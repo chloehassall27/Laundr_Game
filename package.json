@@ -14,6 +14,8 @@
   ],
   "devDependencies": {
     "nodemon": "^2.0.4",
-    "requirejs": "^2.3.6"
+    "requirejs": "^2.3.6",
+    "express": "^4.17.1",
+    "node-static": "^0.7.11"
   }
 }
