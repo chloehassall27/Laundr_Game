@@ -1,0 +1,89 @@
+{"frames": {
+
+"ironSprite_0.png":
+{
+	"frame": {"x":131,"y":131,"w":184,"h":79},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":28,"w":184,"h":79},
+	"sourceSize": {"w":192,"h":192}
+},
+"ironSprite_1.png":
+{
+	"frame": {"x":293,"y":131,"w":175,"h":79},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":28,"w":175,"h":79},
+	"sourceSize": {"w":192,"h":192}
+},
+"ironSprite_2.png":
+{
+	"frame": {"x":212,"y":131,"w":184,"h":79},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":28,"w":184,"h":79},
+	"sourceSize": {"w":192,"h":192}
+},
+"laundrySprite_0.png":
+{
+	"frame": {"x":293,"y":212,"w":128,"h":98},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":35,"y":71,"w":128,"h":98},
+	"sourceSize": {"w":192,"h":192}
+},
+"laundrySprite_1.png":
+{
+	"frame": {"x":361,"y":1,"w":128,"h":104},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":35,"y":65,"w":128,"h":104},
+	"sourceSize": {"w":192,"h":192}
+},
+"laundrySprite_2.png":
+{
+	"frame": {"x":249,"y":1,"w":128,"h":110},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":35,"y":59,"w":128,"h":110},
+	"sourceSize": {"w":192,"h":192}
+},
+"laundrySprite_3.png":
+{
+	"frame": {"x":131,"y":1,"w":128,"h":116},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":35,"y":53,"w":128,"h":116},
+	"sourceSize": {"w":192,"h":192}
+},
+"washerSprite_0.png":
+{
+	"frame": {"x":1,"y":1,"w":128,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":29,"y":23,"w":128,"h":158},
+	"sourceSize": {"w":192,"h":192}
+},
+"washerSprite_1.png":
+{
+	"frame": {"x":1,"y":161,"w":128,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":29,"y":23,"w":128,"h":158},
+	"sourceSize": {"w":192,"h":192}
+}},
+"animations": {
+	"ironSprite": ["ironSprite_0.png","ironSprite_1.png","ironSprite_2.png"],
+	"laundrySprite": ["laundrySprite_0.png","laundrySprite_1.png","laundrySprite_2.png","laundrySprite_3.png"],
+	"washerSprite": ["washerSprite_0.png","washerSprite_1.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "ObstacleSprites-0.png",
+	"format": "RGBA8888",
+	"size": {"w":469,"h":320},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2013554651b85f6488ef364eda87631f:a3ef0c58d7cc9db6b3fdbfa67da0d671:9b9db65f2d07ac8f39664125febca29f$"
+}
+}
