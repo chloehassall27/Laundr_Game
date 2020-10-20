@@ -21,7 +21,7 @@ let loaded = false;
 let player, obstacle;
 app.loader
   .add('charaSheet', "sprites/charaSpriteSheet.json")
-  .add('obSheet', "sprites/obstacleSprites.json")
+  .add('obSheet', "sprites/obstacleSpriteSheet.json")
   .load((loader, resources) => {
     player = new PIXI.AnimatedSprite(resources.charaSheet.spritesheet.animations["running_WithSock"]);
     player.height = WIDTH/8;
@@ -32,7 +32,7 @@ app.loader
     player.play()
     app.stage.addChild(player);
 
-    obstacle = new PIXI.Sprite(resources.obSheet.spritesheet.textures["washer.png"])
+    obstacle = new PIXI.AnimatedSprite(resources.obSheet.spritesheet.animations["washerSprite"])
     obstacle.height = WIDTH/8;
     obstacle.width = WIDTH/8;
     obstacle.x = 400;
