@@ -1,15 +1,11 @@
 /*
 first let me just mention, i had to change where the washer was spawning in, i brought it up higher on the screen, when i first started live server the washer was way too low, i could only see the top of it peeking out? idk
-
 alright so check out this website for details on setTimeOut which is what i used for interval decrementation:
 https://www.geeksforgeeks.org/how-to-change-the-time-interval-of-setinterval-method-at-runtime-using-javascript/
-
 all the variables relating to the spawn time stuff has been grouped togther under "time variables"
 bug when sprite makes it ~2/3 across screen, it kind of stutters? not very visible if you run as is, but if you let it run for long enough that the interval decreases a bunch (or if you just set the interval small to begin with) you can see it very well.
-
 if you comment out the section labeled "??????" (the part where we check if the sprite needs to be deleted) the stutter goes away, but then like,, nothing gets cleaned up lol
 lmk if you want my help to better understand what i did/help in debugging!! <33
-
 OH ALSO i copied the original stuff into original.js! bc the original code does not have this bug so,,, like even tho i mentioned the one part makes the bug go away if you comment it out, the problem is still probably in the new code not the old stuff LMAO
 */
 
@@ -94,8 +90,9 @@ function gameLoop() {
       if (xBox === 0) {
         app.stage.removeChild(obstacles[i]);
         obstacles.shift();
-    }
+      }
     // funcions to run every game tick, ex moveSprite();
+    }
   }
 }
 
