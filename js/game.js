@@ -13,6 +13,8 @@ lmk if you want my help to better understand what i did/help in debugging!! <33
 OH ALSO i copied the original stuff into original.js! bc the original code does not have this bug so,,, like even tho i mentioned the one part makes the bug go away if you comment it out, the problem is still probably in the new code not the old stuff LMAO
 */
 
+//HI OLIVIA I LOVE YOU!!! <3
+
 
 import Obstacle from "./obstacle.js"
 
@@ -88,11 +90,10 @@ function gameLoop() {
     for (var i = 0; i < obstacles.length; i++) {
       const xBox = obstacles[i].getBounds().x + obstacles[i].getBounds().width;
       obstacles[i].x -= 1.9;
-      //??????????
+
       if (xBox === 0) {
         app.stage.removeChild(obstacles[i]);
         obstacles.shift();
-      //end of ?????
     }
     // funcions to run every game tick, ex moveSprite();
   }
