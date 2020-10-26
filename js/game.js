@@ -92,7 +92,6 @@ function gameLoop() {
       if (xBox === 0) {
         app.stage.removeChild(obstacles[i]);
         obstacles.shift();
-      }
       //end of ?????
     }
     // funcions to run every game tick, ex moveSprite();
