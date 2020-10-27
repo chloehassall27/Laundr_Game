@@ -6,6 +6,10 @@ current bugs:
 
 //HI OLIVIA I LOVE YOU!!! <3
 // <3 <3 <3 <3 <3 <3 <3 <3 <3 <3 <3
+//  _._     _,-'""`-._
+// (,-.`._,'(       |\`-/|
+//     `-.-' \ )-`( , o o)
+//           `-    \`_`"'-
 
 
 import Obstacle from "./obstacle.js"
@@ -105,7 +109,6 @@ function decreaseInterval() {
     intRangeMin = smallestInt;
     rangeMin = true;
   }
-  console.log(intRangeMax);
 }
 
 function randomizeInterval(){
