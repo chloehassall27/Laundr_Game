@@ -38,7 +38,7 @@ let interval = 1500;
 let intDecAmt = 0.9;
 let intRangeMax = 3000;
 let intRangeMin = 1500;
-let smallestInt = 400;
+let smallestInt = 500;
 let rangeMin = false;
 let currTime;
 
@@ -132,6 +132,7 @@ function spawnObstacle() {
     decreaseInterval();
   }
   interval = randomizeInterval();
+  console.log(interval);
 
   //call the next spawn obstacle, with a delay of interval
   setTimeout(spawnObstacle, interval);
