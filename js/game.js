@@ -36,6 +36,8 @@ let loaded = false;
 //time variables
 let interval = 1500;
 let intDecAmt = 0.9;
+let intRangeMax = 3000;
+let intRangeMin = 1500;
 let smallestInt = 400;
 let rangeMin = false;
 let currTime;
@@ -98,13 +100,19 @@ function gameLoop() {
 
 function decreaseInterval() {
   //intDecAmt is the factor you decrease the increment by
-  interval *= intDecAmt;
+  intRangeMax *= intDecAmt;
+  intRangeMin *= intDecAmt;
 
   //smallestInt is the smallest the interval will ever get
-  if (interval <= smallestInt) {
-    interval = smallestInt;
+  if (intRangeMin <= smallestInt) {
+    intRangeMin = smallestInt;
     rangeMin = true;
   }
+  console.log(intRangeMax);
+}
+
+function randomizeInterval(){
+  return (Math.floor(Math.random() * (intRangeMax - intRangeMin + 1)) + intRangeMin);
 }
 
 function spawnObstacle() {
@@ -116,6 +124,7 @@ function spawnObstacle() {
   if ((currTime > (interval * 10)) && !rangeMin) {
     decreaseInterval();
   }
+  interval = randomizeInterval();
 
   //call the next spawn obstacle, with a delay of interval
   setTimeout(spawnObstacle, interval);
