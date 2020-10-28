@@ -1,14 +1,7 @@
 /*
 current bugs:
--nothing we're incredible and the smartest ever :)
+- Can't hug Olivia due to Coronavirus bug - URGENT
 */
-
-//HI OLIVIA I LOVE YOU!!! <3
-// <3 <3 <3 <3 <3 <3 <3 <3 <3 <3 <3
-//  _._     _,-'""`-._
-// (,-.`._,'(       |\`-/|
-//     `-.-' \ )-`( , o o)
-//           `-    \`_`"'-
 
 //                _ |\_
 //                \` ..\  <3
@@ -17,6 +10,24 @@ current bugs:
 //   _    /   ,    \/\_
 //  ((____|    )_-\ \_-`
 //   `-----'`-----` `--`
+
+//                      _                        
+//                      \`*-.                    
+//                      )  _`-.                 
+//   ,d88b.d88b,       .  : `. .
+//   88888888888       : _   '  \
+//   `Y8888888Y'       ; *` _.   `*-._  
+//     `Y888Y'         `-.-'          `-. 
+//       `Y'             ;       `       `.                          
+//                       :.       .        \              
+//                       . \  .   :   .-'   .   
+//                        '  `+.;  ;  '      :   
+//                        :  '  |    ;       ;-. 
+//                        ; '   : :`-:     _.`* ;
+//                     .*' /  .*' ; .*`- +'  `*' 
+//                     `*-*   `*-*  `*-*'              
+//                            
+
 
 import Obstacle from "./obstacle.js"
 
@@ -150,6 +161,16 @@ function spawnObstacle() {
 function spawnIron() {
   //randomly choose the height (walk under, or duck under?)
   //include that as the y offset in buildObstacle
+  const walkOrDuck = Math.floor(Math.random() * 2);
+  let yPos;
+  if(walkOrDuck === 0){
+    yPos = app.renderer.height/2; //Walk
+  }
+  else{
+    yPos = app.renderer.height/2 + 100; //Duck
+  }
+
+  buildObstacles(0, yPos, "ironSprite");
 }
 
 function spawnDouble() {
@@ -172,11 +193,12 @@ function spawnDouble() {
 
 function chooseSprite() {
   currTime = performance.now();
-  const rand = Math.floor(Math.random() * 25);
+  const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
   const switchDifficulty = 60000;
 
   //%3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
   //iron should only be allowed to spawn after a set time probs, maybe 1 or 1.5 min? is that too long? at what point would ppl get bored if nothing new is added?
+  
 
   if (rand % 3 == 0) {
     if (currTime > switchDifficulty) return "double"
@@ -184,6 +206,8 @@ function chooseSprite() {
   } else if (rand % 5 == 0) {
     if (currTime > switchDifficulty) return "laundrySprite"
     return "double"
+  } else if (rand % 8 == 0){ //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
+    return "ironSprite"
   }
   else {
     return "washerSprite"
