@@ -1,7 +1,6 @@
 /*
 current bugs:
--when a pair of doubles spawn together, the interval should be temporarily lengthened, otherwise they spawn too close together to the next obstacle :(
--the laundry basket and the washing machine arent at the same height, very noticable when they spawn as a double pair :(
+-nothing we're incredible and the smartest ever :)
 */
 
 //HI OLIVIA I LOVE YOU!!! <3
@@ -11,6 +10,13 @@ current bugs:
 //     `-.-' \ )-`( , o o)
 //           `-    \`_`"'-
 
+//                _ |\_
+//                \` ..\  <3
+//           __,.-" =__Y=
+//         ."        )
+//   _    /   ,    \/\_
+//  ((____|    )_-\ \_-`
+//   `-----'`-----` `--`
 
 import Obstacle from "./obstacle.js"
 
@@ -65,6 +71,8 @@ app.loader
 
     //fire the initial obstacle spawn (which will call all other spawns)
     spawnObstacle();
+    //set the interval to decrease over time
+    setInterval(decreaseInterval(), 3000);
   });
 
 function buildObstacles(xOffset, posy, spriteName) {
@@ -72,9 +80,14 @@ function buildObstacles(xOffset, posy, spriteName) {
 
   obstacle.anchor.set(0.5);
   obstacle.scale.set(0.5);
+  //the laundry sprite doesn't line up well with the washer one, so offset it a bit
+  if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
+
   obstacle.x = app.renderer.width;
+  //if offset>0, we're dealing with a flying iron :)
   if (xOffset > 0) obstacle.x += xOffset;
   obstacle.y = posy;
+
   obstacle.animationSpeed = .125;
   obstacle.play()
 
@@ -111,7 +124,7 @@ function decreaseInterval() {
   }
 }
 
-function randomizeInterval(){
+function randomizeInterval() {
   return (Math.floor(Math.random() * (intRangeMax - intRangeMin + 1)) + intRangeMin);
 }
 
@@ -121,21 +134,23 @@ function spawnObstacle() {
 
   if (obstName === "double") { //just make this if(true) to better test the double spawning :)
     spawnDouble();
+  } else if (obstName == "ironSprite") {
+    spawnIron();
   } else {
     //spawn in the actual obstacle, use x=0 for the default
     buildObstacles(0, app.renderer.height / 2, obstName);
   }
 
-  //if the current time is greater than [whatever interval you want] and the min range hasn't been reached, dec interval
-  currTime = performance.now();
-  if ((currTime > (interval * 10)) && !rangeMin) {
-    decreaseInterval();
-  }
   interval = randomizeInterval();
   console.log(interval);
 
   //call the next spawn obstacle, with a delay of interval
   setTimeout(spawnObstacle, interval);
+}
+
+function spawnIron() {
+  //randomly choose the height (walk under, or duck under?)
+  //include that as the y offset in buildObstacle
 }
 
 function spawnDouble() {
@@ -157,14 +172,18 @@ function spawnDouble() {
 }
 
 function chooseSprite() {
+  currTime = performance.now();
   const rand = Math.floor(Math.random() * 25);
+  const switchDifficulty = 60000;
 
   //%3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
+  //iron should only be allowed to spawn after a set time probs, maybe 1 or 1.5 min? is that too long? at what point would ppl get bored if nothing new is added?
+
   if (rand % 3 == 0) {
-    if (currTime > 60000) return "double"
+    if (currTime > switchDifficulty) return "double"
     return "laundrySprite"
   } else if (rand % 5 == 0) {
-    if (currTime > 60000) return "laundrySprite"
+    if (currTime > switchDifficulty) return "laundrySprite"
     return "double"
   }
   else {
