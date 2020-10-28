@@ -132,7 +132,6 @@ function spawnObstacle() {
     decreaseInterval();
   }
   interval = randomizeInterval();
-  console.log(interval);
 
   //call the next spawn obstacle, with a delay of interval
   setTimeout(spawnObstacle, interval);
