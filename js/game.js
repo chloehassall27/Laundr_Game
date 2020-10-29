@@ -1,6 +1,7 @@
 /*
 current bugs:
-- Can't hug Olivia due to Coronavirus bug - URGENT
+- Can't hug Olivia due to Coronavirus bug - URGENT :((((
+  -possible fixes: hug olivia anyway
 */
 
 //                _ |\_
