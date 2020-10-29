@@ -1,0 +1,165 @@
+{
+    "frames": {
+        "LaundrBomb0.png": {
+            "frame": {
+                "x": 0,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "sourceSize": {
+                "w": 192,
+                "h": 192
+            }
+        },
+        "LaundrBomb1.png": {
+            "frame": {
+                "x": 192,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "sourceSize": {
+                "w": 192,
+                "h": 192
+            }
+        },
+        "LaundrBomb2.png": {
+            "frame": {
+                "x": 384,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "sourceSize": {
+                "w": 192,
+                "h": 192
+            }
+        },
+        "LaundrBomb3.png": {
+            "frame": {
+                "x": 0,
+                "y": 192,
+                "w": 192,
+                "h": 192
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "sourceSize": {
+                "w": 192,
+                "h": 192
+            }
+        },
+        "LaundrBomb4.png": {
+            "frame": {
+                "x": 192,
+                "y": 192,
+                "w": 192,
+                "h": 192
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "sourceSize": {
+                "w": 192,
+                "h": 192
+            }
+        },
+        "LaundrBomb5.png": {
+            "frame": {
+                "x": 384,
+                "y": 192,
+                "w": 192,
+                "h": 192
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "sourceSize": {
+                "w": 192,
+                "h": 192
+            }
+        },
+        "LaundrBomb6.png": {
+            "frame": {
+                "x": 0,
+                "y": 384,
+                "w": 192,
+                "h": 192
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 192,
+                "h": 192
+            },
+            "sourceSize": {
+                "w": 192,
+                "h": 192
+            }
+        }
+    },
+    "animations": {
+        "tokenSprite": [
+            "LaundrBomb0.png",
+            "LaundrBomb1.png",
+            "LaundrBomb2.png",
+            "LaundrBomb3.png",
+            "LaundrBomb4.png",
+            "LaundrBomb5.png",
+            "LaundrBomb6.png"
+        ]
+    },
+    "meta": {
+        "app": "https://github.com/piskelapp/piskel/",
+        "version": "1.0",
+        "image": "LaundrBombSprite.png",
+        "format": "RGBA8888",
+        "size": {
+            "w": 576,
+            "h": 576
+        }
+    }
+}
