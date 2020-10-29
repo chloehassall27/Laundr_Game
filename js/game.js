@@ -134,12 +134,15 @@ console.log(RESOLUTION)
     // console.log(e);
     for (var i=0; i < e.changedTouches.length; i++) {
       touch = e.changedTouches[i]
-      console.log(touch);
+      // console.log(touch);
+
+      // Top 2/3 of the canvas will stop the jump function
       if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
         inputs[jump] = false;
         break;
       }
-      // Bottom 1/3 of the canvas will call the duck function
+
+      // Bottom 1/3 of the canvas will stop the duck function
       else if (touch.pageY > HEIGHT*RESOLUTION/3) {
         inputs[duck] = false;
         break;
@@ -151,8 +154,26 @@ console.log(RESOLUTION)
     // console.log("cancel");
   }
 
+  // May not work with multitouch!
   function touchMove(e) {
-    // console.log("move");
+    // console.log(e);
+    for (var i=0; i < e.changedTouches.length; i++) {
+      touch = e.changedTouches[i]
+      // console.log(touch);
+
+      // Top 2/3 of the canvas will call the jump function and stop the duck function
+      if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
+        inputs[jump] = true;
+        inputs[duck] = false;
+        break;
+      }
+      // Bottom 1/3 of the canvas will call the duck function and stop the jump function
+      else if (touch.pageY > HEIGHT*RESOLUTION/3) {
+        inputs[duck] = true;
+        inputs[jump] = false;
+        break;
+      }
+    }
   }
   
 // === End helper functions === //
