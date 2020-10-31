@@ -1,7 +1,22 @@
 /*
 current bugs:
+-collision happens too soon - the bounding boxes of the sprites are bigger than the sprites themselves
+  -possible fixes: manually create the hitArea for each sprite and use that for collisions, see
+   https://www.html5gamedevs.com/topic/42185-how-to-update-hitarea-of-a-sprite/
+  -we could also just. crop all the sprites to just be the sprite itself, no blank space at all
+    -this might be the easiest solution? you'll probs have to be the one do it tho, my texturepacker free trial expired LMAO
+    -idk tho maybe we could manually crop all the sprites outside texture packer?
+      -take simran's obstacle .png, manually save a bunch of crops of it, add those crops into a texturepacker thing??
+  -or there could be an easier way to edit the bounds that i havent found yet
+  -or we could, in the collision function, check for bounds smaller than the bounds we fetch?
+    -this is what is what i started messing with bc im lazy and head empty only tgcf donghua
+    -but the results aren't great, vry hard to make it behave the way i want it to
+    -srsly i think we should just change the sprite images themselves lmao
+  -wait one last possibility: don't change the sprite png stuff, but in the json data, change the values for spriteSourceSize or spriteSize???
+  
 - Can't hug Olivia due to Coronavirus bug - URGENT :((((
   -possible fixes: hug olivia anyway
+
 */
 
 //                _ |\_
@@ -92,6 +107,11 @@ function gameLoop() {
       const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
       spawner.obstacles[i].x -= 1.9;
 
+      //check collision
+      if (checkCollision(player, spawner.obstacles[i]))
+        endGame();
+
+      //remove box if it's offscreen
       if (xBox === 0) {
         app.stage.removeChild(spawner.obstacles[i]);
         spawner.obstacles.shift();
@@ -101,13 +121,54 @@ function gameLoop() {
       const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
       spawner.tokens[i].x -= 1.9;
 
+      if (checkCollision(player, spawner.tokens[i]))
+        collectToken(i);
+
       if (xBox === 0) {
         app.stage.removeChild(tokens[i]);
         spawner.tokens.shift();
       }
     }
+
   }
 
+}
+
+//collision
+function checkCollision(a, b) {
+  const aBox = a.getBounds();
+  const bBox = b.getBounds();
+  //none of us thought to trim our sprites rip so this offset makes it so collision happens at the bounds we see, rather than the sprites' actual bounds
+  let offset = 35;
+
+  if ((aBox.x + aBox.width > bBox.x + offset) && (aBox.x < bBox.x + bBox.width - offset) && (aBox.y + aBox.height > bBox.y + offset) && (aBox.y < bBox.y + bBox.height - offset)) {
+    return true;
+  }
+  else return false;
+}
+
+function endGame() {
+  //call whatever clean up is needed, trigger popups, etc..
+  gameOver = true;
+  player.stop();
+  spawner.endGame();
+
+  //lil message for testing
+  let message = new PIXI.Text("game over, hit detected!");
+  message.y = app.view.height / 2;
+  message.x = 150;
+  app.stage.addChild(message);
+}
+
+function collectToken(index) {
+  //whatever score stuff has to happen here, noises, etc
+  spawner.collectToken(index);
+
+  //lil message for testing
+  let message = new PIXI.Text("token collected!");
+  message.y = app.view.height / 2;
+  message.x = 150;
+  app.stage.addChild(message);
 }
 
 // Keypress functions

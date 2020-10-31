@@ -21,6 +21,8 @@ export default class Spawner {
     obstacles = [];
     tokens = [];
 
+    gameOver = false;
+
 
     constructor(HEIGHT, WIDTH, app, washerSpr, laundrySpr, ironSpr, tokenSpr) {
         this.app = app;
@@ -42,6 +44,7 @@ export default class Spawner {
 
     buildObstacles(xOffset, posy, spriteName) {
         var obstacle = new PIXI.AnimatedSprite(this.app.loader.resources.obSheet.spritesheet.animations[spriteName]);
+
         obstacle.anchor.set(0.5);
         obstacle.scale.set(0.5);
         //the laundry sprite doesn't line up well with the washer one, so offset it a bit
@@ -50,12 +53,18 @@ export default class Spawner {
         obstacle.x = this.app.renderer.width;
         obstacle.x += xOffset;
         obstacle.y = posy;
+        console.log(obstacle.getBounds());
+
+        obstacle.calculateBounds();
+        console.log(obstacle.getBounds());
 
         obstacle.animationSpeed = .125;
         obstacle.play()
         this.app.stage.addChild(obstacle);
-
         this.obstacles.push(obstacle);
+
+
+        console.log(this.obstacles);
     }
 
     buildToken() {
@@ -96,7 +105,7 @@ export default class Spawner {
 
     spawn() {
         //first check if it's time to spawn in a token :D
-        if (this.tokenTime) {
+        if (this.tokenTime && !this.gameOver) {
             console.log("token!");
             this.buildToken();
             setTimeout(this.spawn.bind(this), this.interval);
@@ -121,7 +130,8 @@ export default class Spawner {
         this.interval = this.randomizeInterval();
 
         //call the next spawn obstacle, with a delay of interval
-        setTimeout(this.spawn.bind(this), this.interval);
+        if (!this.gameOver)
+            setTimeout(this.spawn.bind(this), this.interval);
     }
 
     spawnIron() {
@@ -175,5 +185,17 @@ export default class Spawner {
         else {
             return "washerSprite";
         }
+    }
+
+    endGame() {
+        this.gameOver = true;
+        for (let i = 0; i < this.obstacles.length; i++) {
+            this.obstacles[i].stop();
+        }
+    }
+
+    collectToken(index) {
+        this.app.stage.removeChild(this.tokens[index]);
+        this.tokens.splice(index, 1);
     }
 }
