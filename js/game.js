@@ -1,7 +1,11 @@
 /*
 current bugs:
 - One more obstacle is spawned after game ends
+  - i think i fixed this? spawn gets called one more time, but it doesnt add anything. 
+
 - Game slows down after multiple tokens due to persistent text I think??? That's not like a serious bug but something to keep in mind!
+  - i changed it so the text goes away after a second, check to see if the slowdown still happens -  it doesn't look like it does, but idk what the slowdown originally looked like so//
+
 - Hit areas are hard-coded. Also not a super serious bug since it works but might be nice to fix
   
 - Can't hug Olivia due to Coronavirus bug - URGENT :((((
@@ -44,8 +48,8 @@ current bugs:
 
 import Spawner from "./spawner.js"
 
-const WIDTH = 1000;
-const HEIGHT = WIDTH * 2 / 3
+const HEIGHT = 450;
+const WIDTH = HEIGHT * 3;
 
 // === Basic app setup === //
 const app = new PIXI.Application({
@@ -61,24 +65,28 @@ let gameOver = false;
 let loaded = false;
 
 let spawner;
+let count = 0;
 
 //time variables
 let interval = 1500;
 
 
-// let text = new PIXI.Text('This is a PixiJS text',{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center'});
-// app.stage.addChild(text);
-
 // === Sprite setup === //
 let player;
+let background;
 app.loader
   .add('charaSheet', "sprites/charaSpriteSheet.json")
   .add('obSheet', "sprites/obstacleSprites.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
   .load((loader, resources) => {
+
+    let bgTexture = PIXI.Texture.from("../sprites/background.png");
+    background = new PIXI.TilingSprite(bgTexture, WIDTH, HEIGHT);
+    background.tileScale.set(0.5);
+    app.stage.addChild(background);
+
     player = new PIXI.AnimatedSprite(resources.charaSheet.spritesheet.animations["running_WithSock"]);
-    player.height = WIDTH / 8;
-    player.width = WIDTH / 8;
+    player.scale.set(0.65)
     player.interactive = true;
     player.x = 200;
     player.y = HEIGHT - (HEIGHT * .1);
@@ -101,6 +109,7 @@ app.loader
 // === Main game loop === //
 function gameLoop() {
   if (!gameOver && loaded) {
+    moveBackground();
     //we should try to move this into like a spawner.moveSprites() function or something
     for (var i = 0; i < spawner.obstacles.length; i++) {
       const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
@@ -144,13 +153,13 @@ function checkCollision(a, b) {
   let playerLeft = aBox.x + aBox.width;
   let playerBottom = aBox.y;
   let playerTop = aBox.y + aBox.height;
-  
+
   let obsLeft = bBox.x;
   let obsRight = bBox.x + bBox.width;
   let obsBottom = bBox.y + bBox.height;
   let obsTop = bBox.y;
 
-  if((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom))
+  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom))
     return true
   else
     return false;
@@ -178,6 +187,14 @@ function collectToken(index) {
   message.y = app.view.height / 2;
   message.x = 150;
   app.stage.addChild(message);
+  setTimeout(function () {
+    app.stage.removeChild(message)
+  }, 1000);
+}
+
+function moveBackground() {
+  //change the '1' to whatever speed is best :)
+  background.tilePosition.x -= 1;
 }
 
 // Keypress functions

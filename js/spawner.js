@@ -56,9 +56,9 @@ export default class Spawner {
         //console.log(obstacle.getBounds());
 
         //Calculate hit boxes based on which sprite is spawned
-        if(spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 33, obstacle.y - 35, 63, 42); 
-        else if(spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 32, obstacle.y - 3, 63, 42); 
-        else if(spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 45, obstacle.y - 30, 68, 8); 
+        if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 33, obstacle.y - 35, 63, 42);
+        else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 32, obstacle.y - 3, 63, 42);
+        else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 45, obstacle.y - 30, 68, 8);
         else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
         //console.log(obstacle.hitArea.x);
 
@@ -113,34 +113,36 @@ export default class Spawner {
     }
 
     spawn() {
-        //first check if it's time to spawn in a token :D
-        if (this.tokenTime && !this.gameOver) {
-            console.log("token!");
-            this.buildToken();
-            setTimeout(this.spawn.bind(this), this.interval);
-            let rand = Math.floor(Math.random() * (10 - 5)) + 4;
-            setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
-            this.tokenTime = false;
-            return;
+        if (!this.gameOver) {
+            //first check if it's time to spawn in a token :D
+            if (this.tokenTime) {
+                console.log("token!");
+                this.buildToken();
+                setTimeout(this.spawn.bind(this), this.interval);
+                let rand = Math.floor(Math.random() * (10 - 5)) + 4;
+                setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
+                this.tokenTime = false;
+                return;
+            }
+
+            //otherwise we're building a normal obstacle
+            //get the name of the obstacle
+            const obstName = this.chooseSprite();
+
+            if (obstName === "double") {
+                this.spawnDouble();
+            } else if (obstName == "ironSprite") {
+                this.spawnIron();
+            } else {
+                this.buildObstacles(0, this.walkingLevel, obstName);
+            }
+
+            this.interval = this.randomizeInterval();
+
+            //call the next spawn obstacle, with a delay of interval
+            if (!this.gameOver)
+                setTimeout(this.spawn.bind(this), this.interval);
         }
-
-        //otherwise we're building a normal obstacle
-        //get the name of the obstacle
-        const obstName = this.chooseSprite();
-
-        if (obstName === "double") {
-            this.spawnDouble();
-        } else if (obstName == "ironSprite") {
-            this.spawnIron();
-        } else {
-            this.buildObstacles(0, this.walkingLevel, obstName);
-        }
-
-        this.interval = this.randomizeInterval();
-
-        //call the next spawn obstacle, with a delay of interval
-        if (!this.gameOver)
-            setTimeout(this.spawn.bind(this), this.interval);
     }
 
     spawnIron() {
