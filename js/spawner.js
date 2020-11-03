@@ -53,10 +53,17 @@ export default class Spawner {
         obstacle.x = this.app.renderer.width;
         obstacle.x += xOffset;
         obstacle.y = posy;
-        console.log(obstacle.getBounds());
+        //console.log(obstacle.getBounds());
+
+        //Calculate hit boxes based on which sprite is spawned
+        if(spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 33, obstacle.y - 35, 63, 42); 
+        else if(spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 32, obstacle.y - 3, 63, 42); 
+        else if(spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 45, obstacle.y - 30, 68, 8); 
+        else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
+        //console.log(obstacle.hitArea.x);
 
         obstacle.calculateBounds();
-        console.log(obstacle.getBounds());
+        //console.log(obstacle.getBounds());
 
         obstacle.animationSpeed = .125;
         obstacle.play()
@@ -76,6 +83,8 @@ export default class Spawner {
         if (rand % 3 == 0) token.y = this.jumpLevel;
         else token.y = this.walkingLevel;
         token.x = this.app.renderer.width;
+
+        token.hitArea = new PIXI.Rectangle(token.x - 19, token.y - 20, 38, 40);
 
         token.animationSpeed = 0.125;
         token.play();
