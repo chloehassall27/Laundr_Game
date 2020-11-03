@@ -146,18 +146,17 @@ export default class Spawner {
     }
 
     spawnIron() {
-        //randomly choose the height (walk under, or duck under?)
-        //include that as the y offset in buildObstacle
-        const walkOrDuck = Math.floor(Math.random() * 2);
-        let yPos;
-        if (walkOrDuck === 0) {
-            yPos = this.app.renderer.height / 2; //Walk
+        //randomly pick if the irons will spawn in a V formation or not
+        const pattern = Math.floor(Math.random() * 2);
+        if (pattern === 0) { //Irons spawn in pattern
+            this.buildObstacles(125, this.app.renderer.height / 2 - 50, "ironSprite");
+            this.buildObstacles(0, this.app.renderer.height / 2, "ironSprite");
+            this.buildObstacles(100, this.app.renderer.height / 2 + 50, "ironSprite");
         }
-        else {
-            yPos = this.app.renderer.height / 2 + 100; //Duck
+        else { //Irons spawn between range that can be jumped over or ducked under
+            let yPos = Math.floor(Math.random() * (this.app.renderer.height / 2 - (this.app.renderer.height / 2 + 100) + 1)) + (this.app.renderer.height / 2 + 100);
+            this.buildObstacles(0, yPos, "ironSprite");
         }
-
-        this.buildObstacles(0, yPos, "ironSprite");
     }
 
     spawnDouble() {
