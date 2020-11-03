@@ -48,8 +48,8 @@ current bugs:
 
 import Spawner from "./spawner.js"
 
-const HEIGHT = 450;
-const WIDTH = HEIGHT * 3;
+const HEIGHT = 225;
+const WIDTH = HEIGHT * 4;
 
 // === Basic app setup === //
 const app = new PIXI.Application({
@@ -82,11 +82,11 @@ app.loader
 
     let bgTexture = PIXI.Texture.from("../sprites/background.png");
     background = new PIXI.TilingSprite(bgTexture, WIDTH, HEIGHT);
-    background.tileScale.set(0.5);
+    background.tileScale.set(0.25);
     app.stage.addChild(background);
 
     player = new PIXI.AnimatedSprite(resources.charaSheet.spritesheet.animations["running_WithSock"]);
-    player.scale.set(0.65)
+    player.scale.set(0.55)
     player.interactive = true;
     player.x = 200;
     player.y = HEIGHT - (HEIGHT * .1);

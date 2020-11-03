@@ -33,7 +33,7 @@ export default class Spawner {
         this.ironSprite = ironSpr;
         this.tokenSprite = tokenSpr;
 
-        this.walkingLevel = HEIGHT - (HEIGHT * 0.16)
+        this.walkingLevel = HEIGHT - (HEIGHT * 0.245)
         this.jumpLevel = this.walkingLevel - 100;
         this.tokenTime = false;
         this.rangeMin = false;
@@ -46,7 +46,7 @@ export default class Spawner {
         var obstacle = new PIXI.AnimatedSprite(this.app.loader.resources.obSheet.spritesheet.animations[spriteName]);
 
         obstacle.anchor.set(0.5);
-        obstacle.scale.set(0.5);
+        obstacle.scale.set(0.4);
         //the laundry sprite doesn't line up well with the washer one, so offset it a bit
         if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
 
@@ -127,7 +127,7 @@ export default class Spawner {
 
             //otherwise we're building a normal obstacle
             //get the name of the obstacle
-            const obstName = this.chooseSprite();
+            const obstName = "ironSprite";//this.chooseSprite();
 
             if (obstName === "double") {
                 this.spawnDouble();
@@ -149,9 +149,9 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(125, this.app.renderer.height / 2 - 50, "ironSprite");
-            this.buildObstacles(0, this.app.renderer.height / 2, "ironSprite");
-            this.buildObstacles(100, this.app.renderer.height / 2 + 50, "ironSprite");
+            this.buildObstacles(100, this.app.renderer.height / 2 - 60, "ironSprite");
+            this.buildObstacles(0, this.app.renderer.height / 2 - 25, "ironSprite");
+            this.buildObstacles(85, this.app.renderer.height / 2 + 10, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
             let yPos = Math.floor(Math.random() * (this.app.renderer.height / 2 - (this.app.renderer.height / 2 + 100) + 1)) + (this.app.renderer.height / 2 + 100);
