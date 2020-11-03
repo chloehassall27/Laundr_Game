@@ -1,0 +1,27 @@
+{
+  "name": "Laundr_Game",
+  "version": "1.0.0",
+  "description": "Run with npm start after npm install. Serves @ localhost",
+  "main": "server.js",
+  "dependencies": {
+    "minimist": "^1.2.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kylehassall27/Laundr_Game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kylehassall27/Laundr_Game/issues"
+  },
+  "homepage": "https://github.com/kylehassall27/Laundr_Game#readme"
+}
