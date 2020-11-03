@@ -1,6 +1,12 @@
 var fs = require('fs'),
     http = require('http');
 const { serialize } = require('v8');
+require('dotenv').config()
+
+if (!process.env.PORT)
+  process.env.PORT = 80;
+
+console.log("Started server on port " + process.env.PORT);
 
 http.createServer(function (req, res) {
   let url = req.url;
@@ -16,4 +22,4 @@ http.createServer(function (req, res) {
     res.writeHead(200);
     res.end(data);
   });
-}).listen(80);
+}).listen(process.env.PORT);

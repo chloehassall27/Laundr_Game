@@ -7,10 +7,12 @@
     "minimist": "^1.2.5"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "2.0.4",
+    "dotenv": "8.2.0"
   },
   "scripts": {
     "start": "nodemon server.js",
+    "env": "echo PORT=80 > .env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/kylehassall27/Laundr_Game/issues"
   },
-  "homepage": "https://github.com/kylehassall27/Laundr_Game#readme"
+  "homepage": "https://github.com/kylehassall27/Laundr_Game#readme",
+  "engines": {
+    "node": "12.18.3"
+  }
 }
