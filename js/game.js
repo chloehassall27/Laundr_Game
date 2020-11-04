@@ -95,8 +95,8 @@ function gameLoop() {
     //we should try to move this into like a spawner.moveSprites() function or something
     for (var i = 0; i < spawner.obstacles.length; i++) {
       const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-      spawner.obstacles[i].x -= 1.9;
-      spawner.obstacles[i].hitArea.x -= 1.9;
+      spawner.obstacles[i].x -= 3.5;
+      spawner.obstacles[i].hitArea.x -= 3.5;
 
       //check collision
       if (checkCollision(player.currSprite, spawner.obstacles[i])) {
@@ -133,18 +133,24 @@ function checkCollision(a, b) {
   const aBox = a.hitArea;
   const bBox = b.hitArea;
 
-  let playerRight = aBox.x;
-  let playerLeft = aBox.x + aBox.width;
-  let playerBottom = aBox.y;
-  let playerTop = aBox.y + aBox.height;
+  let playerRight = aBox.x; //200
+  let playerLeft = aBox.x + aBox.width; //125
+  let playerBottom = aBox.y; //202.5
+  let playerTop = aBox.y + aBox.height; //153.02
 
   let obsLeft = bBox.x;
   let obsRight = bBox.x + bBox.width;
   let obsBottom = bBox.y + bBox.height;
   let obsTop = bBox.y;
 
-  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom))
+  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom)){
+    console.log(playerRight + " is more than " + obsLeft);
+    console.log(playerLeft + " is less than " + obsRight);
+    console.log(playerBottom + " is more than " + obsTop);
+    console.log(playerTop + " is less than " + obsBottom);
+    console.log(obsTop); console.log(playerBottom);
     return true
+  }
   else
     return false;
 }

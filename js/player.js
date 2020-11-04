@@ -36,7 +36,7 @@ export default class Player {
         }
 
         if (this.speedY > 0 && jump) {
-            this.speedY += .038
+            this.speedY += .038;
         }
 
         if (this.currSprite.y < this.groundLevel) {
@@ -45,10 +45,14 @@ export default class Player {
         else if (this.currSprite.y > this.groundLevel) {
             this.speedY = 0;
             this.currSprite.y = this.groundLevel;
+            this.currSprite.hitArea.y = this.groundLevel;
             this.switchSprite(this.running);
         }
 
         this.currSprite.y -= this.speedY;
+        this.currSprite.hitArea.y -= this.speedY;
+
+        //console.log(this.currSprite.y + " vs " + this.currSprite.hitArea.y)
     }
 
     duck() {
