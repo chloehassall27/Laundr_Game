@@ -11,8 +11,7 @@ it looks like simran forked off of kyle's thing?? idk but i had to change my def
    - locations things spawn at (mostly the y values of irons, i think) need to be updated
    - speed at which obstacles move leftward should increase over time until it hits a max
       - i replayed dino game and i think they might have only increased speed and not decreased spawn times? idk, let's just try increasing speed and see if we need to edit other stuff, i do think it needs to go faster in general or else it's too easy/boring (play dino game for ref)
-   - sound doesnt work rn :( relevant stuff is commented out so that it doesnt interfere with your stuff
-   - reset needed for spawner
+   - starting sprite for player should be one of the ducking ones (so that it starts on the ground, not mid run, and then it jumps up when player starts game and starts running)
    - the whole "pause when leave tab" thing
 */
 
@@ -30,6 +29,8 @@ const app = new PIXI.Application({
 document.body.appendChild(app.view);
 
 app.ticker.add(gameLoop);
+let win = false;
+let lose = false;
 let gameOver = false;
 let gameStart = false;
 let inputs = {
@@ -40,16 +41,28 @@ let inputs = {
 let groundY = HEIGHT - (HEIGHT * .1)
 
 let spawner;
-let death;
-
-// === Sprite setup === //
 let player;
 let background;
+
+//noises
+let deathS;
+let jumpS;
+let tokenS;
+let winS;
+
+let started = false;
+let spawnerInterval;
+
+// === Sprite setup === //
 
 app.loader
   .add('charaSheet', "sprites/charaSpriteSheet.json")
   .add('obSheet', "sprites/obstacleSprites.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
+  .add('deathSound', "sounds/death.wav")
+  .add('jumpSound', "sounds/jump.wav")
+  .add('tokenSound', "sounds/jelly2.wav")
+  .add('winSound', "sounds/BETTERWin3.wav")
   .load((loader, resources) => {
 
     //create tiling sprite that can be scrolled infinitely
@@ -60,27 +73,17 @@ app.loader
 
     //create player object - handles jumping + ducking
     player = new Player(HEIGHT, WIDTH, app);
+    player.currSprite.stop();
 
     //create our spawner - handles obstacles + tokens
     spawner = new Spawner(HEIGHT, WIDTH, app);
 
-    //create sounds
-    //death = PIXI.sound.Sound.from('sounds/death.wav');
-    // PIXI.sound.add('token', 'sounds/jelly2.wav');
-    // PIXI.sound.add('death', 'sounds/death.wav');
-    // PIXI.sound.add('win', 'sounds/win.wav');
-
-    //fire the initial obstacle spawn (which will call all other spawns)
-    spawner.spawn();
-
-    //set the interval to decrease over time
-    setInterval(spawner.decreaseInterval(), 3000);
   });
 
 // === Main game loop === //
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
-  if (!gameOver && player && player.loaded) {
+  if (!gameOver && player && player.loaded && started) {
     moveBackground();
 
     player.updatePos(inputs.jump);
@@ -96,8 +99,10 @@ function gameLoop() {
       spawner.obstacles[i].hitArea.x -= 1.9;
 
       //check collision
-      if (checkCollision(player.currSprite, spawner.obstacles[i]))
+      if (checkCollision(player.currSprite, spawner.obstacles[i])) {
+        lose = true;
         endGame();
+      }
 
       //remove box if it's offscreen
       if (xBox === 0) {
@@ -147,9 +152,11 @@ function checkCollision(a, b) {
 function endGame() {
   //call whatever clean up is needed, trigger popups, etc..
   gameOver = true;
-  //death.play();
   player.endGame();
   spawner.endGame();
+
+  if (lose) deathS.play();
+  else if (win) winS.play();
 
   //lil message for testing
   let message = new PIXI.Text("game over, hit detected!");
@@ -161,6 +168,7 @@ function endGame() {
 function collectToken(index) {
   //whatever score stuff has to happen here, noises, etc
   spawner.collectToken(index);
+  tokenS.play();
 
   //lil message for testing
   let message = new PIXI.Text("token collected!");
@@ -170,6 +178,36 @@ function collectToken(index) {
   setTimeout(function () {
     app.stage.removeChild(message)
   }, 1000);
+}
+
+function cleanUp() {
+  clearInterval(spawnerInterval);
+  spawner = new Spawner(HEIGHT, WIDTH, app);
+  started = false;
+}
+
+function startGame() {
+  //make the noises (they can only be created/started after player interraction due to PIXI limitations)
+  createNoises();
+  //now the player sprite is allowed to animate
+  player.currSprite.play();
+  //fire the initial obstacle spawn (which will call all other spawns)
+  spawner.spawn();
+  //set the interval to decrease over time
+  spawnerInterval = setInterval(spawner.decreaseInterval(), 3000);
+
+  started = true;
+}
+
+function createNoises() {
+  deathS = PIXI.sound.Sound.from(app.loader.resources.deathSound);
+  deathS.volume = 0.4;
+  jumpS = PIXI.sound.Sound.from(app.loader.resources.jumpSound);
+  jumpS.volume = 0.4;
+  tokenS = PIXI.sound.Sound.from(app.loader.resources.tokenSound);
+  tokenS.volume = 0.4;
+  winS = PIXI.sound.Sound.from(app.loader.resources.winSound);
+  winS.volume = 0.35;
 }
 
 // === Helper functions === //
@@ -183,6 +221,8 @@ function keysDown(e) {
 
   if (e.key == "ArrowUp" || e.key == " ") {
     inputs.jump = true;
+    if (!started) startGame();
+    jumpS.play();
   }
   if (e.key == "ArrowDown") {
     inputs.duck = true;
