@@ -70,8 +70,6 @@ export default class Spawner {
         this.app.stage.addChild(obstacle);
         this.obstacles.push(obstacle);
 
-
-        console.log(this.obstacles);
     }
 
     buildToken() {
@@ -127,7 +125,7 @@ export default class Spawner {
 
             //otherwise we're building a normal obstacle
             //get the name of the obstacle
-            const obstName = "ironSprite";//this.chooseSprite();
+            const obstName = this.chooseSprite();
 
             if (obstName === "double") {
                 this.spawnDouble();
@@ -174,7 +172,7 @@ export default class Spawner {
             nameRight = "washerSprite";
         }
         this.buildObstacles(0, this.walkingLevel, nameLeft);
-        this.buildObstacles(80, this.walkingLevel, nameRight);
+        this.buildObstacles(55, this.walkingLevel, nameRight);
     }
 
     chooseSprite() {

@@ -47,6 +47,7 @@ current bugs:
 
 
 import Spawner from "./spawner.js"
+import Player from "./player.js"
 
 const HEIGHT = 225;
 const WIDTH = HEIGHT * 4;
@@ -62,18 +63,14 @@ app.stage.addChild(container);
 
 app.ticker.add(gameLoop);
 let gameOver = false;
-let loaded = false;
 
 let spawner;
-let count = 0;
-
-//time variables
-let interval = 1500;
 
 
 // === Sprite setup === //
 let player;
 let background;
+
 app.loader
   .add('charaSheet', "sprites/charaSpriteSheet.json")
   .add('obSheet', "sprites/obstacleSprites.json")
@@ -85,17 +82,7 @@ app.loader
     background.tileScale.set(0.25);
     app.stage.addChild(background);
 
-    player = new PIXI.AnimatedSprite(resources.charaSheet.spritesheet.animations["running_WithSock"]);
-    player.scale.set(0.55)
-    player.interactive = true;
-    player.x = 200;
-    player.y = HEIGHT - (HEIGHT * .1);
-    player.hitArea = new PIXI.Rectangle(player.x, player.y, -75, -70);
-    player.animationSpeed = .15;
-    player.play()
-    app.stage.addChild(player);
-
-    loaded = true;
+    player = new Player(HEIGHT, WIDTH, app);
 
     //create our spawner - handles obstacles and tokens
     spawner = new Spawner(HEIGHT, WIDTH, app, app.loader.resources.obSheet.spritesheet.animations["washerSprite"], app.loader.resources.obSheet.spritesheet.animations["laundrySprite"], app.loader.resources.obSheet.spritesheet.animations["ironSprite"], app.loader.resources.tokenSheet.spritesheet.animations["tokenSprite"]);
@@ -108,8 +95,10 @@ app.loader
 
 // === Main game loop === //
 function gameLoop() {
-  if (!gameOver && loaded) {
+  //must check &&player first or else itll be checking for loaded on a null object
+  if (!gameOver && player && player.loaded) {
     moveBackground();
+
     //we should try to move this into like a spawner.moveSprites() function or something
     for (var i = 0; i < spawner.obstacles.length; i++) {
       const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
@@ -117,7 +106,7 @@ function gameLoop() {
       spawner.obstacles[i].hitArea.x -= 1.9;
 
       //check collision
-      if (checkCollision(player, spawner.obstacles[i]))
+      if (checkCollision(player.currSprite, spawner.obstacles[i]))
         endGame();
 
       //remove box if it's offscreen
@@ -131,7 +120,7 @@ function gameLoop() {
       spawner.tokens[i].x -= 1.9;
       spawner.tokens[i].hitArea.x -= 1.9;
 
-      if (checkCollision(player, spawner.tokens[i]))
+      if (checkCollision(player.currSprite, spawner.tokens[i]))
         collectToken(i);
 
       if (xBox === 0) {
@@ -168,13 +157,13 @@ function checkCollision(a, b) {
 function endGame() {
   //call whatever clean up is needed, trigger popups, etc..
   gameOver = true;
-  player.stop();
+  player.endGame();
   spawner.endGame();
 
   //lil message for testing
   let message = new PIXI.Text("game over, hit detected!");
-  message.y = app.view.height / 2;
-  message.x = 150;
+  message.y = 10;
+  message.x = 10;
   app.stage.addChild(message);
 }
 
@@ -184,8 +173,8 @@ function collectToken(index) {
 
   //lil message for testing
   let message = new PIXI.Text("token collected!");
-  message.y = app.view.height / 2;
-  message.x = 150;
+  message.y = 10;
+  message.x = 10;
   app.stage.addChild(message);
   setTimeout(function () {
     app.stage.removeChild(message)
