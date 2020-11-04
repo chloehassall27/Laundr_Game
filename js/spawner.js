@@ -6,11 +6,6 @@ export default class Spawner {
     smallestInt = 500;
     rangeMin;
     tokenTime;
-    washerSprite;
-    laundrySprite;
-    ironSprite;
-    tokenSprite;
-
     app;
     HEIGHT;
     WIDTH;
@@ -24,14 +19,10 @@ export default class Spawner {
     gameOver = false;
 
 
-    constructor(HEIGHT, WIDTH, app, washerSpr, laundrySpr, ironSpr, tokenSpr) {
+    constructor(HEIGHT, WIDTH, app) {
         this.app = app;
         this.HEIGHT = HEIGHT;
         this.WIDTH = WIDTH;
-        this.washerSprite = washerSpr;
-        this.laundrySprite = laundrySpr;
-        this.ironSprite = ironSpr;
-        this.tokenSprite = tokenSpr;
 
         this.walkingLevel = HEIGHT - (HEIGHT * 0.245)
         this.jumpLevel = this.walkingLevel - 100;
@@ -73,7 +64,7 @@ export default class Spawner {
     }
 
     buildToken() {
-        var token = new PIXI.AnimatedSprite(this.tokenSprite);
+        var token = new PIXI.AnimatedSprite(this.app.loader.resources.tokenSheet.spritesheet.animations["tokenSprite"]);
 
         token.anchor.set(0.5);
         token.scale.set(0.35);
@@ -187,7 +178,8 @@ export default class Spawner {
         } else if (rand % 5 == 0) {
             if (currTime > switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (rand % 8 == 0) { //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
+        } else if (currTime >= 20000 && rand % 8 == 0) { //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
+            //changed so iron only spawns after 20 seconds to immitate pterodactyls 
             return "ironSprite";
         }
         else {

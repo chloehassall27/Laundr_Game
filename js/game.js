@@ -1,4 +1,9 @@
 /*
+HEY MAKE SURE THAT WHEN YOU PUSH YOU PUSH TO 
+https://github.com/kylehassall27/Laundr_Game.git
+
+it looks like simran forked off of kyle's thing?? idk but i had to change my defualt origin to push to, so double check you have the right one!
+
   current bugs:
    - i copy pasted their game.js and lost our notes :'(
    - hitArea needs to be updated on jump and duck
@@ -6,10 +11,12 @@
    - locations things spawn at (mostly the y values of irons, i think) need to be updated
    - speed at which obstacles move leftward should increase over time until it hits a max
       - i replayed dino game and i think they might have only increased speed and not decreased spawn times? idk, let's just try increasing speed and see if we need to edit other stuff, i do think it needs to go faster in general or else it's too easy/boring (play dino game for ref)
-   - sound should be added
+   - sound doesnt work rn :( relevant stuff is commented out so that it doesnt interfere with your stuff
    - reset needed for spawner
+   - the whole "pause when leave tab" thing
 */
 
+//import sound from 'pixi-sound';
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
@@ -33,7 +40,7 @@ let inputs = {
 let groundY = HEIGHT - (HEIGHT * .1)
 
 let spawner;
-
+let death;
 
 // === Sprite setup === //
 let player;
@@ -45,15 +52,23 @@ app.loader
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
   .load((loader, resources) => {
 
+    //create tiling sprite that can be scrolled infinitely
     let bgTexture = PIXI.Texture.from("../sprites/background.png");
     background = new PIXI.TilingSprite(bgTexture, WIDTH, HEIGHT);
     background.tileScale.set(0.25);
     app.stage.addChild(background);
 
+    //create player object - handles jumping + ducking
     player = new Player(HEIGHT, WIDTH, app);
 
-    //create our spawner - handles obstacles and tokens
-    spawner = new Spawner(HEIGHT, WIDTH, app, app.loader.resources.obSheet.spritesheet.animations["washerSprite"], app.loader.resources.obSheet.spritesheet.animations["laundrySprite"], app.loader.resources.obSheet.spritesheet.animations["ironSprite"], app.loader.resources.tokenSheet.spritesheet.animations["tokenSprite"]);
+    //create our spawner - handles obstacles + tokens
+    spawner = new Spawner(HEIGHT, WIDTH, app);
+
+    //create sounds
+    //death = PIXI.sound.Sound.from('sounds/death.wav');
+    // PIXI.sound.add('token', 'sounds/jelly2.wav');
+    // PIXI.sound.add('death', 'sounds/death.wav');
+    // PIXI.sound.add('win', 'sounds/win.wav');
 
     //fire the initial obstacle spawn (which will call all other spawns)
     spawner.spawn();
@@ -132,6 +147,7 @@ function checkCollision(a, b) {
 function endGame() {
   //call whatever clean up is needed, trigger popups, etc..
   gameOver = true;
+  //death.play();
   player.endGame();
   spawner.endGame();
 
