@@ -1,50 +1,14 @@
 /*
-current bugs:
-- One more obstacle is spawned after game ends
-  - i think i fixed this? spawn gets called one more time, but it doesnt add anything. 
-
-- Game slows down after multiple tokens due to persistent text I think??? That's not like a serious bug but something to keep in mind!
-  - i changed it so the text goes away after a second, check to see if the slowdown still happens -  it doesn't look like it does, but idk what the slowdown originally looked like so//
-
-- Hit areas are hard-coded. Also not a super serious bug since it works but might be nice to fix
-  
-- Can't hug Olivia due to Coronavirus bug - URGENT :((((
-  -possible fixes: hug olivia anyway
-  
-  function hugOlivia(Olivia, Oliver){
-    if(abs(Olivia.location.x - Oliver.location.x) < 200 miles) 
-      hug();
-    else
-      cry();
-  }
-
+  current bugs:
+   - i copy pasted their game.js and lost our notes :'(
+   - hitArea needs to be updated on jump and duck
+   - hitAreas need to be updated in general to reflect the changed size of things
+   - locations things spawn at (mostly the y values of irons, i think) need to be updated
+   - speed at which obstacles move leftward should increase over time until it hits a max
+      - i replayed dino game and i think they might have only increased speed and not decreased spawn times? idk, let's just try increasing speed and see if we need to edit other stuff, i do think it needs to go faster in general or else it's too easy/boring (play dino game for ref)
+   - sound should be added
+   - reset needed for spawner
 */
-
-//                _ |\_
-//                \` ..\  <3
-//           __,.-" =__Y=
-//         ."        )
-//   _    /   ,    \/\_
-//  ((____|    )_-\ \_-`
-//   `-----'`-----` `--`
-
-//                      _                        
-//                      \`*-.                    
-//                      )  _`-.                 
-//   ,d88b.d88b,       .  : `. .
-//   88888888888       : _   '  \
-//   `Y8888888Y'       ; *` _.   `*-._  
-//     `Y888Y'         `-.-'          `-. 
-//       `Y'             ;       `       `.                          
-//                       :.       .        \              
-//                       . \  .   :   .-'   .   
-//                        '  `+.;  ;  '      :   
-//                        :  '  |    ;       ;-. 
-//                        ; '   : :`-:     _.`* ;
-//                     .*' /  .*' ; .*`- +'  `*' 
-//                     `*-*   `*-*  `*-*'              
-//                            
-
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
@@ -58,11 +22,15 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
-const container = new PIXI.Container();
-app.stage.addChild(container);
-
 app.ticker.add(gameLoop);
 let gameOver = false;
+let gameStart = false;
+let inputs = {
+  jump: false,
+  duck: false,
+  prevDuck: false
+};
+let groundY = HEIGHT - (HEIGHT * .1)
 
 let spawner;
 
@@ -89,6 +57,7 @@ app.loader
 
     //fire the initial obstacle spawn (which will call all other spawns)
     spawner.spawn();
+
     //set the interval to decrease over time
     setInterval(spawner.decreaseInterval(), 3000);
   });
@@ -98,6 +67,12 @@ function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded) {
     moveBackground();
+
+    player.updatePos(inputs.jump);
+
+    if (inputs.duck) player.duck();
+    else if (!inputs.duck && inputs.prevDuck) player.reset();
+    inputs.prevDuck = inputs.duck;
 
     //we should try to move this into like a spawner.moveSprites() function or something
     for (var i = 0; i < spawner.obstacles.length; i++) {
@@ -181,19 +156,40 @@ function collectToken(index) {
   }, 1000);
 }
 
-function moveBackground() {
-  //change the '1' to whatever speed is best :)
-  background.tilePosition.x -= 1;
-}
-
+// === Helper functions === //
 // Keypress functions
 window.addEventListener("keydown", keysDown);
 window.addEventListener("keyup", keysUp);
 let keys = {};
 function keysDown(e) {
-  keys[e.keyCode] = true;
+  // console.log(e.key);
+  // keys[e.keyCode] = true;
+
+  if (e.key == "ArrowUp" || e.key == " ") {
+    inputs.jump = true;
+  }
+  if (e.key == "ArrowDown") {
+    inputs.duck = true;
+  }
 }
 
 function keysUp(e) {
-  keys[e.keyCode] = false;
+  if (e.key == "ArrowUp" || e.key == " ") {
+    inputs.jump = false;
+  }
+  if (e.key == "ArrowDown") {
+    inputs.duck = false;
+  }
 }
+
+// === End helper functions === //
+
+// === Game functions === //
+
+
+function moveBackground() {
+  //change the '1' to whatever speed is best :)
+  background.tilePosition.x -= 1;
+}
+
+// === End game functions === //

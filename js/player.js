@@ -7,6 +7,8 @@ export default class Player {
     gameOver = false;
     loaded = false;
 
+    speedY = 0;
+
     currSprite;
     running;
     jumping;
@@ -25,26 +27,31 @@ export default class Player {
         this.createSprites();
     }
 
-    jump() {
-        //add your jump stuff here!
+    updatePos(jump) {
+        if (this.currSprite.y == this.groundLevel) {
+            if (jump) {
+                this.speedY = 3.5;
+                this.switchSprite(this.jumpStatic);
+            }
+        }
 
-        /*
-        these lines play the animated jumping sprite. commented out for now bc simran was saying that it loops and that's a pain, so we have a few options:
-            - time the jump so that it takes exactly the same amount of time as one loop of the jump animation\
-            - or visa versa, change the length of the jump animation so that it matches the jump timing
-            -or just keep to the line that's not commented out, which just gets a static sprite, not animated
-        the animated jumping sprite is set to only play once (not loop) but it still might look a bit odd to have it finish playing before the player hits the ground, so if you choose to use the animated sprite, it is important to make sure the timing is right imo!
+        if (this.speedY > 0 && jump) {
+            this.speedY += .038
+        }
 
-        this.switchSprite(this.jumping);
-        this.jumping.play();
+        if (this.currSprite.y < this.groundLevel) {
+            this.speedY -= .1;
+        }
+        else if (this.currSprite.y > this.groundLevel) {
+            this.speedY = 0;
+            this.currSprite.y = this.groundLevel;
+            this.switchSprite(this.running);
+        }
 
-        */
-        this.switchSprite(this.jumpStatic);
+        this.currSprite.y -= this.speedY;
     }
 
     duck() {
-        //oliver n i got this one! we'll use your jump as ref :D
-
         this.switchSprite(this.ducking);
     }
 
