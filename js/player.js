@@ -51,12 +51,11 @@ export default class Player {
 
         this.currSprite.y -= this.speedY;
         this.currSprite.hitArea.y -= this.speedY;
-
-        //console.log(this.currSprite.y + " vs " + this.currSprite.hitArea.y)
     }
 
     duck() {
         this.switchSprite(this.ducking);
+        this.currSprite.hitArea.y = 207;
     }
 
     reset() {
@@ -65,6 +64,7 @@ export default class Player {
         //if currSprite.x = groundLevel, reset() might work for jumping, but not ducking
         //for ducking, perhaps you could just have, on release of downArrow, reset()?
         this.switchSprite(this.running);
+        this.currSprite.hitArea.y = this.currSprite.y;
     }
 
     switchSprite(sprite) {

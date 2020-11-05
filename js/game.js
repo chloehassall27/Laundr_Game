@@ -143,14 +143,8 @@ function checkCollision(a, b) {
   let obsBottom = bBox.y + bBox.height;
   let obsTop = bBox.y;
 
-  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom)){
-    console.log(playerRight + " is more than " + obsLeft);
-    console.log(playerLeft + " is less than " + obsRight);
-    console.log(playerBottom + " is more than " + obsTop);
-    console.log(playerTop + " is less than " + obsBottom);
-    console.log(obsTop); console.log(playerBottom);
+  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom))
     return true
-  }
   else
     return false;
 }

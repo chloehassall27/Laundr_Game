@@ -49,7 +49,7 @@ export default class Spawner {
         //Calculate hit boxes based on which sprite is spawned
         if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 33, obstacle.y - 30, 55, 42);
         else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 32, obstacle.y, 54, 42);
-        else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 45, obstacle.y - 25, 63, 8);
+        else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 35, obstacle.y - 25, 63, 16);
         else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
         //console.log(obstacle.hitArea.y);
 
@@ -138,12 +138,12 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(100, this.app.renderer.height / 2 - 60, "ironSprite");
-            this.buildObstacles(0, this.app.renderer.height / 2 - 25, "ironSprite");
-            this.buildObstacles(85, this.app.renderer.height / 2 + 10, "ironSprite");
+            this.buildObstacles(100, this.app.renderer.height / 2 - 20, "ironSprite");
+            this.buildObstacles(0, this.app.renderer.height / 2 + 5, "ironSprite");
+            this.buildObstacles(85, this.app.renderer.height / 2 + 30, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
-            let yPos = Math.floor(Math.random() * (this.app.renderer.height / 2 - (this.app.renderer.height / 2 + 100) + 1)) + (this.app.renderer.height / 2 + 100);
+            let yPos = Math.floor(Math.random() * ((this.app.renderer.height / 2 + 30) - (this.app.renderer.height / 2 + 100) + 1)) + (this.app.renderer.height / 2 + 90);
             this.buildObstacles(0, yPos, "ironSprite");
         }
     }
@@ -179,7 +179,7 @@ export default class Spawner {
             if (currTime > switchDifficulty) return "laundrySprite";
             return "double";
         } else if (currTime >= 20000 && rand % 8 == 0) { //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
-            //changed so iron only spawns after 20 seconds to immitate pterodactyls 
+            //changed so iron only spawns after 20 seconds to immitate pterodactyls  
             return "ironSprite";
         }
         else {
