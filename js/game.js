@@ -67,7 +67,7 @@ app.loader
 
     //create tiling sprite that can be scrolled infinitely
     let bgTexture = PIXI.Texture.from("../sprites/background.png");
-    background = new PIXI.TilingSprite(bgTexture, WIDTH, HEIGHT);
+    background = new PIXI.TilingSprite(bgTexture, WIDTH, 225);
     background.tileScale.set(0.25);
     app.stage.addChild(background);
 
@@ -76,8 +76,7 @@ app.loader
     player.currSprite.stop();
 
     //create our spawner - handles obstacles + tokens
-    spawner = new Spawner(HEIGHT, WIDTH, app);
-
+    spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
   });
 
 // === Main game loop === //

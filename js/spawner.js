@@ -13,16 +13,19 @@ export default class Spawner {
     jumpLevel;
     test;
 
+    playerBaseY;
+
     obstacles = [];
     tokens = [];
 
     gameOver = false;
 
 
-    constructor(HEIGHT, WIDTH, app) {
+    constructor(HEIGHT, WIDTH, app, playerBaseY) {
         this.app = app;
         this.HEIGHT = HEIGHT;
         this.WIDTH = WIDTH;
+        this.playerBaseY = playerBaseY;
 
         this.walkingLevel = HEIGHT - (HEIGHT * 0.245)
         this.jumpLevel = this.walkingLevel - 100;
@@ -116,7 +119,7 @@ export default class Spawner {
 
             //otherwise we're building a normal obstacle
             //get the name of the obstacle
-            const obstName = this.chooseSprite();
+            const obstName = "ironSprite";//this.chooseSprite();
 
             if (obstName === "double") {
                 this.spawnDouble();
@@ -138,12 +141,12 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(100, this.app.renderer.height / 2 - 20, "ironSprite");
-            this.buildObstacles(0, this.app.renderer.height / 2 + 5, "ironSprite");
-            this.buildObstacles(85, this.app.renderer.height / 2 + 30, "ironSprite");
+            this.buildObstacles(100, this.playerBaseY / 2, "ironSprite");
+            this.buildObstacles(0, this.playerBaseY / 2 + 25, "ironSprite");
+            this.buildObstacles(85, this.playerBaseY / 2 + 50, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
-            let yPos = Math.floor(Math.random() * ((this.app.renderer.height / 2 + 30) - (this.app.renderer.height / 2 + 100) + 1)) + (this.app.renderer.height / 2 + 90);
+            let yPos = Math.floor(Math.random() * ((this.playerBaseY / 2 + 20) - (this.playerBaseY / 2 + 100) + 1)) + (this.playerBaseY / 2 + 90);
             this.buildObstacles(0, yPos, "ironSprite");
         }
     }
@@ -168,7 +171,7 @@ export default class Spawner {
 
     chooseSprite() {
         let currTime = performance.now();
-        const rand = 8; Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
+        const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
         const switchDifficulty = 60000;
 
         //%3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
@@ -178,8 +181,8 @@ export default class Spawner {
         } else if (rand % 5 == 0) {
             if (currTime > switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (rand % 8 == 0) { //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
-            //changed so iron only spawns after 20 seconds to immitate pterodactyls  //currTime >= 20000 && 
+        } else if (currTime >= 20000 && rand % 8 == 0) { //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
+            //changed so iron only spawns after 20 seconds to immitate pterodactyls 
             return "ironSprite";
         }
         else {
