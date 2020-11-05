@@ -54,9 +54,11 @@ export default class Player {
     }
 
     duck() {
-        this.switchSprite(this.ducking);
-        let hitY = this.groundLevel - 130;
-        this.currSprite.hitArea.y = hitY;
+        if(this.currSprite.y == this.groundLevel){
+            this.switchSprite(this.ducking);
+            let hitY = this.groundLevel - 130;
+            this.currSprite.hitArea.y = hitY;
+        }
     }
 
     reset() {
