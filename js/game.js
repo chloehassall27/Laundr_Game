@@ -90,7 +90,7 @@ function gameLoop() {
   if (!gameOver && player && player.loaded && started) {
     moveBackground();
 
-    player.updatePos(inputs.jump);
+    player.updatePos(inputs);
 
     if (inputs.duck) player.duck();
     else if (!inputs.duck && inputs.prevDuck) player.reset();
