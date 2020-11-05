@@ -168,7 +168,7 @@ export default class Spawner {
 
     chooseSprite() {
         let currTime = performance.now();
-        const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
+        const rand = 8; Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
         const switchDifficulty = 60000;
 
         //%3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
@@ -178,8 +178,8 @@ export default class Spawner {
         } else if (rand % 5 == 0) {
             if (currTime > switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (currTime >= 20000 && rand % 8 == 0) { //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
-            //changed so iron only spawns after 20 seconds to immitate pterodactyls  
+        } else if (rand % 8 == 0) { //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
+            //changed so iron only spawns after 20 seconds to immitate pterodactyls  //currTime >= 20000 && 
             return "ironSprite";
         }
         else {
