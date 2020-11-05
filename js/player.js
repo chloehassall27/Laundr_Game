@@ -27,20 +27,18 @@ export default class Player {
         this.createSprites();
     }
 
-    updatePos(jump) {
-        if (this.currSprite.y == this.groundLevel) {
-            if (jump) {
-                this.speedY = 3.5;
-                this.switchSprite(this.jumpStatic);
-            }
+    updatePos(inputs) {
+        if (this.currSprite.y == this.groundLevel && !inputs.duck && inputs.jump) {
+            this.speedY = 4.2;
+            this.switchSprite(this.jumpStatic);
         }
 
-        if (this.speedY > 0 && jump) {
-            this.speedY += .038;
+        if (this.speedY > 0 && inputs.jump) {
+            this.speedY += .06;
         }
 
         if (this.currSprite.y < this.groundLevel) {
-            this.speedY -= .1;
+            this.speedY -= .15;
         }
         else if (this.currSprite.y > this.groundLevel) {
             this.speedY = 0;
@@ -60,7 +58,7 @@ export default class Player {
             this.currSprite.hitArea.y = hitY;
         }
         else {
-            this.speedY -= .1;
+            this.speedY -= .15;
         }
     }
 
