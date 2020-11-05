@@ -5,17 +5,13 @@ https://github.com/kylehassall27/Laundr_Game.git
 it looks like simran forked off of kyle's thing?? idk but i had to change my defualt origin to push to, so double check you have the right one!
 
   current bugs:
-   - i copy pasted their game.js and lost our notes :'(
-   - hitArea needs to be updated on jump and duck
-   - hitAreas need to be updated in general to reflect the changed size of things
-   - locations things spawn at (mostly the y values of irons, i think) need to be updated
+   - hitArea for ducking not fully set (doesn't colide with ground objects or tokens when ducking)
+   - when player is ducking and then immedietely jumps, very odd behavior;;
+   - speed of bg and tokens don't match speed of obstacles
    - speed at which obstacles move leftward should increase over time until it hits a max
-      - i replayed dino game and i think they might have only increased speed and not decreased spawn times? idk, let's just try increasing speed and see if we need to edit other stuff, i do think it needs to go faster in general or else it's too easy/boring (play dino game for ref)
-   - starting sprite for player should be one of the ducking ones (so that it starts on the ground, not mid run, and then it jumps up when player starts game and starts running)
    - the whole "pause when leave tab" thing
 */
 
-//import sound from 'pixi-sound';
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
@@ -85,7 +81,12 @@ function gameLoop() {
   if (!gameOver && player && player.loaded && started) {
     moveBackground();
 
+    if (inputs.jump && player.currSprite != player.ducking) {
+      let marigin = (player.groundLevel - player.currSprite.y);
+      if (marigin === 0 && !gameOver) jumpS.play();
+    }
     player.updatePos(inputs.jump);
+
 
     if (inputs.duck) player.duck();
     else if (!inputs.duck && inputs.prevDuck) player.reset();
@@ -195,6 +196,7 @@ function startGame() {
   //set the interval to decrease over time
   spawnerInterval = setInterval(spawner.decreaseInterval(), 3000);
 
+  jumpS.play();
   started = true;
 }
 
@@ -221,7 +223,6 @@ function keysDown(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     inputs.jump = true;
     if (!started) startGame();
-    jumpS.play();
   }
   if (e.key == "ArrowDown") {
     inputs.duck = true;
