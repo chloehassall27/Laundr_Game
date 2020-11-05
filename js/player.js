@@ -29,7 +29,7 @@ export default class Player {
 
     updatePos(inputs) {
         if (this.currSprite.y == this.groundLevel && !inputs.duck && inputs.jump) {
-            this.speedY = 4.2;
+            this.speedY = 3.5;
             this.switchSprite(this.jumpStatic);
         }
 

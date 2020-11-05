@@ -13,6 +13,7 @@ it looks like simran forked off of kyle's thing?? idk but i had to change my def
       - i replayed dino game and i think they might have only increased speed and not decreased spawn times? idk, let's just try increasing speed and see if we need to edit other stuff, i do think it needs to go faster in general or else it's too easy/boring (play dino game for ref)
    - starting sprite for player should be one of the ducking ones (so that it starts on the ground, not mid run, and then it jumps up when player starts game and starts running)
    - the whole "pause when leave tab" thing
+   - dying in the air should not "teleport" sprite
 */
 
 //import sound from 'pixi-sound';
