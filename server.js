@@ -20,7 +20,15 @@ http.createServer(function (req, res) {
       res.end(JSON.stringify(err));
       return;
     }
-    res.writeHead(200);
+    
+    if(url.endsWith(".js")){
+      res.writeHead(200, {
+        'Content-Type': 'text/javascript'
+      });
+    }
+    else {
+      res.writeHead(200);
+    }
     res.end(data);
   });
 }).listen(port);

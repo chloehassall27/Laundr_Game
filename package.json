@@ -6,10 +6,10 @@
   "dependencies": {
     "minimist": "^1.2.5",
     "nodemon": "2.0.4",
-    "dotenv": "8.2.0"
+    "dotenv": "8.2.0",
+    "pixi-sound": "3.0.5"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "scripts": {
     "start": "nodemon server.js",
     "env": "echo PORT=80 > .env",
