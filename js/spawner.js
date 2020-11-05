@@ -13,6 +13,11 @@ export default class Spawner {
     jumpLevel;
     test;
 
+    obstScale;
+    tokenScale;
+    ironRandScale;
+    ironRandAdd;
+
     startTime;
     firstSpawn = true;
 
@@ -30,10 +35,15 @@ export default class Spawner {
         this.WIDTH = WIDTH;
         this.playerBaseY = playerBaseY;
 
-        this.walkingLevel = HEIGHT - (HEIGHT * 0.245)
-        this.jumpLevel = this.walkingLevel - 100;
+        this.walkingLevel = HEIGHT - (HEIGHT * 0.25);
+        this.jumpLevel = HEIGHT - (HEIGHT * 0.6);
         this.tokenTime = false;
         this.rangeMin = false;
+
+        this.obstScale = this.HEIGHT / (this.HEIGHT * 2.41);
+        this.tokenScale = this.HEIGHT / (this.HEIGHT * 2.6);
+        this.ironRandScale = (this.playerBaseY / 2 + this.HEIGHT * 0.135) - (this.playerBaseY / 2 + this.HEIGHT * 0.4) + 1;
+        this.ironRandAdd = this.playerBaseY / 2 + this.HEIGHT * 0.32;
 
         let rand = Math.floor(Math.random() * (10 - 5)) + 4;
         setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
@@ -43,7 +53,7 @@ export default class Spawner {
         var obstacle = new PIXI.AnimatedSprite(this.app.loader.resources.obSheet.spritesheet.animations[spriteName]);
 
         obstacle.anchor.set(0.5);
-        obstacle.scale.set(0.4);
+        obstacle.scale.set(this.obstScale);
         //the laundry sprite doesn't line up well with the washer one, so offset it a bit
         if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
 
@@ -73,7 +83,7 @@ export default class Spawner {
         var token = new PIXI.AnimatedSprite(this.app.loader.resources.tokenSheet.spritesheet.animations["tokenSprite"]);
 
         token.anchor.set(0.5);
-        token.scale.set(0.35);
+        token.scale.set(this.tokenScale);
         const rand = Math.floor(Math.random() * 6);
         if (rand % 3 == 0) token.y = this.jumpLevel;
         else token.y = this.walkingLevel;
@@ -81,12 +91,13 @@ export default class Spawner {
 
         token.hitArea = new PIXI.Rectangle(token.x - 19, token.y - 20, 38, 40);
 
-        token.animationSpeed = 0.125;
+        token.animationSpeed = 0.135;
         token.play();
         this.app.stage.addChild(token);
 
         this.tokens.push(token);
     }
+
     decreaseInterval() {
         //intDecAmt is the factor you decrease the increment by
         this.intRangeMax *= this.intDecAmt;
@@ -144,12 +155,12 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(100, this.playerBaseY / 2, "ironSprite");
-            this.buildObstacles(0, this.playerBaseY / 2 + 25, "ironSprite");
-            this.buildObstacles(85, this.playerBaseY / 2 + 50, "ironSprite");
+            this.buildObstacles(100, this.playerBaseY / 2 - this.HEIGHT * 0.05, "ironSprite");
+            this.buildObstacles(0, this.playerBaseY / 2 + this.HEIGHT * 0.1, "ironSprite");
+            this.buildObstacles(85, this.playerBaseY / 2 + this.HEIGHT * 0.2, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
-            let yPos = Math.floor(Math.random() * ((this.playerBaseY / 2 + 20) - (this.playerBaseY / 2 + 100) + 1)) + (this.playerBaseY / 2 + 90);
+            let yPos = Math.floor(Math.random() * this.ironRandScale) + this.ironRandAdd;
             this.buildObstacles(0, yPos, "ironSprite");
         }
     }
@@ -169,7 +180,7 @@ export default class Spawner {
             nameRight = "washerSprite";
         }
         this.buildObstacles(0, this.walkingLevel, nameLeft);
-        this.buildObstacles(55, this.walkingLevel, nameRight);
+        this.buildObstacles((this.WIDTH * 0.065), this.walkingLevel, nameRight);
     }
 
     chooseSprite() {

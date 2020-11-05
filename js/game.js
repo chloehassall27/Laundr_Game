@@ -239,6 +239,7 @@ function onClickRestart() {
   cleanUp();
   load();
   player.switchSprite(player.running);
+  player.ducking.play();
   startGame();
 }
 
@@ -311,91 +312,91 @@ function keysDown(e) {
     }
 
   }
-    if (e.key == "ArrowDown") {
-        inputs.duck = true;
-    }
+  if (e.key == "ArrowDown") {
+    inputs.duck = true;
+  }
 }
-        
-  function keysUp(e) {
-    if(e.key == "ArrowUp" || e.key == " "){
+
+function keysUp(e) {
+  if (e.key == "ArrowUp" || e.key == " ") {
+    inputs.jump = false;
+  }
+  if (e.key == "ArrowDown") {
+    inputs.duck = false;
+  }
+}
+
+
+// Touchevent functions
+app.view.addEventListener("touchstart", touchStart, false);
+app.view.addEventListener("touchend", touchEnd, false);
+app.view.addEventListener("touchcancel", touchCancel, false);
+app.view.addEventListener("touchmove", touchMove, false);
+
+function touchStart(e) {
+  // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
+  for (var i = 0; i < e.targetTouches.length; i++) {
+    touch = e.targetTouches[i]
+    // console.log(touch);
+    // Top 2/3 of the canvas will call the jump function
+    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
+      inputs.jump = true;
+      if (!started) startGame();
+      break;
+    }
+    // Bottom 1/3 of the canvas will call the duck function
+    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
+      inputs.duck = true;
+      break;
+    }
+  }
+}
+
+function touchEnd(e) {
+  // console.log(e);
+  for (var i = 0; i < e.changedTouches.length; i++) {
+    touch = e.changedTouches[i]
+    // console.log(touch);
+
+    // Top 2/3 of the canvas will stop the jump function
+    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
       inputs.jump = false;
+      break;
     }
-    if(e.key == "ArrowDown"){
+
+    // Bottom 1/3 of the canvas will stop the duck function
+    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
       inputs.duck = false;
+      break;
     }
   }
+}
 
-  
-  // Touchevent functions
-  app.view.addEventListener("touchstart", touchStart, false);
-  app.view.addEventListener("touchend", touchEnd, false);
-  app.view.addEventListener("touchcancel", touchCancel, false);
-  app.view.addEventListener("touchmove", touchMove, false);
+function touchCancel(e) {
+  // console.log("cancel");
+}
 
-  function touchStart(e) {
-    // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
-    for (var i=0; i < e.targetTouches.length; i++) {
-      touch = e.targetTouches[i]
-      // console.log(touch);
-      // Top 2/3 of the canvas will call the jump function
-      if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
-        inputs.jump = true;
-        if (!started) startGame();
-        break;
-      }
-      // Bottom 1/3 of the canvas will call the duck function
-      else if (touch.pageY > HEIGHT*RESOLUTION/3) {
-        inputs.duck = true;
-        break;
-      }
+// May not work with multitouch!
+function touchMove(e) {
+  // console.log(e);
+  for (var i = 0; i < e.changedTouches.length; i++) {
+    touch = e.changedTouches[i]
+    // console.log(touch);
+
+    // Top 2/3 of the canvas will call the jump function and stop the duck function
+    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
+      inputs.jump = true;
+      inputs.duck = false;
+      break;
+    }
+    // Bottom 1/3 of the canvas will call the duck function and stop the jump function
+    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
+      inputs.duck = true;
+      inputs.jump = false;
+      break;
     }
   }
-
-  function touchEnd(e) {
-    // console.log(e);
-    for (var i=0; i < e.changedTouches.length; i++) {
-      touch = e.changedTouches[i]
-      // console.log(touch);
-
-      // Top 2/3 of the canvas will stop the jump function
-      if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
-        inputs.jump = false;
-        break;
-      }
-
-      // Bottom 1/3 of the canvas will stop the duck function
-      else if (touch.pageY > HEIGHT*RESOLUTION/3) {
-        inputs.duck = false;
-        break;
-      }
-    }
-  }
-
-  function touchCancel(e) {
-    // console.log("cancel");
-  }
-
-  // May not work with multitouch!
-  function touchMove(e) {
-    // console.log(e);
-    for (var i=0; i < e.changedTouches.length; i++) {
-      touch = e.changedTouches[i]
-      // console.log(touch);
-
-      // Top 2/3 of the canvas will call the jump function and stop the duck function
-      if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
-        inputs.jump = true;
-        inputs.duck = false;
-        break;
-      }
-      // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-      else if (touch.pageY > HEIGHT*RESOLUTION/3) {
-        inputs.duck = true;
-        inputs.jump = false;
-        break;
-      }
-    }
-  }
+}
 
 // === End helper functions === //
 
