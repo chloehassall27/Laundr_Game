@@ -1,27 +1,30 @@
 /*
-HEY MAKE SURE THAT WHEN YOU PUSH YOU PUSH TO 
-https://github.com/kylehassall27/Laundr_Game.git
-
-it looks like simran forked off of kyle's thing?? idk but i had to change my defualt origin to push to, so double check you have the right one!
-
   current bugs:
-   - i copy pasted their game.js and lost our notes :'(
-   - hitArea needs to be updated on jump and duck
-   - hitAreas need to be updated in general to reflect the changed size of things
-   - locations things spawn at (mostly the y values of irons, i think) need to be updated
-   - speed at which obstacles move leftward should increase over time until it hits a max
-      - i replayed dino game and i think they might have only increased speed and not decreased spawn times? idk, let's just try increasing speed and see if we need to edit other stuff, i do think it needs to go faster in general or else it's too easy/boring (play dino game for ref)
-   - starting sprite for player should be one of the ducking ones (so that it starts on the ground, not mid run, and then it jumps up when player starts game and starts running)
+   - hitArea for ducking not fully set (doesn't colide with ground objects or tokens when ducking)
+   - when player is ducking and then immedietely jumps, very odd behavior;;
+   - most spawner values not relative (might have odd behavior on small screens)
+   - speed of bg and tokens don't match speed of obstacles
+   - speed at which obstacles move leftward should probs increase over time until it hits a max
+   - jump noise can be activated while dying
    - the whole "pause when leave tab" thing
    - dying in the air should not "teleport" sprite
 */
 
-//import sound from 'pixi-sound';
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
 const HEIGHT = 225;
 const WIDTH = HEIGHT * 4;
+
+const style = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
+});
+const scoreStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: 23, fill: '#4b4b4b'
+})
+const highscoreStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: 23, fill: '#7c7c7c',
+})
 
 // === Basic app setup === //
 const app = new PIXI.Application({
@@ -47,10 +50,12 @@ let inputs = {
   prevDuck: false
 };
 
+let restartButton;
+let score;
+let scoreText = new PIXI.Text(score, scoreStyle);
 
-
-let started = false;
-let spawnerInterval;
+let highscore = 0;
+let highscoreText = new PIXI.Text(highscore, highscoreStyle);
 
 //noises
 let deathS;
@@ -59,6 +64,9 @@ let tokenS;
 let winS;
 // === End basic app setup === //
 
+let started = false;
+let firstLoad = true;
+let spawnerInterval;
 
 
 // === Sprite setup === //
@@ -66,30 +74,58 @@ app.loader
   .add('charaSheet', "sprites/charaSpriteSheet.json")
   .add('obSheet', "sprites/obstacleSprites.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
+  .add('buttonSheet', "sprites/PodsAndButtons.json")
   .add('deathSound', "sounds/death.wav")
   .add('jumpSound', "sounds/jump.wav")
   .add('tokenSound', "sounds/jelly2.wav")
-  .add('winSound', "sounds/BETTERWin3.wav")
-  .load((loader, resources) => {
-     //create tiling sprite that can be scrolled infinitely
-     let bgTexture = PIXI.Texture.from("../sprites/background.png");
-     background = new PIXI.TilingSprite(bgTexture, WIDTH, 225);
-     background.tileScale.set(0.25);
-     app.stage.addChild(background);
- 
-     //create player object - handles jumping + ducking
-     player = new Player(HEIGHT, WIDTH, app);
-     player.currSprite.stop();
- 
-     //create our spawner - handles obstacles + tokens
-     spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
-   });
+  .add('winSound', "sounds/BETTERWin3.wav");
+
+load();
+
+function load() {
+  app.loader
+    .load((loader, resources) => {
+      score = 0;
+
+      //create tiling sprite that can be scrolled infinitely
+      let bgTexture = PIXI.Texture.from("../sprites/background.png");
+      background = new PIXI.TilingSprite(bgTexture, WIDTH, 225);
+      background.tileScale.set(0.25);
+      app.stage.addChild(background);
+
+      //create player object - handles jumping + ducking
+      player = new Player(HEIGHT, WIDTH, app);
+      player.currSprite.stop();
+
+      //create our spawner - handles obstacles + tokens
+      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
+
+      //restart functionality stuff
+      restartButton = new PIXI.Sprite(app.loader.resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
+      restartButton.scale.set(0.3)
+      restartButton.anchor.set(0.5)
+      restartButton.x = WIDTH / 2
+      restartButton.y = HEIGHT / 1.75
+
+      restartButton.interactive = true
+      restartButton.buttonMode = true
+
+      restartButton.on('click', onClickRestart);
+    })
+}
 
 // === Main game loop === //
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
     moveBackground();
+    displayScore();
+
+    //noise for jump - has to be here to ensure it plays ONLY when it's supposed to
+    if (inputs.jump && player.currSprite != player.ducking) {
+      let marigin = (player.groundLevel - player.currSprite.y);
+      if (marigin === 0 && !gameOver) jumpS.play();
+    }
 
     player.updatePos(inputs);
 
@@ -131,7 +167,29 @@ function gameLoop() {
   }
 }
 
-// Collision
+// Display the current score
+function displayScore() {
+  app.stage.removeChild(scoreText);
+  score = score + 1;
+
+  scoreText = new PIXI.Text(score, scoreStyle);
+  scoreText.x = WIDTH / 1.07;
+  app.stage.addChild(scoreText);
+
+  displayHighScore();
+}
+
+//display the highest score
+function displayHighScore() {
+  if (highscore > 0) {
+    app.stage.removeChild(highscoreText);
+    highscoreText = new PIXI.Text('HI  ' + highscore, highscoreStyle);
+    highscoreText.x = WIDTH / 1.21;
+    app.stage.addChild(highscoreText);
+  }
+}
+
+//collision
 function checkCollision(a, b) {
   const aBox = a.hitArea;
   const bBox = b.hitArea;
@@ -157,15 +215,31 @@ function endGame() {
   gameOver = true;
   player.endGame();
   spawner.endGame();
+  started = false;
 
   if (lose) deathS.play();
   else if (win) winS.play();
 
-  //lil message for testing
-  let message = new PIXI.Text("game over, hit detected!");
-  message.y = 10;
-  message.x = 10;
+  if (score > highscore) {
+    highscore = score;
+    displayHighScore();
+  }
+
+  const message = new PIXI.Text('G A M E  O V E R', style);
+  message.x = WIDTH / 2.6;
+  message.y = HEIGHT / 4;
+
   app.stage.addChild(message);
+  app.stage.addChild(restartButton);
+}
+
+// restart game on command
+function onClickRestart() {
+  app.stage.removeChild(restartButton);
+  cleanUp();
+  load();
+  player.switchSprite(player.running);
+  startGame();
 }
 
 function collectToken(index) {
@@ -185,13 +259,14 @@ function collectToken(index) {
 
 function cleanUp() {
   clearInterval(spawnerInterval);
-  spawner = new Spawner(HEIGHT, WIDTH, app);
-  started = false;
+  gameOver = false;
+  started = true;
+  win = false;
+  lose = false;
+  score = 0;
 }
 
 function startGame() {
-  //make the noises (they can only be created/started after player interraction due to PIXI limitations)
-  createNoises();
   //now the player sprite is allowed to animate
   player.currSprite.play();
   //fire the initial obstacle spawn (which will call all other spawns)
@@ -200,6 +275,7 @@ function startGame() {
   spawnerInterval = setInterval(spawner.decreaseInterval(), 3000);
 
   started = true;
+  firstLoad = false;
 }
 
 function createNoises() {
@@ -214,19 +290,31 @@ function createNoises() {
 }
 
 // === Helper functions === //
-  // Keypress functions
-  window.addEventListener("keydown", keysDown);
-  window.addEventListener("keyup", keysUp);
-  function keysDown(e) {
-    // console.log(e.key);
-    if(e.key == "ArrowUp" || e.key == " "){
-      inputs.jump = true;
-      if (!started) startGame();
+// Keypress functions
+window.addEventListener("keydown", keysDown);
+window.addEventListener("keyup", keysUp);
+let keys = {};
+function keysDown(e) {
+  // console.log(e.key);
+  // keys[e.keyCode] = true;
+
+  if (e.key == "ArrowUp" || e.key == " ") {
+    inputs.jump = true;
+    if (!started && firstLoad) {
+      //make the noises (they can only be created/started after player interraction due to PIXI limitations)
+      createNoises();
+      jumpS.play();
+      startGame();
     }
-    if(e.key == "ArrowDown"){
-      inputs.duck = true;
+    if (gameOver) {
+      onClickRestart();
     }
+
   }
+    if (e.key == "ArrowDown") {
+        inputs.duck = true;
+    }
+}
         
   function keysUp(e) {
     if(e.key == "ArrowUp" || e.key == " "){

@@ -13,6 +13,9 @@ export default class Spawner {
     jumpLevel;
     test;
 
+    startTime;
+    firstSpawn = true;
+
     playerBaseY;
 
     obstacles = [];
@@ -106,9 +109,9 @@ export default class Spawner {
 
     spawn() {
         if (!this.gameOver) {
+            if (this.firstSpawn) this.startTime = performance.now();
             //first check if it's time to spawn in a token :D
             if (this.tokenTime) {
-                console.log("token!");
                 this.buildToken();
                 setTimeout(this.spawn.bind(this), this.interval);
                 let rand = Math.floor(Math.random() * (10 - 5)) + 4;
@@ -119,7 +122,7 @@ export default class Spawner {
 
             //otherwise we're building a normal obstacle
             //get the name of the obstacle
-            const obstName = "ironSprite";//this.chooseSprite();
+            const obstName = this.chooseSprite();
 
             if (obstName === "double") {
                 this.spawnDouble();
@@ -170,7 +173,7 @@ export default class Spawner {
     }
 
     chooseSprite() {
-        let currTime = performance.now();
+        let currTime = performance.now() + this.startTime;
         const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
         const switchDifficulty = 60000;
 
@@ -181,8 +184,7 @@ export default class Spawner {
         } else if (rand % 5 == 0) {
             if (currTime > switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (currTime >= 20000 && rand % 8 == 0) { //IDK if 8 is the best number, but we can change this when we tweak difficulty later!
-            //changed so iron only spawns after 20 seconds to immitate pterodactyls 
+        } else if (currTime >= 20000 && rand % 8 == 0) {
             return "ironSprite";
         }
         else {
