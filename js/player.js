@@ -59,6 +59,9 @@ export default class Player {
             let hitY = this.groundLevel - 130;
             this.currSprite.hitArea.y = hitY;
         }
+        else {
+            this.speedY -= .1;
+        }
     }
 
     reset() {
