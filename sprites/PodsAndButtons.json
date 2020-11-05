@@ -1,0 +1,60 @@
+{"frames": {
+
+"BlueRestart.png":
+{
+	"frame": {"x":0,"y":0,"w":192,"h":192},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":192,"h":192},
+	"sourceSize": {"w":192,"h":192}
+},
+"GlowPodSheet.png":
+{
+	"frame": {"x":0,"y":384,"w":384,"h":576},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":384,"h":576},
+	"sourceSize": {"w":384,"h":576}
+},
+"InfoButton.png":
+{
+	"frame": {"x":192,"y":0,"w":192,"h":192},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":192,"h":192},
+	"sourceSize": {"w":192,"h":192}
+},
+"RedRestart.png":
+{
+	"frame": {"x":0,"y":192,"w":192,"h":192},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":192,"h":192},
+	"sourceSize": {"w":192,"h":192}
+},
+"SpinPodSheet.png":
+{
+	"frame": {"x":0,"y":960,"w":384,"h":384},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":384,"h":384},
+	"sourceSize": {"w":384,"h":384}
+},
+"YellowRestart.png":
+{
+	"frame": {"x":192,"y":192,"w":192,"h":192},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":192,"h":192},
+	"sourceSize": {"w":192,"h":192}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "PodsAndButtons.png",
+	"format": "RGBA8888",
+	"size": {"w":384,"h":1344},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:dd1a65b3bd91e51ebd87c527aa23a0b8:3520082a51b46cbefc42c85b205f9f87:474d844ac9716034b873f896671b6eb3$"
+}
+}

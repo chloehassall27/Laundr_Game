@@ -121,9 +121,8 @@ export default class Player {
         this.falling.animationSpeed = .25;
         this.falling.loop = false;
 
-        this.currSprite = this.running;
-        this.currSprite.hitArea = this.running.hitArea;
-        console.log(this.currSprite.hitArea);
+        this.currSprite = this.ducking;
+        this.currSprite.hitArea = this.ducking.hitArea;
         this.app.stage.addChild(this.currSprite);
         this.loaded = true;
     }
