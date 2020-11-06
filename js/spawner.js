@@ -63,7 +63,7 @@ export default class Spawner {
         //console.log(obstacle.getBounds());
 
         //Calculate hit boxes based on which sprite is spawned
-        if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40),   obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
+        if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40), obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
         else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - obstacle.width * 0.40, obstacle.y - (obstacle.height * 0.01), obstacle.width * 0.68, obstacle.height * 0.53);
         else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.2);
         else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
@@ -126,12 +126,15 @@ export default class Spawner {
             }
             //first check if it's time to spawn in a token :D
             if (this.tokenTime) {
-                this.buildToken();
-                setTimeout(this.spawn.bind(this), this.interval);
                 let rand = Math.floor(Math.random() * (10 - 5)) + 4;
-                setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
-                this.tokenTime = false;
-                return;
+                if (!this.firstSpawn && (performance.now() - this.startTime >= 15000)) {
+                    this.buildToken();
+                    setTimeout(this.spawn.bind(this), this.interval);
+                    setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
+                    this.tokenTime = false;
+                    return;
+                }
+                else setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
             }
 
             //otherwise we're building a normal obstacle

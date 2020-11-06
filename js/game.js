@@ -1,10 +1,8 @@
 /*
   current bugs:
-   - hitArea for ducking not fully set (doesn't colide with ground objects or tokens when ducking)
    - when player is ducking and then immedietely jumps, very odd behavior;;
-   - most spawner values not relative (might have odd behavior on small screens)
-   - jump noise can be activated while dying
    - the whole "pause when leave tab" thing
+   - sometimes there's terrible slowdown?? cannot consistantly replicate this bug
 */
 
 import Spawner from "./spawner.js"
@@ -67,6 +65,8 @@ let started = false;
 let firstLoad = true;
 let spawnerInterval;
 let speedInterval;
+
+let timeout = 0;
 
 
 // === Sprite setup === //
@@ -234,6 +234,7 @@ function endGame() {
   player.endGame();
   spawner.endGame();
   started = false;
+  timeout = performance.now();
 
   if (lose) deathS.play();
   else if (win) winS.play();
@@ -318,7 +319,7 @@ function keysDown(e) {
       jumpS.play();
       startGame();
     }
-    if (gameOver) {
+    if (gameOver && (performance.now() - timeout > 600)) {
       onClickRestart();
     }
 
@@ -410,7 +411,6 @@ function touchMove(e) {
 }
 
 function increaseSpeedScale() {
-  console.log("called");
   speedScale += 0.02;
   if (speedScale >= 1.3) {
     clearInterval(speedInterval);
