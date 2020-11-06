@@ -62,7 +62,7 @@ export default class Spawner {
         obstacle.y = posy;
         //console.log(obstacle.getBounds());
 
-        //Calculate hit boxes based on which sprite is spawned 138.75
+        //Calculate hit boxes based on which sprite is spawned
         if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40),   obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
         else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - obstacle.width * 0.40, obstacle.y - (obstacle.height * 0.01), obstacle.width * 0.68, obstacle.height * 0.53);
         else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.2);
