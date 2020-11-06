@@ -194,10 +194,10 @@ function checkCollision(a, b) {
   const aBox = a.hitArea;
   const bBox = b.hitArea;
 
-  let playerRight = aBox.x; //200
-  let playerLeft = aBox.x + aBox.width; //125
-  let playerBottom = aBox.y; //202.5
-  let playerTop = aBox.y + aBox.height; //153.02
+  let playerRight = aBox.x;
+  let playerLeft = aBox.x + aBox.width;
+  let playerBottom = aBox.y;
+  let playerTop = aBox.y + aBox.height;
 
   let obsLeft = bBox.x;
   let obsRight = bBox.x + bBox.width;
