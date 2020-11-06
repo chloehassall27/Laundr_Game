@@ -7,6 +7,7 @@
    - speed at which obstacles move leftward should probs increase over time until it hits a max
    - jump noise can be activated while dying
    - the whole "pause when leave tab" thing
+   - dying in the air should not "teleport" sprite
 */
 
 import Spawner from "./spawner.js"
@@ -126,8 +127,7 @@ function gameLoop() {
       if (marigin === 0 && !gameOver) jumpS.play();
     }
 
-    //jump + duck stuff
-    player.updatePos(inputs.jump);
+    player.updatePos(inputs);
 
     if (inputs.duck) player.duck();
     else if (!inputs.duck && inputs.prevDuck) player.reset();
