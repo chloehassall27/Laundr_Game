@@ -3,7 +3,6 @@
    - hitArea for ducking not fully set (doesn't colide with ground objects or tokens when ducking)
    - when player is ducking and then immedietely jumps, very odd behavior;;
    - most spawner values not relative (might have odd behavior on small screens)
-   - speed of bg and tokens don't match speed of obstacles
    - speed at which obstacles move leftward should probs increase over time until it hits a max
    - jump noise can be activated while dying
    - the whole "pause when leave tab" thing
