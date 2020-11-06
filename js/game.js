@@ -15,6 +15,7 @@ import Player from "./player.js"
 
 const HEIGHT = 225;
 const WIDTH = HEIGHT * 4;
+let RESOLUTION = window.devicePixelRatio || 1;
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
@@ -28,7 +29,7 @@ const highscoreStyle = new PIXI.TextStyle({
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: WIDTH, height: HEIGHT, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1,
+  width: WIDTH, height: HEIGHT, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
 
@@ -335,7 +336,7 @@ function keysDown(e) {
   function touchStart(e) {
     // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
     for (var i=0; i < e.targetTouches.length; i++) {
-      touch = e.targetTouches[i]
+      let touch = e.targetTouches[i]
       // console.log(touch);
       // Top 2/3 of the canvas will call the jump function
       if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
@@ -354,7 +355,7 @@ function keysDown(e) {
   function touchEnd(e) {
     // console.log(e);
     for (var i=0; i < e.changedTouches.length; i++) {
-      touch = e.changedTouches[i]
+      let touch = e.changedTouches[i]
       // console.log(touch);
 
       // Top 2/3 of the canvas will stop the jump function
@@ -379,7 +380,7 @@ function keysDown(e) {
   function touchMove(e) {
     // console.log(e);
     for (var i=0; i < e.changedTouches.length; i++) {
-      touch = e.changedTouches[i]
+      let touch = e.changedTouches[i]
       // console.log(touch);
 
       // Top 2/3 of the canvas will call the jump function and stop the duck function
