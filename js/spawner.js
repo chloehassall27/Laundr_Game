@@ -62,10 +62,10 @@ export default class Spawner {
         obstacle.y = posy;
         //console.log(obstacle.getBounds());
 
-        //Calculate hit boxes based on which sprite is spawned
-        if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 33, obstacle.y - 30, 55, 42);
-        else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 32, obstacle.y, 54, 42);
-        else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - 35, obstacle.y - 25, 63, 16);
+        //Calculate hit boxes based on which sprite is spawned 138.75
+        if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40),   obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
+        else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - obstacle.width * 0.40, obstacle.y - (obstacle.height * 0.01), obstacle.width * 0.68, obstacle.height * 0.53);
+        else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.2);
         else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
         //console.log(obstacle.hitArea.y);
 
@@ -89,7 +89,7 @@ export default class Spawner {
         else token.y = this.walkingLevel;
         token.x = this.app.renderer.width;
 
-        token.hitArea = new PIXI.Rectangle(token.x - 19, token.y - 20, 38, 40);
+        token.hitArea = new PIXI.Rectangle(token.x - (token.width * 0.25), token.y - (token.height * 0.28), token.width * 0.52, token.height * 0.55);
 
         token.animationSpeed = 0.135;
         token.play();
