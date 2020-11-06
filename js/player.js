@@ -6,6 +6,8 @@ export default class Player {
     app;
     gameOver = false;
     loaded = false;
+    needsFall = false;
+    fallComplete = false;
 
     speedY = 0;
 
@@ -27,20 +29,18 @@ export default class Player {
         this.createSprites();
     }
 
-    updatePos(jump) {
-        if (this.currSprite.y == this.groundLevel) {
-            if (jump) {
-                this.speedY = 3.5;
-                this.switchSprite(this.jumpStatic);
-            }
+    updatePos(inputs) {
+        if (this.currSprite.y == this.groundLevel && !inputs.duck && inputs.jump) {
+            this.speedY = 3.5;
+            this.switchSprite(this.jumpStatic);
         }
 
-        if (this.speedY > 0 && jump) {
-            this.speedY += .038;
+        if (this.speedY > 0 && inputs.jump) {
+            this.speedY += .06;
         }
 
         if (this.currSprite.y < this.groundLevel) {
-            this.speedY -= .1;
+            this.speedY -= .12;
         }
         else if (this.currSprite.y > this.groundLevel) {
             this.speedY = 0;
@@ -54,9 +54,14 @@ export default class Player {
     }
 
     duck() {
-        this.switchSprite(this.ducking);
-        let hitY = this.groundLevel + 20;
-        this.currSprite.hitArea.y = hitY;
+        if (this.currSprite.y == this.groundLevel) {
+            this.switchSprite(this.ducking);
+            let hitY = this.groundLevel + 20;
+            this.currSprite.hitArea.y = hitY;
+        }
+        else {
+            this.speedY -= .15;
+        }
     }
 
     reset() {
@@ -72,8 +77,26 @@ export default class Player {
     }
 
     endGame() {
-        this.switchSprite(this.falling);
-        this.falling.play();
+        if (this.currSprite.y != this.groundLevel) {
+            let hold = this.currSprite.y;
+            this.switchSprite(this.falling);
+            this.currSprite.y = hold;
+            this.falling.play();
+            this.needsFall = true;
+        }
+        else {
+            this.switchSprite(this.falling);
+            this.falling.play();
+        }
+    }
+
+    endGameFall() {
+        if (this.currSprite.y < this.groundLevel) {
+            this.currSprite.y += 4;
+        } else {
+            this.currSprite.y = this.groundLevel;
+            this.fallComplete = true;
+        }
     }
 
     createSprites() {

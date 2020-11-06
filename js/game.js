@@ -1,8 +1,9 @@
 /*
   current bugs:
-   - when player is ducking and then immedietely jumps, very odd behavior;;
    - the whole "pause when leave tab" thing
    - sometimes there's terrible slowdown?? cannot consistantly replicate this bug
+   - two tokens spawn in same timespan
+   - non relative hitarea in player.js
 */
 
 import Spawner from "./spawner.js"
@@ -147,7 +148,7 @@ function gameLoop() {
     }
 
     //jump + duck stuff
-    player.updatePos(inputs.jump);
+    player.updatePos(inputs);
 
     if (inputs.duck) player.duck();
     else if (!inputs.duck && inputs.prevDuck) player.reset();
@@ -184,6 +185,8 @@ function gameLoop() {
         spawner.tokens.shift();
       }
     }
+  } else if (gameOver && player && player.needsFall) {
+    endGameFall();
   }
 }
 
@@ -191,7 +194,7 @@ function gameLoop() {
 function displayScore() {
   score = score + 1;
   scoreText.text = score;
-  
+
   app.stage.addChild(scoreText);
 
   displayHighScore();
@@ -275,6 +278,8 @@ function cleanUp() {
   lose = false;
   score = 0;
   speedScale = 1.0;
+  player.needsFall = false;
+  player.fallComplete = false;
 }
 
 function startGame() {
@@ -425,6 +430,12 @@ function moveBackground() {
   //parallax
   backgroundFront.tilePosition.x -= 3.5 * speedScale;
   backgroundBack.tilePosition.x -= 1.2 * speedScale;
+}
+
+function endGameFall() {
+  if (!player.fallComplete && player.needsFall) {
+    player.endGameFall();
+  }
 }
 
 // === End game functions === //
