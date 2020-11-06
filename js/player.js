@@ -55,7 +55,7 @@ export default class Player {
 
     duck() {
         this.switchSprite(this.ducking);
-        let hitY = this.groundLevel - 130;
+        let hitY = this.groundLevel + 20;
         this.currSprite.hitArea.y = hitY;
     }
 
