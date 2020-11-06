@@ -80,8 +80,8 @@ export default class Player {
         //only call this the one time in the construtor!!
         let height = this.HEIGHT / (this.HEIGHT * 1.7);
 
-        let spriteWidth = -(this.WIDTH - (this.WIDTH * 0.22))/9.3;
-        let spriteHeight = -(this.WIDTH - (this.WIDTH * 0.22))/10;
+        let spriteWidth = -(this.WIDTH - (this.WIDTH * 0.22)) / 9.3;
+        let spriteHeight = -(this.WIDTH - (this.WIDTH * 0.22)) / 10;
 
         this.running = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["running_WithSock"]);
         this.running.scale.set(height)

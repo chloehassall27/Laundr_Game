@@ -35,6 +35,7 @@ app.ticker.add(gameLoop);
 let spawner;
 let player;
 let background;
+let backgroundFront, backgroundBack;
 const groundY = HEIGHT - (HEIGHT * .1);
 
 // Basic game variables
@@ -87,10 +88,24 @@ function load() {
       score = 0;
 
       //create tiling sprite that can be scrolled infinitely
-      let bgTexture = PIXI.Texture.from("../sprites/background.png");
-      background = new PIXI.TilingSprite(bgTexture, WIDTH, 225);
-      background.tileScale.set(0.25);
-      app.stage.addChild(background);
+      //currently set up for parallax effect, if disliked, switch which things are commented out
+
+      //for non parallax (everything moves together)
+      //let bgTexture = PIXI.Texture.from("../sprites/background.png");
+      //background = new PIXI.TilingSprite(bgTexture, WIDTH, HEIGHT);
+      //background.tileScale.set(0.25);
+      //app.stage.addChild(background);
+
+      //for parallax (background moves slower than foreground)
+      let bgTextureFront = PIXI.Texture.from("../sprites/background_road.png");
+      let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
+      backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
+      backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
+      backgroundFront.tileScale.set(0.25);
+      backgroundFront.y = HEIGHT - 50.25;
+      backgroundBack.tileScale.set(0.25);
+      app.stage.addChild(backgroundBack);
+      app.stage.addChild(backgroundFront);
 
       //create player object - handles jumping + ducking
       player = new Player(HEIGHT, WIDTH, app);
@@ -153,8 +168,8 @@ function gameLoop() {
     }
     for (var i = 0; i < spawner.tokens.length; i++) {
       const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-      spawner.tokens[i].x -= 1.9;
-      spawner.tokens[i].hitArea.x -= 1.9;
+      spawner.tokens[i].x -= 3.5;
+      spawner.tokens[i].hitArea.x -= 3.5;
 
       if (checkCollision(player.currSprite, spawner.tokens[i]))
         collectToken(i);
@@ -247,15 +262,6 @@ function collectToken(index) {
   //whatever score stuff has to happen here, noises, etc
   spawner.collectToken(index);
   tokenS.play();
-
-  //lil message for testing
-  let message = new PIXI.Text("token collected!");
-  message.y = 10;
-  message.x = 10;
-  app.stage.addChild(message);
-  setTimeout(function () {
-    app.stage.removeChild(message)
-  }, 1000);
 }
 
 function cleanUp() {
@@ -402,8 +408,12 @@ function touchMove(e) {
 
 // === Game functions === //
 function moveBackground() {
-  //change the '1' to whatever speed is best :)
-  background.tilePosition.x -= 1;
+  //non parallax
+  //background.tilePosition.x -= 3.5;
+
+  //parallax
+  backgroundFront.tilePosition.x -= 3.5;
+  backgroundBack.tilePosition.x -= 1.2;
 }
 
 // === End game functions === //
