@@ -52,9 +52,11 @@ let inputs = {
 let restartButton;
 let score;
 let scoreText = new PIXI.Text(score, scoreStyle);
+scoreText.x = WIDTH / 1.07;
 
 let highscore = 0;
 let highscoreText = new PIXI.Text(highscore, highscoreStyle);
+highscoreText.x = WIDTH / 1.21;
 
 //noises
 let deathS;
@@ -187,11 +189,9 @@ function gameLoop() {
 
 // Display the current score
 function displayScore() {
-  app.stage.removeChild(scoreText);
   score = score + 1;
-
-  scoreText = new PIXI.Text(score, scoreStyle);
-  scoreText.x = WIDTH / 1.07;
+  scoreText.text = score;
+  
   app.stage.addChild(scoreText);
 
   displayHighScore();
@@ -200,9 +200,7 @@ function displayScore() {
 //display the highest score
 function displayHighScore() {
   if (highscore > 0) {
-    app.stage.removeChild(highscoreText);
-    highscoreText = new PIXI.Text('HI  ' + highscore, highscoreStyle);
-    highscoreText.x = WIDTH / 1.21;
+    highscoreText.text = 'HI ' + highscore;
     app.stage.addChild(highscoreText);
   }
 }
