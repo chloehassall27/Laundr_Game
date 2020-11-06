@@ -120,7 +120,10 @@ export default class Spawner {
 
     spawn() {
         if (!this.gameOver) {
-            if (this.firstSpawn) this.startTime = performance.now();
+            if (this.firstSpawn) {
+                this.startTime = performance.now();
+                this.firstSpawn = false;
+            }
             //first check if it's time to spawn in a token :D
             if (this.tokenTime) {
                 this.buildToken();
@@ -184,7 +187,7 @@ export default class Spawner {
     }
 
     chooseSprite() {
-        let currTime = performance.now() + this.startTime;
+        let currTime = performance.now() - this.startTime;
         const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
         const switchDifficulty = 60000;
 
