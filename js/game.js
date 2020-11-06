@@ -3,7 +3,6 @@
    - hitArea for ducking not fully set (doesn't colide with ground objects or tokens when ducking)
    - when player is ducking and then immedietely jumps, very odd behavior;;
    - most spawner values not relative (might have odd behavior on small screens)
-   - speed at which obstacles move leftward should probs increase over time until it hits a max
    - jump noise can be activated while dying
    - the whole "pause when leave tab" thing
 */
@@ -42,6 +41,7 @@ let win = false;
 let lose = false;
 let gameOver = false;
 let gameStart = false;
+let speedScale = 1.0;
 
 let inputs = {
   jump: false,
@@ -66,6 +66,7 @@ let winS;
 let started = false;
 let firstLoad = true;
 let spawnerInterval;
+let speedInterval;
 
 
 // === Sprite setup === //
@@ -113,6 +114,9 @@ function load() {
       //create our spawner - handles obstacles + tokens
       spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
 
+      //ensure things speed up over time
+      speedInterval = setInterval(increaseSpeedScale, 20000);
+
       //restart functionality stuff
       restartButton = new PIXI.Sprite(app.loader.resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
       restartButton.scale.set(0.3)
@@ -150,8 +154,8 @@ function gameLoop() {
     //we should try to move this into like a spawner.moveSprites() function or something
     for (var i = 0; i < spawner.obstacles.length; i++) {
       const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-      spawner.obstacles[i].x -= 3.5;
-      spawner.obstacles[i].hitArea.x -= 3.5;
+      spawner.obstacles[i].x -= 3.5 * speedScale;
+      spawner.obstacles[i].hitArea.x -= 3.5 * speedScale;
 
       //check collision
       if (checkCollision(player.currSprite, spawner.obstacles[i])) {
@@ -167,8 +171,8 @@ function gameLoop() {
     }
     for (var i = 0; i < spawner.tokens.length; i++) {
       const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-      spawner.tokens[i].x -= 3.5;
-      spawner.tokens[i].hitArea.x -= 3.5;
+      spawner.tokens[i].x -= 3.5 * speedScale;
+      spawner.tokens[i].hitArea.x -= 3.5 * speedScale;
 
       if (checkCollision(player.currSprite, spawner.tokens[i]))
         collectToken(i);
@@ -265,11 +269,13 @@ function collectToken(index) {
 
 function cleanUp() {
   clearInterval(spawnerInterval);
+  clearInterval(speedInterval);
   gameOver = false;
   started = true;
   win = false;
   lose = false;
   score = 0;
+  speedScale = 1.0;
 }
 
 function startGame() {
@@ -403,16 +409,24 @@ function touchMove(e) {
   }
 }
 
+function increaseSpeedScale() {
+  console.log("called");
+  speedScale += 0.02;
+  if (speedScale >= 1.3) {
+    clearInterval(speedInterval);
+  }
+}
+
 // === End helper functions === //
 
 // === Game functions === //
 function moveBackground() {
   //non parallax
-  //background.tilePosition.x -= 3.5;
+  //background.tilePosition.x -= 3.5*speedScale;
 
   //parallax
-  backgroundFront.tilePosition.x -= 3.5;
-  backgroundBack.tilePosition.x -= 1.2;
+  backgroundFront.tilePosition.x -= 3.5 * speedScale;
+  backgroundBack.tilePosition.x -= 1.2 * speedScale;
 }
 
 // === End game functions === //
