@@ -2,7 +2,6 @@
   current bugs:
    - the whole "pause when leave tab" thing
    - sometimes there's terrible slowdown?? cannot consistantly replicate this bug
-   - two tokens spawn in same timespan
    - non relative hitarea in player.js
 */
 

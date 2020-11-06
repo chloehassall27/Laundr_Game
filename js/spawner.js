@@ -1,9 +1,9 @@
 export default class Spawner {
-    interval = 1500;
-    intDecAmt = 0.9;
-    intRangeMax = 3000;
-    intRangeMin = 1500;
-    smallestInt = 500;
+    interval = 1100;
+    intDecAmt = 0.85;
+    intRangeMax = 2500;
+    intRangeMin = 1100;
+    smallestInt = 200;
     rangeMin;
     tokenTime;
     app;
@@ -17,6 +17,8 @@ export default class Spawner {
     tokenScale;
     ironRandScale;
     ironRandAdd;
+
+    tokenTimeoutHold;
 
     startTime;
     firstSpawn = true;
@@ -129,12 +131,16 @@ export default class Spawner {
                 let rand = Math.floor(Math.random() * (10 - 5)) + 4;
                 if (!this.firstSpawn && (performance.now() - this.startTime >= 15000)) {
                     this.buildToken();
-                    setTimeout(this.spawn.bind(this), this.interval);
-                    setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
+                    setTimeout(this.spawn.bind(this), this.interval * 0.5);
+                    setTimeout(this.setTokenTimer.bind(this), this.interval * rand * 1.5);
+                    clearTimeout(this.tokenTimeoutHold);
                     this.tokenTime = false;
                     return;
                 }
-                else setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
+                else {
+                    clearTimeout(this.tokenTimeoutHold);
+                    this.tokenTimeoutHold = setTimeout(this.setTokenTimer.bind(this), this.interval * rand * 1.5);
+                }
             }
 
             //otherwise we're building a normal obstacle
