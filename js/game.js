@@ -13,9 +13,18 @@
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
-const HEIGHT = 225;
-const WIDTH = HEIGHT * 4;
-let RESOLUTION = window.devicePixelRatio || 1;
+WIDTH = window.innerWidth;
+HEIGHT = window.innerHeight;
+
+resizing();
+window.addEventListener('resize', resizing);
+function resizing(){
+  if (WIDTH  != window.innerWidth ||
+    HEIGHT != window.innerHeight) {
+  
+  location.reload();
+  }
+}
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
