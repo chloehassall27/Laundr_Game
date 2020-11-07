@@ -12,10 +12,8 @@
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
-
 let WIDTH = window.innerWidth;
 let HEIGHT = window.innerHeight;
-let RESOLUTION = 1;
 
 resizing();
 window.addEventListener('resize', resizing);
@@ -26,6 +24,8 @@ function resizing(){
   location.reload();
   }
 }
+
+let RESOLUTION = 1;//window.devicePixelRatio || 1;
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
@@ -105,11 +105,19 @@ function load() {
       app.stage.addChild(background);
 
       //create player object - handles jumping + ducking
-      player = new Player(HEIGHT, WIDTH, app);
+      player = new Player(/*HEIGHT*/225, WIDTH, app);
       player.currSprite.stop();
 
       //create our spawner - handles obstacles + tokens
-      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
+      spawner = new Spawner(/*HEIGHT*/225, WIDTH, app, player.groundLevel);
+
+      //restart functionality stuff
+      restartButton = new PIXI.Sprite(app.loader.resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
+      restartButton.scale.set(0.3)
+      restartButton.anchor.set(0.5)
+      restartButton.x = WIDTH / 2
+      restartButton.y = /*HEIGHT*/225 / 1.75
+
 
       //restart functionality stuff
       restartButton = new PIXI.Sprite(app.loader.resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
