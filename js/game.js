@@ -13,8 +13,9 @@
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
-WIDTH = window.innerWidth;
-HEIGHT = window.innerHeight;
+let WIDTH = window.innerWidth;
+let HEIGHT = window.innerHeight;
+let RESOLUTION = || 1;
 
 resizing();
 window.addEventListener('resize', resizing);
