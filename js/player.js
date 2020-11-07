@@ -29,8 +29,9 @@ export default class Player {
         this.createSprites();
     }
 
-    updatePos(inputs) {
+    updatePos(inputs, jumpS) {
         if (this.currSprite.y == this.groundLevel && !inputs.duck && inputs.jump) {
+            jumpS.play();
             this.speedY = 3.5;
             this.switchSprite(this.jumpStatic);
         }
@@ -56,8 +57,6 @@ export default class Player {
     duck() {
         if (this.currSprite.y == this.groundLevel) {
             this.switchSprite(this.ducking);
-            let hitY = this.groundLevel + 20;
-            this.currSprite.hitArea.y = hitY;
         }
         else {
             this.speedY -= .15;
@@ -137,7 +136,7 @@ export default class Player {
         this.ducking.interactive = true;
         this.ducking.x = this.WIDTH * 0.22;
         this.ducking.y = this.HEIGHT - (this.HEIGHT * .1);
-        this.ducking.hitArea = new PIXI.Rectangle(this.ducking.x, this.ducking.y, spriteWidth, spriteHeight);
+        this.ducking.hitArea = new PIXI.Rectangle(this.ducking.x, this.ducking.y, spriteWidth, spriteHeight * 0.65);
         this.ducking.animationSpeed = .15;
         this.ducking.play()
 
@@ -154,5 +153,6 @@ export default class Player {
         this.currSprite.hitArea = this.ducking.hitArea;
         this.app.stage.addChild(this.currSprite);
         this.loaded = true;
+
     }
 }

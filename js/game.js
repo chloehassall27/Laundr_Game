@@ -1,8 +1,7 @@
 /*
   current bugs:
    - the whole "pause when leave tab" thing
-   - sometimes there's terrible slowdown?? cannot consistantly replicate this bug
-   - non relative hitarea in player.js
+   - slowdown probably fixed, but gotta be on the lookout for it just in case..
 */
 
 import Spawner from "./spawner.js"
@@ -140,14 +139,8 @@ function gameLoop() {
     moveBackground();
     displayScore();
 
-    //noise for jump - has to be here to ensure it plays ONLY when it's supposed to
-    if (inputs.jump && player.currSprite != player.ducking) {
-      let marigin = (player.groundLevel - player.currSprite.y);
-      if (marigin === 0 && !gameOver) jumpS.play();
-    }
-
     //jump + duck stuff
-    player.updatePos(inputs);
+    player.updatePos(inputs, jumpS);
 
     if (inputs.duck) player.duck();
     else if (!inputs.duck && inputs.prevDuck) player.reset();
@@ -318,7 +311,6 @@ function keysDown(e) {
     if (!started && firstLoad) {
       //make the noises (they can only be created/started after player interraction due to PIXI limitations)
       createNoises();
-      jumpS.play();
       startGame();
     }
     if (gameOver && (performance.now() - timeout > 600)) {
