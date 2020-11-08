@@ -39,6 +39,8 @@ let lose = false;
 let gameOver = false;
 let gameStart = false;
 let speedScale = 1.0;
+let focus = true;
+let visible = true;
 
 let inputs = {
   jump: false,
@@ -129,6 +131,7 @@ function load() {
       restartButton.buttonMode = true
 
       restartButton.on('click', onClickRestart);
+
     })
 }
 
@@ -136,45 +139,48 @@ function load() {
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
-    moveBackground();
-    displayScore();
+    checkFocus();
+    if (focus && visible) {
+      moveBackground();
+      displayScore();
 
-    //jump + duck stuff
-    player.updatePos(inputs, jumpS);
+      //jump + duck stuff
+      player.updatePos(inputs, jumpS);
 
-    if (inputs.duck) player.duck();
-    else if (!inputs.duck && inputs.prevDuck) player.reset();
-    inputs.prevDuck = inputs.duck;
+      if (inputs.duck) player.duck();
+      else if (!inputs.duck && inputs.prevDuck) player.reset();
+      inputs.prevDuck = inputs.duck;
 
-    //we should try to move this into like a spawner.moveSprites() function or something
-    for (var i = 0; i < spawner.obstacles.length; i++) {
-      const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-      spawner.obstacles[i].x -= 3.5 * speedScale;
-      spawner.obstacles[i].hitArea.x -= 3.5 * speedScale;
+      //we should try to move this into like a spawner.moveSprites() function or something
+      for (var i = 0; i < spawner.obstacles.length; i++) {
+        const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
+        spawner.obstacles[i].x -= 3.5 * speedScale;
+        spawner.obstacles[i].hitArea.x -= 3.5 * speedScale;
 
-      //check collision
-      if (checkCollision(player.currSprite, spawner.obstacles[i])) {
-        lose = true;
-        endGame();
+        //check collision
+        if (checkCollision(player.currSprite, spawner.obstacles[i])) {
+          lose = true;
+          endGame();
+        }
+
+        //remove box if it's offscreen
+        if (xBox === 0) {
+          app.stage.removeChild(spawner.obstacles[i]);
+          spawner.obstacles.shift();
+        }
       }
+      for (var i = 0; i < spawner.tokens.length; i++) {
+        const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
+        spawner.tokens[i].x -= 3.5 * speedScale;
+        spawner.tokens[i].hitArea.x -= 3.5 * speedScale;
 
-      //remove box if it's offscreen
-      if (xBox === 0) {
-        app.stage.removeChild(spawner.obstacles[i]);
-        spawner.obstacles.shift();
-      }
-    }
-    for (var i = 0; i < spawner.tokens.length; i++) {
-      const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-      spawner.tokens[i].x -= 3.5 * speedScale;
-      spawner.tokens[i].hitArea.x -= 3.5 * speedScale;
+        if (checkCollision(player.currSprite, spawner.tokens[i]))
+          collectToken(i);
 
-      if (checkCollision(player.currSprite, spawner.tokens[i]))
-        collectToken(i);
-
-      if (xBox === 0) {
-        app.stage.removeChild(tokens[i]);
-        spawner.tokens.shift();
+        if (xBox === 0) {
+          app.stage.removeChild(tokens[i]);
+          spawner.tokens.shift();
+        }
       }
     }
   } else if (gameOver && player && player.needsFall) {
@@ -408,6 +414,45 @@ function increaseSpeedScale() {
   speedScale += 0.02;
   if (speedScale >= 1.3) {
     clearInterval(speedInterval);
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    console.log("hidden!");
+    visible = false;
+    spawner.loseFocus();
+  }
+  else if (document.visibilityState === 'visible') {
+    visible = true;
+    spawner.gainFocus();
+  }
+});
+
+function checkFocus() {
+  if (document.hasFocus()) {
+    spawner.gainFocus();
+    focus = true;
+    player.running.play();
+
+    for (let i = 0; i < spawner.obstacles.length; i++) {
+      spawner.obstacles[i].play();
+    }
+    for (let i = 0; i < spawner.tokens.length; i++) {
+      spawner.tokens[i].play();
+    }
+
+  } else if (!document.hasFocus()) {
+    spawner.loseFocus();
+    focus = false;
+
+    player.running.stop();
+    for (let i = 0; i < spawner.obstacles.length; i++) {
+      spawner.obstacles[i].stop();
+    }
+    for (let i = 0; i < spawner.tokens.length; i++) {
+      spawner.tokens[i].stop();
+    }
   }
 }
 

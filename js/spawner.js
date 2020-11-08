@@ -29,6 +29,7 @@ export default class Spawner {
     tokens = [];
 
     gameOver = false;
+    focus = true;
 
 
     constructor(HEIGHT, WIDTH, app, playerBaseY) {
@@ -130,7 +131,7 @@ export default class Spawner {
             if (this.tokenTime) {
                 let rand = Math.floor(Math.random() * (10 - 5)) + 4;
                 if (!this.firstSpawn && (performance.now() - this.startTime >= 15000)) {
-                    this.buildToken();
+                    if (this.focus) this.buildToken();
                     setTimeout(this.spawn.bind(this), this.interval * 0.5);
                     setTimeout(this.setTokenTimer.bind(this), this.interval * rand * 1.5);
                     clearTimeout(this.tokenTimeoutHold);
@@ -147,12 +148,14 @@ export default class Spawner {
             //get the name of the obstacle
             const obstName = this.chooseSprite();
 
-            if (obstName === "double") {
-                this.spawnDouble();
-            } else if (obstName == "ironSprite") {
-                this.spawnIron();
-            } else {
-                this.buildObstacles(0, this.walkingLevel, obstName);
+            if (this.focus) {
+                if (obstName === "double") {
+                    this.spawnDouble();
+                } else if (obstName == "ironSprite") {
+                    this.spawnIron();
+                } else {
+                    this.buildObstacles(0, this.walkingLevel, obstName);
+                }
             }
 
             this.interval = this.randomizeInterval();
@@ -220,10 +223,21 @@ export default class Spawner {
         for (let i = 0; i < this.obstacles.length; i++) {
             this.obstacles[i].stop();
         }
+        for (let i = 0; i < this.tokens.length; i++) {
+            this.tokens[i].stop();
+        }
     }
 
     collectToken(index) {
         this.app.stage.removeChild(this.tokens[index]);
         this.tokens.splice(index, 1);
+    }
+
+    loseFocus() {
+        this.focus = false;
+    }
+
+    gainFocus() {
+        this.focus = true;
     }
 }
