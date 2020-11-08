@@ -26,7 +26,8 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
-app.ticker.add(gameLoop);
+//app.ticker.add(gameLoop);
+
 let spawner;
 let player;
 let background;
@@ -72,7 +73,7 @@ let started = false;
 let firstLoad = true;
 let spawnerInterval;
 let speedInterval;
-
+let gameInterval;
 let timeout = 0;
 
 
@@ -135,6 +136,8 @@ function load() {
       restartButton.buttonMode = true
 
       restartButton.on('pointerdown', onClickRestart);
+
+      gameInterval = setInterval(gameLoop, 7);
     })
 }
 
@@ -279,6 +282,7 @@ function endGame() {
 function onClickRestart() {
   app.stage.removeChild(restartButton);
   cleanUp();
+  gameInterval = setInterval(gameLoop, 7);
   load();
   player.switchSprite(player.running);
   player.ducking.play();
@@ -305,6 +309,7 @@ function cleanUp() {
   player.fallComplete = false;
   winTriggered = false;
   firstLoop = true;
+  clearInterval(gameInterval);
 }
 
 function startGame() {
