@@ -286,6 +286,7 @@ function collectToken(index) {
   //whatever score stuff has to happen here, noises, etc
   spawner.collectToken(index);
   tokenS.play();
+  score += 25;
 }
 
 function cleanUp() {
