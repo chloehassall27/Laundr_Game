@@ -75,17 +75,22 @@ export default class Player {
         this.app.stage.addChild(this.currSprite);
     }
 
-    endGame() {
-        if (this.currSprite.y != this.groundLevel) {
-            let hold = this.currSprite.y;
-            this.switchSprite(this.falling);
-            this.currSprite.y = hold;
-            this.falling.play();
-            this.needsFall = true;
-        }
-        else {
-            this.switchSprite(this.falling);
-            this.falling.play();
+    endGame(win) {
+        if (!win) {
+            if (this.currSprite.y != this.groundLevel) {
+                let hold = this.currSprite.y;
+                this.switchSprite(this.falling);
+                this.currSprite.y = hold;
+                this.falling.play();
+                this.needsFall = true;
+            }
+            else {
+                this.switchSprite(this.falling);
+                this.falling.play();
+            }
+        } else {
+            this.ducking.stop();
+            this.switchSprite(this.ducking);
         }
     }
 

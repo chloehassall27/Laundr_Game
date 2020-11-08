@@ -41,6 +41,10 @@ let gameStart = false;
 let speedScale = 1.0;
 let focus = true;
 let visible = true;
+let winTriggered = false;
+let winTimeout;
+let timeOffset;
+let firstLoop = true;
 
 let inputs = {
   jump: false,
@@ -117,7 +121,7 @@ function load() {
       //create our spawner - handles obstacles + tokens
       spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
 
-    //ensure things speed up over time
+      //ensure things speed up over time
       speedInterval = setInterval(increaseSpeedScale, 20000);
 
       //restart functionality stuff
@@ -140,6 +144,11 @@ function gameLoop() {
   if (!gameOver && player && player.loaded && started) {
     checkFocus();
     if (focus && visible) {
+      if (firstLoop) {
+        timeOffset = performance.now();
+        firstLoop = false;
+      }
+
       moveBackground();
       displayScore();
 
@@ -181,6 +190,15 @@ function gameLoop() {
           spawner.tokens.shift();
         }
       }
+
+      //check if it's time to win!
+      if ((performance.now() - timeOffset) > 300000 && !winTriggered) {
+        win = true;
+        winTriggered = true;
+        spawner.gameOver = true;
+        winTimeout = setTimeout(endGame, 3000);
+      }
+
     }
   } else if (gameOver && player && player.needsFall) {
     endGameFall();
@@ -229,10 +247,11 @@ function checkCollision(a, b) {
 function endGame() {
   //call whatever clean up is needed, trigger popups, etc..
   gameOver = true;
-  player.endGame();
+  player.endGame(win);
   spawner.endGame();
   started = false;
   timeout = performance.now();
+  clearTimeout(winTimeout);
 
   if (lose) deathS.play();
   else if (win) winS.play();
@@ -242,7 +261,9 @@ function endGame() {
     displayHighScore();
   }
 
-  const message = new PIXI.Text('G A M E  O V E R', style);
+  let message;
+  if (lose) message = new PIXI.Text('G A M E  O V E R', style);
+  else if (win) message = new PIXI.Text('W I N N E R', style);
   message.x = WIDTH / 2.6;
   message.y = HEIGHT / 4;
 
@@ -277,6 +298,8 @@ function cleanUp() {
   speedScale = 1.0;
   player.needsFall = false;
   player.fallComplete = false;
+  winTriggered = false;
+  firstLoop = true;
 }
 
 function startGame() {
