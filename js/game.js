@@ -1,7 +1,6 @@
 /*
   current bugs:
-   - the whole "pause when leave tab" thing
-   - slowdown probably fixed, but gotta be on the lookout for it just in case..
+   - i think it's all been fixed??? be on the lookout for slowdown
 */
 
 import Spawner from "./spawner.js"
@@ -9,6 +8,7 @@ import Player from "./player.js"
 
 const HEIGHT = 225;
 const WIDTH = HEIGHT * 4;
+let RESOLUTION = window.devicePixelRatio || 1;
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
@@ -22,7 +22,7 @@ const highscoreStyle = new PIXI.TextStyle({
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: WIDTH, height: HEIGHT, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1,
+  width: WIDTH, height: HEIGHT, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
 
@@ -117,7 +117,7 @@ function load() {
       //create our spawner - handles obstacles + tokens
       spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
 
-      //ensure things speed up over time
+    //ensure things speed up over time
       speedInterval = setInterval(increaseSpeedScale, 20000);
 
       //restart functionality stuff
@@ -131,7 +131,6 @@ function load() {
       restartButton.buttonMode = true
 
       restartButton.on('click', onClickRestart);
-
     })
 }
 
@@ -361,6 +360,7 @@ function touchStart(e) {
       inputs.duck = true;
       break;
     }
+
   }
 }
 
