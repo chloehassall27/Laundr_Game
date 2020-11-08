@@ -147,6 +147,7 @@ function gameLoop() {
       if (firstLoop) {
         timeOffset = performance.now();
         firstLoop = false;
+        app.stage.addChild(scoreText);
       }
 
       moveBackground();
@@ -207,10 +208,10 @@ function gameLoop() {
 
 // Display the current score
 function displayScore() {
-  score = score + 1;
-  scoreText.text = score;
+  score += .01;
+  scoreText.text = Math.round(score);
 
-  app.stage.addChild(scoreText);
+  // app.stage.addChild(scoreText);
 
   displayHighScore();
 }
@@ -218,7 +219,7 @@ function displayScore() {
 //display the highest score
 function displayHighScore() {
   if (highscore > 0) {
-    highscoreText.text = 'HI ' + highscore;
+    highscoreText.text = 'HI ' + Math.round(highscore);
     app.stage.addChild(highscoreText);
   }
 }
