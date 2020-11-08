@@ -370,12 +370,18 @@ app.view.addEventListener("touchmove", touchMove, false);
 function touchStart(e) {
   // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
   for (var i = 0; i < e.targetTouches.length; i++) {
-    touch = e.targetTouches[i]
+    let touch = e.targetTouches[i]
     // console.log(touch);
     // Top 2/3 of the canvas will call the jump function
     if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
       inputs.jump = true;
-      if (!started) startGame();
+
+      if (!started && firstLoad) {
+        //make the noises (they can only be created/started after player interraction due to PIXI limitations)
+        createNoises();
+        startGame();
+      }
+      
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
@@ -390,7 +396,7 @@ function touchStart(e) {
 function touchEnd(e) {
   // console.log(e);
   for (var i = 0; i < e.changedTouches.length; i++) {
-    touch = e.changedTouches[i]
+    let touch = e.changedTouches[i]
     // console.log(touch);
 
     // Top 2/3 of the canvas will stop the jump function
@@ -415,7 +421,7 @@ function touchCancel(e) {
 function touchMove(e) {
   // console.log(e);
   for (var i = 0; i < e.changedTouches.length; i++) {
-    touch = e.changedTouches[i]
+    let touch = e.changedTouches[i]
     // console.log(touch);
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
