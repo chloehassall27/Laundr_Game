@@ -1,6 +1,6 @@
 /*
   current bugs:
-   - i think it's all been fixed??? be on the lookout for slowdown
+   - Jump/duck spam
 */
 
 import Spawner from "./spawner.js"
@@ -28,13 +28,13 @@ document.body.appendChild(app.view);
 
 //app.ticker.add(gameLoop);
 
+// Basic game variables
 let spawner;
 let player;
 let background;
 let backgroundFront, backgroundBack;
 const groundY = HEIGHT - (HEIGHT * .1);
 
-// Basic game variables
 let win = false;
 let lose = false;
 let gameOver = false;
@@ -115,8 +115,11 @@ function load() {
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
 
+
+      createNoises();
+
       //create player object - handles jumping + ducking
-      player = new Player(HEIGHT, WIDTH, app);
+      player = new Player(HEIGHT, WIDTH, app, jumpS);
       player.currSprite.stop();
 
       //create our spawner - handles obstacles + tokens
@@ -157,11 +160,8 @@ function gameLoop() {
       displayScore();
 
       //jump + duck stuff
-      player.updatePos(inputs, jumpS);
-
-      if (inputs.duck) player.duck();
-      else if (!inputs.duck && inputs.prevDuck) player.reset();
-      inputs.prevDuck = inputs.duck;
+      player.updateJump(inputs);
+      player.updateDuck(inputs);
 
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
@@ -313,7 +313,7 @@ function startGame() {
   //now the player sprite is allowed to animate
   player.currSprite.play();
   //fire the initial obstacle spawn (which will call all other spawns)
-  spawner.spawn();
+  // spawner.spawn();
   //set the interval to decrease over time
   spawnerInterval = setInterval(spawner.decreaseInterval(), 3000);
 
@@ -345,7 +345,6 @@ function keysDown(e) {
     inputs.jump = true;
     if (!started && firstLoad) {
       //make the noises (they can only be created/started after player interraction due to PIXI limitations)
-      createNoises();
       startGame();
     }
     if (gameOver && (performance.now() - timeout > 600)) {
@@ -385,7 +384,6 @@ function touchStart(e) {
 
       if (!started && firstLoad) {
         //make the noises (they can only be created/started after player interraction due to PIXI limitations)
-        createNoises();
         startGame();
       }
 
