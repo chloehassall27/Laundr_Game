@@ -282,7 +282,6 @@ function endGame() {
 function onClickRestart() {
   app.stage.removeChild(restartButton);
   cleanUp();
-  gameInterval = setInterval(gameLoop, 7);
   load();
   player.switchSprite(player.running);
   player.ducking.play();
@@ -310,6 +309,7 @@ function cleanUp() {
   winTriggered = false;
   firstLoop = true;
   clearInterval(gameInterval);
+
 }
 
 function startGame() {
