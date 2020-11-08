@@ -144,9 +144,6 @@ function load() {
 // === Main game loop === //
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
-
-  console.log(app.ticker.FPS);
-
   if (!gameOver && player && player.loaded && started) {
     checkFocus();
     if (focus && visible) {
