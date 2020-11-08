@@ -134,7 +134,7 @@ function load() {
       restartButton.interactive = true
       restartButton.buttonMode = true
 
-      restartButton.on('click', onClickRestart);
+      restartButton.on('pointerdown', onClickRestart);
     })
 }
 
@@ -381,7 +381,7 @@ function touchStart(e) {
         createNoises();
         startGame();
       }
-      
+
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
