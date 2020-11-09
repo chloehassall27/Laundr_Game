@@ -313,7 +313,7 @@ function startGame() {
   //now the player sprite is allowed to animate
   player.currSprite.play();
   //fire the initial obstacle spawn (which will call all other spawns)
-  // spawner.spawn();
+  spawner.spawn();
   //set the interval to decrease over time
   spawnerInterval = setInterval(spawner.decreaseInterval(), 3000);
 
