@@ -39,6 +39,7 @@ export default class Player {
             this.jumpS.play();
             this.speedY = 3.5;
             this.switchSprite(this.jumpStatic);
+            // this.switchSprite(this.jumping);
         }
         
         // If player is below ground, set them on the ground and reset speed and animation
@@ -59,20 +60,24 @@ export default class Player {
             this.speedY += .06;
         }
 
+        // Once the jump animation is completed, switch to static animation
+        // if (this.currSprite === this.jumping && this.currSprite.currentFrame == this.jumping.size - 1){
+        //     this.switchSprite(this.jumpStatic);
+        // }
+
         this.currSprite.y -= this.speedY;
         this.currSprite.hitArea.y -= this.speedY;
     }
 
     updateDuck(inputs) {
         if(inputs.duck){
-            if (this.currSprite.y == this.groundLevel) {
+            // If ducking on (or below) ground, use ducking sprite
+            if (this.currSprite.y >= this.groundLevel) 
                 this.switchSprite(this.ducking);
-            }
             
             // If ducking in midair, move player down faster
-            else {
+            else 
                 this.speedY -= .15;
-            }
         }
 
         // End of duck
@@ -151,7 +156,7 @@ export default class Player {
         this.jumping.y = this.HEIGHT - (this.HEIGHT * .1);
         this.jumping.hitArea = new PIXI.Rectangle(this.jumping.x, this.jumping.y, spriteWidth, spriteHeight);
         this.jumping.animationSpeed = .15;
-        this.jumping.loop = false;
+        this.jumping.play()
 
         this.jumpStatic = new PIXI.Sprite(this.app.loader.resources.charaSheet.spritesheet.textures["jumping_WithSock_1.png"]);
         this.jumpStatic.scale.set(height)
