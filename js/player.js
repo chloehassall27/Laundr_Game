@@ -17,49 +17,72 @@ export default class Player {
     jumpStatic;
     ducking;
     falling;
+    
+    jumpS;
 
-    constructor(HEIGHT, WIDTH, app) {
+    constructor(HEIGHT, WIDTH, app ,jumpS) {
         this.app = app;
         this.HEIGHT = HEIGHT;
         this.WIDTH = WIDTH;
 
         this.groundLevel = this.HEIGHT - (this.HEIGHT * .1);
 
+        this.jumpS = jumpS;
+
         //set up all the sprites
         this.createSprites();
     }
 
-    updatePos(inputs, jumpS) {
+    updateJump(inputs) {
+        // If the player is on the ground, not ducking, and trying to jump, start the jump sequence with an initial jump speed
         if (this.currSprite.y == this.groundLevel && !inputs.duck && inputs.jump) {
-            jumpS.play();
+            this.jumpS.play();
             this.speedY = 3.5;
             this.switchSprite(this.jumpStatic);
+            // this.switchSprite(this.jumping);
         }
-
-        if (this.speedY > 0 && inputs.jump) {
-            this.speedY += .06;
-        }
-
-        if (this.currSprite.y < this.groundLevel) {
-            this.speedY -= .12;
-        }
+        
+        // If player is below ground, set them on the ground and reset speed and animation
         else if (this.currSprite.y > this.groundLevel) {
             this.speedY = 0;
             this.currSprite.y = this.groundLevel;
             this.currSprite.hitArea.y = this.groundLevel;
             this.switchSprite(this.running);
         }
+        
+        // If player is in air, add gravity
+        else if (this.currSprite.y < this.groundLevel) {
+            this.speedY -= .12;
+        }
+
+        // If player is rising and holding jump, keep them up longer
+        if (this.speedY > 0 && inputs.jump) {
+            this.speedY += .06;
+        }
+
+        // Once the jump animation is completed, switch to static animation
+        // if (this.currSprite === this.jumping && this.currSprite.currentFrame == this.jumping.size - 1){
+        //     this.switchSprite(this.jumpStatic);
+        // }
 
         this.currSprite.y -= this.speedY;
         this.currSprite.hitArea.y -= this.speedY;
     }
 
-    duck() {
-        if (this.currSprite.y == this.groundLevel) {
-            this.switchSprite(this.ducking);
+    updateDuck(inputs) {
+        if(inputs.duck){
+            // If ducking on (or below) ground, use ducking sprite
+            if (this.currSprite.y >= this.groundLevel) 
+                this.switchSprite(this.ducking);
+            
+            // If ducking in midair, move player down faster
+            else 
+                this.speedY -= .15;
         }
-        else {
-            this.speedY -= .15;
+
+        // End of duck
+        else if(this.currSprite === this.ducking){
+            this.switchSprite(this.running)
         }
     }
 
@@ -69,10 +92,16 @@ export default class Player {
     }
 
     switchSprite(sprite) {
-        this.app.stage.removeChild(this.currSprite);
-        this.currSprite = sprite;
-        this.currSprite.hitArea = sprite.hitArea;
-        this.app.stage.addChild(this.currSprite);
+        // Only switch sprite if necesary
+        if(this.currSprite !== sprite){
+            let y = this.currSprite.y;
+            this.app.stage.removeChild(this.currSprite);
+            this.currSprite = sprite;
+            this.currSprite.hitArea = sprite.hitArea;
+            this.currSprite.y = y;
+            this.currSprite.hitArea.y = y;
+            this.app.stage.addChild(this.currSprite);
+        }
     }
 
     endGame(win) {
@@ -127,7 +156,7 @@ export default class Player {
         this.jumping.y = this.HEIGHT - (this.HEIGHT * .1);
         this.jumping.hitArea = new PIXI.Rectangle(this.jumping.x, this.jumping.y, spriteWidth, spriteHeight);
         this.jumping.animationSpeed = .15;
-        this.jumping.loop = false;
+        this.jumping.play()
 
         this.jumpStatic = new PIXI.Sprite(this.app.loader.resources.charaSheet.spritesheet.textures["jumping_WithSock_1.png"]);
         this.jumpStatic.scale.set(height)
