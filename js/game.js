@@ -85,7 +85,7 @@ app.loader
   .add('obSheet', "sprites/obstacleSprites.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
   .add('buttonSheet', "sprites/PodsAndButtons.json")
-  .add('muteSheet', "sprites/Mute Unmute.json")
+  .add('muteSheet', "sprites/MuteUnmute.json")
   .add('deathSound', "sounds/death.wav")
   .add('jumpSound', "sounds/jump.wav")
   .add('tokenSound', "sounds/jelly2.wav")

@@ -47,7 +47,7 @@
   "meta": {
     "app": "https://github.com/piskelapp/piskel/",
     "version": "1.0",
-    "image": "Mute Unmute.png",
+    "image": "MuteUnmute.png",
     "format": "RGBA8888",
     "size": {
       "w": 32,
