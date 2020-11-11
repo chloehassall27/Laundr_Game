@@ -20,7 +20,7 @@ export default class Spawner {
         house.anchor.set(0, 1);
         house.x = Math.random() * 4 *WIDTH/5;
         house.y = 4 * HEIGHT / 5;
-        house.scale.set(1.5);
+        house.scale.set(1.7);
         house.zIndex = 0;
         
         container.addChild(house);
@@ -33,7 +33,7 @@ export default class Spawner {
         house.anchor.set(0, 1);
         house.x = WIDTH;
         house.y = 4 * HEIGHT / 5;
-        house.scale.set(1.5);
+        house.scale.set(1.7);
         house.zIndex = 0;
         
         container.addChild(house);
