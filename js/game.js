@@ -1,6 +1,9 @@
 /*
   current bugs:
-   - Jump/duck spam
+   - None known
+
+   Test:
+   - Touch inputs on buttons on rest of page (maybe copy their 404 page and try testing what it will look like on there)
 */
 
 import Spawner from "./spawner.js"
@@ -25,6 +28,9 @@ const app = new PIXI.Application({
   width: WIDTH, height: HEIGHT, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
+
+window.topOffset = app.view.offsetTop;
+window.bottomY = topOffset + HEIGHT;
 
 //app.ticker.add(gameLoop);
 
@@ -339,34 +345,25 @@ function createNoises() {
 // Keypress functions
 window.addEventListener("keydown", keysDown);
 window.addEventListener("keyup", keysUp);
-let keys = {};
-function keysDown(e) {
-  // console.log(e.key);
-  // keys[e.keyCode] = true;
 
+function keysDown(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     inputs.jump = true;
-    if (!started && firstLoad) {
-      //make the noises (they can only be created/started after player interraction due to PIXI limitations)
+    if (!started && firstLoad)
       startGame();
-    }
-    if (gameOver && (performance.now() - timeout > 600)) {
+    if (gameOver && (performance.now() - timeout > 600))
       onClickRestart();
-    }
+  }
 
-  }
-  if (e.key == "ArrowDown") {
+  if (e.key == "ArrowDown")
     inputs.duck = true;
-  }
 }
 
 function keysUp(e) {
-  if (e.key == "ArrowUp" || e.key == " ") {
+  if (e.key == "ArrowUp" || e.key == " ")
     inputs.jump = false;
-  }
-  if (e.key == "ArrowDown") {
+  if (e.key == "ArrowDown")
     inputs.duck = false;
-  }
 }
 
 
@@ -376,75 +373,84 @@ app.view.addEventListener("touchend", touchEnd, false);
 app.view.addEventListener("touchcancel", touchCancel, false);
 app.view.addEventListener("touchmove", touchMove, false);
 
+let currentTouchID = -1;
+
 function touchStart(e) {
   // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
   for (var i = 0; i < e.targetTouches.length; i++) {
     let touch = e.targetTouches[i]
-    console.log(touch);
+
+    // If there's no current touch, then set this touch to be the current one
+    if (currentTouchID === -1) currentTouchID = touch.identifier
+    
+    // We only care about the current touch, so skip if this isn't it
+    if(touch.identifier !== currentTouchID) continue;
+
     // Top 2/3 of the canvas will call the jump function
-    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
+    if (touch.pageY < (2 * HEIGHT * RESOLUTION / 3) + topOffset) {
       inputs.jump = true;
 
-      if (!started && firstLoad) {
-        //make the noises (they can only be created/started after player interraction due to PIXI limitations)
+      if (!started && firstLoad) 
         startGame();
-      }
 
+      // We only care about the current touch, so breaking here will stop the rest of the touches from even being checked
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
-    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
+    else if (touch.pageY > (HEIGHT * RESOLUTION / 3) + topOffset)
       inputs.duck = true;
-      break;
-    }
 
   }
 }
 
-function touchEnd(e) {
-  // console.log(e);
-  for (var i = 0; i < e.changedTouches.length; i++) {
-    let touch = e.changedTouches[i]
-    // console.log(touch);
-
-    // Top 2/3 of the canvas will stop the jump function
-    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
-      inputs.jump = false;
-      break;
-    }
-
-    // Bottom 1/3 of the canvas will stop the duck function
-    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
-      inputs.duck = false;
-      break;
-    }
-  }
-}
-
-function touchCancel(e) {
-  // console.log("cancel");
-}
-
-// May not work with multitouch!
 function touchMove(e) {
-  // console.log(e);
   for (var i = 0; i < e.changedTouches.length; i++) {
     let touch = e.changedTouches[i]
-    // console.log(touch);
+
+    // We only care about the current touch
+    if(touch.identifier !== currentTouchID) continue;
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
-    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
+    if (touch.pageY < (2 * HEIGHT * RESOLUTION / 3) + topOffset) {
       inputs.jump = true;
       inputs.duck = false;
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
+    else if (touch.pageY > (HEIGHT * RESOLUTION / 3) + topOffset) {
       inputs.duck = true;
       inputs.jump = false;
       break;
     }
   }
+}
+
+function touchEnd(e) {
+  let oldTouchID = currentTouchID;
+
+  // Set currentTouchID to most recent touch that's not the one being released that is within the canvas
+  for (var i = 0; i < e.touches.length; i++) {
+    if (e.touches[i].pageY < HEIGHT * RESOLUTION) currentTouchID = e.touches[i].identifier;
+  }
+  
+  if(currentTouchID === oldTouchID) currentTouchID = -1;
+
+  for (var i = 0; i < e.changedTouches.length; i++) {
+    let touch = e.changedTouches[i]
+
+    // Only check with the current touchID
+    if(touch.identifier !== oldTouchID) continue;
+
+    inputs.jump = false;
+    inputs.duck = false;
+
+    break;
+  }
+}
+
+function touchCancel(e) {
+  inputs.jump = false;
+  inputs.duck = false;
 }
 
 function increaseSpeedScale() {
