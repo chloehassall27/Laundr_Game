@@ -1,21 +1,8 @@
 /*
-HEY MAKE SURE THAT WHEN YOU PUSH YOU PUSH TO 
-https://github.com/kylehassall27/Laundr_Game.git
-
-it looks like simran forked off of kyle's thing?? idk but i had to change my defualt origin to push to, so double check you have the right one!
-
   current bugs:
-   - i copy pasted their game.js and lost our notes :'(
-   - hitArea needs to be updated on jump and duck
-   - hitAreas need to be updated in general to reflect the changed size of things
-   - locations things spawn at (mostly the y values of irons, i think) need to be updated
-   - speed at which obstacles move leftward should increase over time until it hits a max
-      - i replayed dino game and i think they might have only increased speed and not decreased spawn times? idk, let's just try increasing speed and see if we need to edit other stuff, i do think it needs to go faster in general or else it's too easy/boring (play dino game for ref)
-   - starting sprite for player should be one of the ducking ones (so that it starts on the ground, not mid run, and then it jumps up when player starts game and starts running)
-   - the whole "pause when leave tab" thing
+   - Jump/duck spam
 */
 
-//import sound from 'pixi-sound';
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
@@ -23,23 +10,42 @@ const HEIGHT = 225;
 const WIDTH = HEIGHT * 4;
 let RESOLUTION = window.devicePixelRatio || 1;
 
+const style = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
+});
+const scoreStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: 23, fill: '#4b4b4b'
+})
+const highscoreStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: 23, fill: '#7c7c7c',
+})
+
 // === Basic app setup === //
 const app = new PIXI.Application({
   width: WIDTH, height: HEIGHT, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
 
-app.ticker.add(gameLoop);
+//app.ticker.add(gameLoop);
+
+// Basic game variables
 let spawner;
 let player;
 let background;
+let backgroundFront, backgroundBack;
 const groundY = HEIGHT - (HEIGHT * .1);
 
-// Basic game variables
 let win = false;
 let lose = false;
 let gameOver = false;
 let gameStart = false;
+let speedScale = 1.0;
+let focus = true;
+let visible = true;
+let winTriggered = false;
+let winTimeout;
+let timeOffset;
+let firstLoop = true;
 
 let inputs = {
   jump: false,
@@ -47,10 +53,14 @@ let inputs = {
   prevDuck: false
 };
 
+let restartButton;
+let score;
+let scoreText = new PIXI.Text(score, scoreStyle);
+scoreText.x = WIDTH / 1.07;
 
-
-let started = false;
-let spawnerInterval;
+let highscore = 0;
+let highscoreText = new PIXI.Text(highscore, highscoreStyle);
+highscoreText.x = WIDTH / 1.21;
 
 //noises
 let deathS;
@@ -59,6 +69,12 @@ let tokenS;
 let winS;
 // === End basic app setup === //
 
+let started = false;
+let firstLoad = true;
+let spawnerInterval;
+let speedInterval;
+let gameInterval;
+let timeout = 0;
 
 
 // === Sprite setup === //
@@ -66,80 +82,160 @@ app.loader
   .add('charaSheet', "sprites/charaSpriteSheet.json")
   .add('obSheet', "sprites/obstacleSprites.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
+  .add('buttonSheet', "sprites/PodsAndButtons.json")
   .add('deathSound', "sounds/death.wav")
   .add('jumpSound', "sounds/jump.wav")
   .add('tokenSound', "sounds/jelly2.wav")
-  .add('winSound', "sounds/BETTERWin3.wav")
-  .load((loader, resources) => {
-     //create tiling sprite that can be scrolled infinitely
-     let bgTexture = PIXI.Texture.from("../sprites/background.png");
-     background = new PIXI.TilingSprite(bgTexture, WIDTH, 225);
-     background.tileScale.set(0.25);
-     app.stage.addChild(background);
- 
-     //create player object - handles jumping + ducking
-     player = new Player(HEIGHT, WIDTH, app);
-     player.currSprite.stop();
- 
-     //create our spawner - handles obstacles + tokens
-     spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
-   });
+  .add('winSound', "sounds/BETTERWin3.wav");
+
+load();
+
+function load() {
+  app.loader
+    .load((loader, resources) => {
+      score = 0;
+
+      //create tiling sprite that can be scrolled infinitely
+      //currently set up for parallax effect, if disliked, switch which things are commented out
+
+      //for non parallax (everything moves together)
+      //let bgTexture = PIXI.Texture.from("../sprites/background.png");
+      //background = new PIXI.TilingSprite(bgTexture, WIDTH, HEIGHT);
+      //background.tileScale.set(0.25);
+      //app.stage.addChild(background);
+
+      //for parallax (background moves slower than foreground)
+      let bgTextureFront = PIXI.Texture.from("../sprites/background_road.png");
+      let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
+      backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
+      backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
+      backgroundFront.tileScale.set(0.25);
+      backgroundFront.y = HEIGHT - 50.25;
+      backgroundBack.tileScale.set(0.25);
+      app.stage.addChild(backgroundBack);
+      app.stage.addChild(backgroundFront);
+
+
+      createNoises();
+
+      //create player object - handles jumping + ducking
+      player = new Player(HEIGHT, WIDTH, app, jumpS);
+      player.currSprite.stop();
+
+      //create our spawner - handles obstacles + tokens
+      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
+
+      //ensure things speed up over time
+      speedInterval = setInterval(increaseSpeedScale, 20000);
+
+      //restart functionality stuff
+      restartButton = new PIXI.Sprite(app.loader.resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
+      restartButton.scale.set(0.3)
+      restartButton.anchor.set(0.5)
+      restartButton.x = WIDTH / 2
+      restartButton.y = HEIGHT / 1.75
+
+      restartButton.interactive = true
+      restartButton.buttonMode = true
+
+      restartButton.on('pointerdown', onClickRestart);
+
+      gameInterval = setInterval(gameLoop, 7);
+    })
+}
 
 // === Main game loop === //
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
-    moveBackground();
-
-    player.updatePos(inputs.jump);
-
-    if (inputs.duck) player.duck();
-    else if (!inputs.duck && inputs.prevDuck) player.reset();
-    inputs.prevDuck = inputs.duck;
-
-    //we should try to move this into like a spawner.moveSprites() function or something
-    for (var i = 0; i < spawner.obstacles.length; i++) {
-      const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-      spawner.obstacles[i].x -= 3.5;
-      spawner.obstacles[i].hitArea.x -= 3.5;
-
-      //check collision
-      if (checkCollision(player.currSprite, spawner.obstacles[i])) {
-        lose = true;
-        endGame();
+    checkFocus();
+    if (focus && visible) {
+      if (firstLoop) {
+        timeOffset = performance.now();
+        firstLoop = false;
+        app.stage.addChild(scoreText);
       }
 
-      //remove box if it's offscreen
-      if (xBox === 0) {
-        app.stage.removeChild(spawner.obstacles[i]);
-        spawner.obstacles.shift();
+      moveBackground();
+      displayScore();
+
+      //jump + duck stuff
+      player.updateJump(inputs);
+      player.updateDuck(inputs);
+
+      //we should try to move this into like a spawner.moveSprites() function or something
+      for (var i = 0; i < spawner.obstacles.length; i++) {
+        const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
+        spawner.obstacles[i].x -= 3.5 * speedScale;
+        spawner.obstacles[i].hitArea.x -= 3.5 * speedScale;
+
+        //check collision
+        if (checkCollision(player.currSprite, spawner.obstacles[i])) {
+          lose = true;
+          endGame();
+        }
+
+        //remove box if it's offscreen
+        if (xBox === 0) {
+          app.stage.removeChild(spawner.obstacles[i]);
+          spawner.obstacles.shift();
+        }
       }
+      for (var i = 0; i < spawner.tokens.length; i++) {
+        const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
+        spawner.tokens[i].x -= 3.5 * speedScale;
+        spawner.tokens[i].hitArea.x -= 3.5 * speedScale;
+
+        if (checkCollision(player.currSprite, spawner.tokens[i]))
+          collectToken(i);
+
+        if (xBox === 0) {
+          app.stage.removeChild(tokens[i]);
+          spawner.tokens.shift();
+        }
+      }
+
+      //check if it's time to win!
+      if ((performance.now() - timeOffset) > 300000 && !winTriggered) {
+        win = true;
+        winTriggered = true;
+        spawner.gameOver = true;
+        winTimeout = setTimeout(endGame, 3000);
+      }
+
     }
-    for (var i = 0; i < spawner.tokens.length; i++) {
-      const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-      spawner.tokens[i].x -= 1.9;
-      spawner.tokens[i].hitArea.x -= 1.9;
-
-      if (checkCollision(player.currSprite, spawner.tokens[i]))
-        collectToken(i);
-
-      if (xBox === 0) {
-        app.stage.removeChild(tokens[i]);
-        spawner.tokens.shift();
-      }
-    }
+  } else if (gameOver && player && player.needsFall) {
+    endGameFall();
   }
 }
 
-// Collision
+// Display the current score
+function displayScore() {
+  score += .01;
+  scoreText.text = Math.round(score);
+
+  // app.stage.addChild(scoreText);
+
+  displayHighScore();
+}
+
+//display the highest score
+function displayHighScore() {
+  if (highscore > 0) {
+    highscoreText.text = 'HI ' + Math.round(highscore);
+    app.stage.addChild(highscoreText);
+  }
+}
+
+//collision
 function checkCollision(a, b) {
   const aBox = a.hitArea;
   const bBox = b.hitArea;
 
-  let playerRight = aBox.x; //200
-  let playerLeft = aBox.x + aBox.width; //125
-  let playerBottom = aBox.y; //202.5
-  let playerTop = aBox.y + aBox.height; //153.02
+  let playerRight = aBox.x;
+  let playerLeft = aBox.x + aBox.width;
+  let playerBottom = aBox.y;
+  let playerTop = aBox.y + aBox.height;
 
   let obsLeft = bBox.x;
   let obsRight = bBox.x + bBox.width;
@@ -155,43 +251,65 @@ function checkCollision(a, b) {
 function endGame() {
   //call whatever clean up is needed, trigger popups, etc..
   gameOver = true;
-  player.endGame();
+  player.endGame(win);
   spawner.endGame();
+  started = false;
+  timeout = performance.now();
+  clearTimeout(winTimeout);
 
   if (lose) deathS.play();
   else if (win) winS.play();
 
-  //lil message for testing
-  let message = new PIXI.Text("game over, hit detected!");
-  message.y = 10;
-  message.x = 10;
+  if (score > highscore) {
+    highscore = score;
+    displayHighScore();
+  }
+
+  let message;
+  if (lose) message = new PIXI.Text('G A M E  O V E R', style);
+  else if (win) message = new PIXI.Text('W I N N E R', style);
+  message.x = WIDTH / 2.6;
+  message.y = HEIGHT / 4;
+
   app.stage.addChild(message);
+  app.stage.addChild(restartButton);
+}
+
+// restart game on command
+function onClickRestart() {
+  app.stage.removeChild(restartButton);
+  cleanUp();
+  load();
+  player.switchSprite(player.running);
+  player.ducking.play();
+  startGame();
 }
 
 function collectToken(index) {
   //whatever score stuff has to happen here, noises, etc
   spawner.collectToken(index);
   tokenS.play();
-
-  //lil message for testing
-  let message = new PIXI.Text("token collected!");
-  message.y = 10;
-  message.x = 10;
-  app.stage.addChild(message);
-  setTimeout(function () {
-    app.stage.removeChild(message)
-  }, 1000);
+  score += 25;
 }
 
 function cleanUp() {
   clearInterval(spawnerInterval);
-  spawner = new Spawner(HEIGHT, WIDTH, app);
-  started = false;
+  clearInterval(speedInterval);
+  gameOver = false;
+  started = true;
+  win = false;
+  lose = false;
+  score = 0;
+  speedScale = 1.0;
+  player.needsFall = false;
+  player.fallComplete = false;
+  winTriggered = false;
+  firstLoop = true;
+  clearInterval(gameInterval);
+
 }
 
 function startGame() {
-  //make the noises (they can only be created/started after player interraction due to PIXI limitations)
-  createNoises();
   //now the player sprite is allowed to animate
   player.currSprite.play();
   //fire the initial obstacle spawn (which will call all other spawns)
@@ -200,6 +318,7 @@ function startGame() {
   spawnerInterval = setInterval(spawner.decreaseInterval(), 3000);
 
   started = true;
+  firstLoad = false;
 }
 
 function createNoises() {
@@ -214,107 +333,179 @@ function createNoises() {
 }
 
 // === Helper functions === //
-  // Keypress functions
-  window.addEventListener("keydown", keysDown);
-  window.addEventListener("keyup", keysUp);
-  function keysDown(e) {
-    // console.log(e.key);
-    if(e.key == "ArrowUp" || e.key == " "){
+// Keypress functions
+window.addEventListener("keydown", keysDown);
+window.addEventListener("keyup", keysUp);
+let keys = {};
+function keysDown(e) {
+  // console.log(e.key);
+  // keys[e.keyCode] = true;
+
+  if (e.key == "ArrowUp" || e.key == " ") {
+    inputs.jump = true;
+    if (!started && firstLoad) {
+      //make the noises (they can only be created/started after player interraction due to PIXI limitations)
+      startGame();
+    }
+    if (gameOver && (performance.now() - timeout > 600)) {
+      onClickRestart();
+    }
+
+  }
+  if (e.key == "ArrowDown") {
+    inputs.duck = true;
+  }
+}
+
+function keysUp(e) {
+  if (e.key == "ArrowUp" || e.key == " ") {
+    inputs.jump = false;
+  }
+  if (e.key == "ArrowDown") {
+    inputs.duck = false;
+  }
+}
+
+
+// Touchevent functions
+app.view.addEventListener("touchstart", touchStart, false);
+app.view.addEventListener("touchend", touchEnd, false);
+app.view.addEventListener("touchcancel", touchCancel, false);
+app.view.addEventListener("touchmove", touchMove, false);
+
+function touchStart(e) {
+  // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
+  for (var i = 0; i < e.targetTouches.length; i++) {
+    let touch = e.targetTouches[i]
+    // console.log(touch);
+    // Top 2/3 of the canvas will call the jump function
+    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
       inputs.jump = true;
-      if (!started) startGame();
+
+      if (!started && firstLoad) {
+        //make the noises (they can only be created/started after player interraction due to PIXI limitations)
+        startGame();
+      }
+
+      break;
     }
-    if(e.key == "ArrowDown"){
+    // Bottom 1/3 of the canvas will call the duck function
+    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
       inputs.duck = true;
+      break;
     }
+
   }
-        
-  function keysUp(e) {
-    if(e.key == "ArrowUp" || e.key == " "){
+}
+
+function touchEnd(e) {
+  // console.log(e);
+  for (var i = 0; i < e.changedTouches.length; i++) {
+    let touch = e.changedTouches[i]
+    // console.log(touch);
+
+    // Top 2/3 of the canvas will stop the jump function
+    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
       inputs.jump = false;
+      break;
     }
-    if(e.key == "ArrowDown"){
+
+    // Bottom 1/3 of the canvas will stop the duck function
+    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
       inputs.duck = false;
+      break;
     }
   }
+}
 
-  
-  // Touchevent functions
-  app.view.addEventListener("touchstart", touchStart, false);
-  app.view.addEventListener("touchend", touchEnd, false);
-  app.view.addEventListener("touchcancel", touchCancel, false);
-  app.view.addEventListener("touchmove", touchMove, false);
+function touchCancel(e) {
+  // console.log("cancel");
+}
 
-  function touchStart(e) {
-    // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
-    for (var i=0; i < e.targetTouches.length; i++) {
-      let touch = e.targetTouches[i]
-      // console.log(touch);
-      // Top 2/3 of the canvas will call the jump function
-      if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
-        inputs.jump = true;
-        if (!started) startGame();
-        break;
-      }
-      // Bottom 1/3 of the canvas will call the duck function
-      else if (touch.pageY > HEIGHT*RESOLUTION/3) {
-        inputs.duck = true;
-        break;
-      }
+// May not work with multitouch!
+function touchMove(e) {
+  // console.log(e);
+  for (var i = 0; i < e.changedTouches.length; i++) {
+    let touch = e.changedTouches[i]
+    // console.log(touch);
+
+    // Top 2/3 of the canvas will call the jump function and stop the duck function
+    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
+      inputs.jump = true;
+      inputs.duck = false;
+      break;
+    }
+    // Bottom 1/3 of the canvas will call the duck function and stop the jump function
+    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
+      inputs.duck = true;
+      inputs.jump = false;
+      break;
     }
   }
+}
 
-  function touchEnd(e) {
-    // console.log(e);
-    for (var i=0; i < e.changedTouches.length; i++) {
-      let touch = e.changedTouches[i]
-      // console.log(touch);
+function increaseSpeedScale() {
+  speedScale += 0.02;
+  if (speedScale >= 1.3) {
+    clearInterval(speedInterval);
+  }
+}
 
-      // Top 2/3 of the canvas will stop the jump function
-      if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
-        inputs.jump = false;
-        break;
-      }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    console.log("hidden!");
+    visible = false;
+    spawner.loseFocus();
+  }
+  else if (document.visibilityState === 'visible') {
+    visible = true;
+    spawner.gainFocus();
+  }
+});
 
-      // Bottom 1/3 of the canvas will stop the duck function
-      else if (touch.pageY > HEIGHT*RESOLUTION/3) {
-        inputs.duck = false;
-        break;
-      }
+function checkFocus() {
+  if (document.hasFocus()) {
+    spawner.gainFocus();
+    focus = true;
+    player.running.play();
+
+    for (let i = 0; i < spawner.obstacles.length; i++) {
+      spawner.obstacles[i].play();
+    }
+    for (let i = 0; i < spawner.tokens.length; i++) {
+      spawner.tokens[i].play();
+    }
+
+  } else if (!document.hasFocus()) {
+    spawner.loseFocus();
+    focus = false;
+
+    player.running.stop();
+    for (let i = 0; i < spawner.obstacles.length; i++) {
+      spawner.obstacles[i].stop();
+    }
+    for (let i = 0; i < spawner.tokens.length; i++) {
+      spawner.tokens[i].stop();
     }
   }
-
-  function touchCancel(e) {
-    // console.log("cancel");
-  }
-
-  // May not work with multitouch!
-  function touchMove(e) {
-    // console.log(e);
-    for (var i=0; i < e.changedTouches.length; i++) {
-      let touch = e.changedTouches[i]
-      // console.log(touch);
-
-      // Top 2/3 of the canvas will call the jump function and stop the duck function
-      if (touch.pageY < 2*HEIGHT*RESOLUTION/3) {
-        inputs.jump = true;
-        inputs.duck = false;
-        break;
-      }
-      // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-      else if (touch.pageY > HEIGHT*RESOLUTION/3) {
-        inputs.duck = true;
-        inputs.jump = false;
-        break;
-      }
-    }
-  }
+}
 
 // === End helper functions === //
 
 // === Game functions === //
 function moveBackground() {
-  //change the '1' to whatever speed is best :)
-  background.tilePosition.x -= 1;
+  //non parallax
+  //background.tilePosition.x -= 3.5*speedScale;
+
+  //parallax
+  backgroundFront.tilePosition.x -= 3.5 * speedScale;
+  backgroundBack.tilePosition.x -= 1.2 * speedScale;
+}
+
+function endGameFall() {
+  if (!player.fallComplete && player.needsFall) {
+    player.endGameFall();
+  }
 }
 
 // === End game functions === //
