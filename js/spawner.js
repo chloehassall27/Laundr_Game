@@ -23,8 +23,6 @@ export default class Spawner {
     startTime;
     firstSpawn = true;
 
-    playerBaseY;
-
     obstacles = [];
     tokens = [];
 
@@ -32,11 +30,10 @@ export default class Spawner {
     focus = true;
 
 
-    constructor(HEIGHT, WIDTH, app, playerBaseY) {
+    constructor(HEIGHT, WIDTH, app) {
         this.app = app;
         this.HEIGHT = HEIGHT;
         this.WIDTH = WIDTH;
-        this.playerBaseY = playerBaseY;
 
         this.walkingLevel = HEIGHT - (HEIGHT * 0.25);
         this.jumpLevel = HEIGHT - (HEIGHT * 0.6);
@@ -45,8 +42,8 @@ export default class Spawner {
 
         this.obstScale = this.HEIGHT / (this.HEIGHT * 2.41);
         this.tokenScale = this.HEIGHT / (this.HEIGHT * 2.6);
-        this.ironRandScale = (this.playerBaseY / 2 + this.HEIGHT * 0.135) - (this.playerBaseY / 2 + this.HEIGHT * 0.4) + 1;
-        this.ironRandAdd = this.playerBaseY / 2 + this.HEIGHT * 0.32;
+        this.ironRandScale = (window.groundLevel / 2 + this.HEIGHT * 0.135) - (window.groundLevel / 2 + this.HEIGHT * 0.4) + 1;
+        this.ironRandAdd = window.groundLevel / 2 + this.HEIGHT * 0.32;
 
         let rand = Math.floor(Math.random() * (10 - 5)) + 4;
         setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
@@ -170,9 +167,9 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(100, this.playerBaseY / 2 - this.HEIGHT * 0.05, "ironSprite");
-            this.buildObstacles(0, this.playerBaseY / 2 + this.HEIGHT * 0.1, "ironSprite");
-            this.buildObstacles(85, this.playerBaseY / 2 + this.HEIGHT * 0.2, "ironSprite");
+            this.buildObstacles(100, window.groundLevel / 2 - this.HEIGHT * 0.05, "ironSprite");
+            this.buildObstacles(0, window.groundLevel / 2 + this.HEIGHT * 0.1, "ironSprite");
+            this.buildObstacles(85, window.groundLevel / 2 + this.HEIGHT * 0.2, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
             let yPos = Math.floor(Math.random() * this.ironRandScale) + this.ironRandAdd;

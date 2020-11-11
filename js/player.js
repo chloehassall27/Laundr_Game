@@ -33,10 +33,10 @@ export default class Player {
         this.createSprites();
     }
 
-    updateJump(inputs) {
+    updateJump() {
         // If the player is on the ground, not ducking, and trying to jump, start the jump sequence with an initial jump speed
-        if (this.currSprite.y == this.groundLevel && !inputs.duck && inputs.jump) {
-            this.jumpS.play();
+        if (this.currSprite.y == this.groundLevel && !window.inputs.duck && window.inputs.jump) {
+            if (!window.mute) this.jumpS.play();
             this.speedY = 3.5;
             this.switchSprite(this.jumpStatic);
             // this.switchSprite(this.jumping);
@@ -56,7 +56,7 @@ export default class Player {
         }
 
         // If player is rising and holding jump, keep them up longer
-        if (this.speedY > 0 && inputs.jump) {
+        if (this.speedY > 0 && window.inputs.jump) {
             this.speedY += .06;
         }
 
@@ -69,8 +69,8 @@ export default class Player {
         this.currSprite.hitArea.y -= this.speedY;
     }
 
-    updateDuck(inputs) {
-        if(inputs.duck){
+    updateDuck() {
+        if(window.inputs.duck){
             // If ducking on (or below) ground, use ducking sprite
             if (this.currSprite.y >= this.groundLevel) 
                 this.switchSprite(this.ducking);
@@ -110,12 +110,12 @@ export default class Player {
                 let hold = this.currSprite.y;
                 this.switchSprite(this.falling);
                 this.currSprite.y = hold;
-                this.falling.play();
+                this.falling.gotoAndPlay(0);
                 this.needsFall = true;
             }
             else {
                 this.switchSprite(this.falling);
-                this.falling.play();
+                this.falling.gotoAndPlay(0);
             }
         } else {
             this.ducking.stop();

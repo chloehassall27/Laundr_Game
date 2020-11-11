@@ -31,9 +31,9 @@ document.body.appendChild(app.view);
 // Basic game variables
 let spawner;
 let player;
-let background;
+// let background;
 let backgroundFront, backgroundBack;
-const groundY = HEIGHT - (HEIGHT * .1);
+window.groundLevel = HEIGHT - (HEIGHT * .1);
 
 let win = false;
 let lose = false;
@@ -42,19 +42,22 @@ let gameStart = false;
 let speedScale = 1.0;
 let focus = true;
 let visible = true;
+window.mute = false;
 let winTriggered = false;
 let winTimeout;
 let timeOffset;
 let firstLoop = true;
+let endMessage;
 
-let inputs = {
+window.inputs = {
   jump: false,
   duck: false,
   prevDuck: false
 };
 
 let restartButton;
-let score;
+let muteButton;
+let score = 0;
 let scoreText = new PIXI.Text(score, scoreStyle);
 scoreText.x = WIDTH / 1.07;
 
@@ -67,7 +70,6 @@ let deathS;
 let jumpS;
 let tokenS;
 let winS;
-// === End basic app setup === //
 
 let started = false;
 let firstLoad = true;
@@ -75,7 +77,7 @@ let spawnerInterval;
 let speedInterval;
 let gameInterval;
 let timeout = 0;
-
+// === End basic app setup === //
 
 // === Sprite setup === //
 app.loader
@@ -83,18 +85,17 @@ app.loader
   .add('obSheet', "sprites/obstacleSprites.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
   .add('buttonSheet', "sprites/PodsAndButtons.json")
+  .add('muteSheet', "sprites/Mute Unmute.json")
   .add('deathSound', "sounds/death.wav")
   .add('jumpSound', "sounds/jump.wav")
   .add('tokenSound', "sounds/jelly2.wav")
   .add('winSound', "sounds/BETTERWin3.wav");
 
-load();
+loadOnce();
 
-function load() {
+function loadOnce(){
   app.loader
     .load((loader, resources) => {
-      score = 0;
-
       //create tiling sprite that can be scrolled infinitely
       //currently set up for parallax effect, if disliked, switch which things are commented out
 
@@ -115,33 +116,46 @@ function load() {
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
 
-
       createNoises();
+      
+      // Mute/unmute button
+      muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
+      muteButton.on('pointerdown', onClickMute);
+      muteButton.interactive = true
+      muteButton.buttonMode = true
+      app.stage.addChild(muteButton);
 
       //create player object - handles jumping + ducking
       player = new Player(HEIGHT, WIDTH, app, jumpS);
       player.currSprite.stop();
-
-      //create our spawner - handles obstacles + tokens
-      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
-
-      //ensure things speed up over time
-      speedInterval = setInterval(increaseSpeedScale, 20000);
-
+      
+      
       //restart functionality stuff
       restartButton = new PIXI.Sprite(app.loader.resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
       restartButton.scale.set(0.3)
       restartButton.anchor.set(0.5)
       restartButton.x = WIDTH / 2
       restartButton.y = HEIGHT / 1.75
-
       restartButton.interactive = true
       restartButton.buttonMode = true
-
       restartButton.on('pointerdown', onClickRestart);
+    });
 
-      gameInterval = setInterval(gameLoop, 7);
-    })
+  reload();
+}
+
+function reload() {
+  app.loader
+    .load((loader, resources) => {
+      //create our spawner - handles obstacles + tokens
+      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
+      player.speedY = 0;
+      player.currSprite.y = player.groundLevel;
+      player.currSprite.hitArea.y = player.groundLevel;
+    });
+      
+    speedInterval = setInterval(increaseSpeedScale, 20000);
+    gameInterval = setInterval(gameLoop, 7);
 }
 
 // === Main game loop === //
@@ -257,32 +271,40 @@ function endGame() {
   timeout = performance.now();
   clearTimeout(winTimeout);
 
-  if (lose) deathS.play();
-  else if (win) winS.play();
+  if (!mute){
+    if (lose) deathS.play();
+    else if (win) winS.play();
+  }
 
   if (score > highscore) {
     highscore = score;
     displayHighScore();
   }
 
-  let message;
-  if (lose) message = new PIXI.Text('G A M E  O V E R', style);
-  else if (win) message = new PIXI.Text('W I N N E R', style);
-  message.x = WIDTH / 2.6;
-  message.y = HEIGHT / 4;
+  if (lose) endMessage = new PIXI.Text('G A M E  O V E R', style);
+  else if (win) endMessage = new PIXI.Text('W I N N E R', style);
+  endMessage.x = WIDTH / 2.6;
+  endMessage.y = HEIGHT / 4;
 
-  app.stage.addChild(message);
+  app.stage.addChild(endMessage);
   app.stage.addChild(restartButton);
 }
 
 // restart game on command
 function onClickRestart() {
-  app.stage.removeChild(restartButton);
   cleanUp();
-  load();
+  reload();
+
   player.switchSprite(player.running);
   player.ducking.play();
   startGame();
+}
+
+function onClickMute(){
+  window.mute = !window.mute;
+  player.mute = window.mute;
+  if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
+  else muteButton.gotoAndStop(1);
 }
 
 function collectToken(index) {
@@ -307,6 +329,12 @@ function cleanUp() {
   firstLoop = true;
   clearInterval(gameInterval);
 
+  // Remove obstacles
+  for (var i = 0; i < spawner.obstacles.length; i++)
+      app.stage.removeChild(spawner.obstacles[i]);
+
+  app.stage.removeChild(endMessage);
+  app.stage.removeChild(restartButton);
 }
 
 function startGame() {
@@ -453,7 +481,7 @@ function increaseSpeedScale() {
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') {
-    console.log("hidden!");
+    // console.log("hidden!");
     visible = false;
     spawner.loseFocus();
   }
