@@ -174,8 +174,8 @@ function gameLoop() {
       displayScore();
 
       //jump + duck stuff
-      player.updateJump(inputs);
-      player.updateDuck(inputs);
+      player.updateJump();
+      player.updateDuck();
 
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
@@ -370,7 +370,7 @@ function keysDown(e) {
   // keys[e.keyCode] = true;
 
   if (e.key == "ArrowUp" || e.key == " ") {
-    inputs.jump = true;
+    window.inputs.jump = true;
     if (!started && firstLoad) {
       //make the noises (they can only be created/started after player interraction due to PIXI limitations)
       startGame();
@@ -381,16 +381,16 @@ function keysDown(e) {
 
   }
   if (e.key == "ArrowDown") {
-    inputs.duck = true;
+    window.inputs.duck = true;
   }
 }
 
 function keysUp(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
-    inputs.jump = false;
+    window.inputs.jump = false;
   }
   if (e.key == "ArrowDown") {
-    inputs.duck = false;
+    window.inputs.duck = false;
   }
 }
 
@@ -408,7 +408,7 @@ function touchStart(e) {
     // console.log(touch);
     // Top 2/3 of the canvas will call the jump function
     if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
-      inputs.jump = true;
+      window.inputs.jump = true;
 
       if (!started && firstLoad) {
         //make the noises (they can only be created/started after player interraction due to PIXI limitations)
@@ -419,7 +419,7 @@ function touchStart(e) {
     }
     // Bottom 1/3 of the canvas will call the duck function
     else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
-      inputs.duck = true;
+      window.inputs.duck = true;
       break;
     }
 
@@ -434,13 +434,13 @@ function touchEnd(e) {
 
     // Top 2/3 of the canvas will stop the jump function
     if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
-      inputs.jump = false;
+      window.inputs.jump = false;
       break;
     }
 
     // Bottom 1/3 of the canvas will stop the duck function
     else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
-      inputs.duck = false;
+      window.inputs.duck = false;
       break;
     }
   }
@@ -459,14 +459,14 @@ function touchMove(e) {
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
     if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
-      inputs.jump = true;
-      inputs.duck = false;
+      window.inputs.jump = true;
+      window.inputs.duck = false;
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function and stop the jump function
     else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
-      inputs.duck = true;
-      inputs.jump = false;
+      window.inputs.duck = true;
+      window.inputs.jump = false;
       break;
     }
   }
@@ -507,6 +507,9 @@ function checkFocus() {
   } else if (!document.hasFocus()) {
     spawner.loseFocus();
     focus = false;
+
+    window.inputs.duck = false;
+    window.inputs.jump = false;
 
     player.running.stop();
     for (let i = 0; i < spawner.obstacles.length; i++) {
