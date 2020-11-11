@@ -12,6 +12,7 @@ export default class Spawner {
     walkingLevel;
     jumpLevel;
     test;
+    player;
 
     obstScale;
     tokenScale;
@@ -32,11 +33,12 @@ export default class Spawner {
     focus = true;
 
 
-    constructor(HEIGHT, WIDTH, app, playerBaseY) {
+    constructor(HEIGHT, WIDTH, app, playerBaseY, player) {
         this.app = app;
         this.HEIGHT = HEIGHT;
         this.WIDTH = WIDTH;
         this.playerBaseY = playerBaseY;
+        this.player = player;
 
         this.walkingLevel = HEIGHT - (HEIGHT * 0.25);
         this.jumpLevel = HEIGHT - (HEIGHT * 0.6);
@@ -80,6 +82,41 @@ export default class Spawner {
         this.app.stage.addChild(obstacle);
         this.obstacles.push(obstacle);
 
+    }
+
+    moveSprites() {
+        for (var i = 0; i < this.obstacles.length; i++) {
+            const xBox = this.obstacles[i].getBounds().x + this.obstacles[i].getBounds().width;
+            this.obstacles[i].x -= 3.5 * speedScale;
+            this.obstacles[i].hitArea.x -= 3.5 * speedScale;
+    
+            //check collision
+            if (checkCollision(this.player.currSprite, this.obstacles[i])) {
+              lose = true;
+              endGame();
+            }
+    
+            //remove box if it's offscreen
+            if (xBox === 0) {
+              app.stage.removeChild(this.obstacles[i]);
+              this.obstacles.shift();
+              i--;
+            }
+          }
+          for (var i = 0; i < this.tokens.length; i++) {
+            const xBox = this.tokens[i].getBounds().x + this.tokens[i].getBounds().width;
+            this.tokens[i].x -= 3.5 * speedScale;
+            this.tokens[i].hitArea.x -= 3.5 * speedScale;
+    
+            if (checkCollision(this.player.currSprite, this.tokens[i]))
+              collectToken(i);
+    
+            if (xBox === 0) {
+              app.stage.removeChild(this.tokens[i]);
+              this.tokens.shift();
+              i--;
+            }
+          }
     }
 
     buildToken() {

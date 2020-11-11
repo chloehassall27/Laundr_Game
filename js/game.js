@@ -4,10 +4,11 @@
 */
 
 import Spawner from "./spawner.js"
+import HouseGen from "./houseGen.js"
 import Player from "./player.js"
 
-const HEIGHT = 225;
-const WIDTH = HEIGHT * 4;
+window.HEIGHT = 225;
+window.WIDTH = HEIGHT * 4;
 let RESOLUTION = window.devicePixelRatio || 1;
 
 const style = new PIXI.TextStyle({
@@ -26,20 +27,26 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
+window.container = new PIXI.Container()
+container.sortableChildren = true;
+
+
+// === End basic app setup === //
 //app.ticker.add(gameLoop);
 
 // Basic game variables
 let spawner;
+let houseGen;
 let player;
 let background;
 let backgroundFront, backgroundBack;
 const groundY = HEIGHT - (HEIGHT * .1);
 
 let win = false;
-let lose = false;
+window.lose = false;
 let gameOver = false;
 let gameStart = false;
-let speedScale = 1.0;
+window.speedScale = 1.0;
 let focus = true;
 let visible = true;
 let winTriggered = false;
@@ -81,6 +88,7 @@ let timeout = 0;
 app.loader
   .add('charaSheet', "sprites/charaSpriteSheet.json")
   .add('obSheet', "sprites/obstacleSprites.json")
+  .add('houseSheet', "sprites/backgroundHouse.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
   .add('buttonSheet', "sprites/PodsAndButtons.json")
   .add('deathSound', "sounds/death.wav")
@@ -112,8 +120,11 @@ function load() {
       backgroundFront.tileScale.set(0.25);
       backgroundFront.y = HEIGHT - 50.25;
       backgroundBack.tileScale.set(0.25);
+      backgroundFront.zIndex = 3;
       app.stage.addChild(backgroundBack);
-      app.stage.addChild(backgroundFront);
+      // app.stage.addChild(backgroundFront);
+      container.addChild(backgroundFront);
+      app.stage.addChild(container);
 
 
       createNoises();
@@ -123,7 +134,9 @@ function load() {
       player.currSprite.stop();
 
       //create our spawner - handles obstacles + tokens
-      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
+      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel, player);
+
+      houseGen = new HouseGen(app);
 
       //ensure things speed up over time
       speedInterval = setInterval(increaseSpeedScale, 20000);
@@ -164,34 +177,16 @@ function gameLoop() {
       player.updateDuck(inputs);
 
       //we should try to move this into like a spawner.moveSprites() function or something
-      for (var i = 0; i < spawner.obstacles.length; i++) {
-        const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-        spawner.obstacles[i].x -= 3.5 * speedScale;
-        spawner.obstacles[i].hitArea.x -= 3.5 * speedScale;
+      spawner.moveSprites();
 
-        //check collision
-        if (checkCollision(player.currSprite, spawner.obstacles[i])) {
-          lose = true;
-          endGame();
-        }
-
-        //remove box if it's offscreen
-        if (xBox === 0) {
-          app.stage.removeChild(spawner.obstacles[i]);
-          spawner.obstacles.shift();
-        }
-      }
-      for (var i = 0; i < spawner.tokens.length; i++) {
-        const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-        spawner.tokens[i].x -= 3.5 * speedScale;
-        spawner.tokens[i].hitArea.x -= 3.5 * speedScale;
-
-        if (checkCollision(player.currSprite, spawner.tokens[i]))
-          collectToken(i);
+      for (var i = 0; i < houseGen.houses.length; i++) {
+        const xBox = houseGen.houses[i].getBounds().x + houseGen.houses[i].getBounds().width;
+        houseGen.houses[i].x -= 1.35 * speedScale;
 
         if (xBox === 0) {
-          app.stage.removeChild(tokens[i]);
-          spawner.tokens.shift();
+          container.removeChild(houseGen.houses[i]);
+          houseGen.houses.shift();
+          i--;
         }
       }
 
@@ -228,7 +223,7 @@ function displayHighScore() {
 }
 
 //collision
-function checkCollision(a, b) {
+window.checkCollision = function (a, b) {
   const aBox = a.hitArea;
   const bBox = b.hitArea;
 
@@ -248,7 +243,7 @@ function checkCollision(a, b) {
     return false;
 }
 
-function endGame() {
+window.endGame = function () {
   //call whatever clean up is needed, trigger popups, etc..
   gameOver = true;
   player.endGame(win);
@@ -285,7 +280,7 @@ function onClickRestart() {
   startGame();
 }
 
-function collectToken(index) {
+window.collectToken = function(index) {
   //whatever score stuff has to happen here, noises, etc
   spawner.collectToken(index);
   tokenS.play();
@@ -307,6 +302,11 @@ function cleanUp() {
   firstLoop = true;
   clearInterval(gameInterval);
 
+  // Clean up houses too
+  for (var i = 0; i < houseGen.houses.length; i++) {
+    container.removeChild(houseGen.houses[i]);
+  }
+  houseGen.houses.shift();
 }
 
 function startGame() {
@@ -456,16 +456,19 @@ document.addEventListener('visibilitychange', () => {
     console.log("hidden!");
     visible = false;
     spawner.loseFocus();
+    houseGen.loseFocus();
   }
   else if (document.visibilityState === 'visible') {
     visible = true;
     spawner.gainFocus();
+    houseGen.gainFocus();
   }
 });
 
 function checkFocus() {
   if (document.hasFocus()) {
     spawner.gainFocus();
+    houseGen.gainFocus();
     focus = true;
     player.running.play();
 
