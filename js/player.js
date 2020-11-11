@@ -20,14 +20,12 @@ export default class Player {
     
     jumpS;
 
-    constructor(HEIGHT, WIDTH, app ,jumpS) {
+    constructor(HEIGHT, WIDTH, app) {
         this.app = app;
         this.HEIGHT = HEIGHT;
         this.WIDTH = WIDTH;
 
         this.groundLevel = this.HEIGHT - (this.HEIGHT * .1);
-
-        this.jumpS = jumpS;
 
         //set up all the sprites
         this.createSprites();

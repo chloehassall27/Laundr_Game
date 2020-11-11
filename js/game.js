@@ -115,11 +115,8 @@ function load() {
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
 
-
-      createNoises();
-
       //create player object - handles jumping + ducking
-      player = new Player(HEIGHT, WIDTH, app, jumpS);
+      player = new Player(HEIGHT, WIDTH, app);
       player.currSprite.stop();
 
       //create our spawner - handles obstacles + tokens
@@ -152,8 +149,8 @@ function gameLoop() {
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
-        firstLoop = false;
         app.stage.addChild(scoreText);
+        firstLoop = false;
       }
 
       moveBackground();
@@ -310,6 +307,8 @@ function cleanUp() {
 }
 
 function startGame() {
+  createNoises();
+
   //now the player sprite is allowed to animate
   player.currSprite.play();
   //fire the initial obstacle spawn (which will call all other spawns)
@@ -322,14 +321,18 @@ function startGame() {
 }
 
 function createNoises() {
-  deathS = PIXI.sound.Sound.from(app.loader.resources.deathSound);
-  deathS.volume = 0.4;
-  jumpS = PIXI.sound.Sound.from(app.loader.resources.jumpSound);
-  jumpS.volume = 0.4;
-  tokenS = PIXI.sound.Sound.from(app.loader.resources.tokenSound);
-  tokenS.volume = 0.4;
-  winS = PIXI.sound.Sound.from(app.loader.resources.winSound);
-  winS.volume = 0.35;
+  app.loader
+    .load((loader, resources) => {
+      deathS = PIXI.sound.Sound.from(resources.deathSound);
+      deathS.volume = 0.4;
+      jumpS = PIXI.sound.Sound.from(resources.jumpSound);
+      jumpS.volume = 0.4;
+      player.jumpS = jumpS;
+      tokenS = PIXI.sound.Sound.from(resources.tokenSound);
+      tokenS.volume = 0.4;
+      winS = PIXI.sound.Sound.from(resources.winSound);
+      winS.volume = 0.35;
+    });
 }
 
 // === Helper functions === //
@@ -377,7 +380,7 @@ function touchStart(e) {
   // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
   for (var i = 0; i < e.targetTouches.length; i++) {
     let touch = e.targetTouches[i]
-    // console.log(touch);
+    console.log(touch);
     // Top 2/3 of the canvas will call the jump function
     if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
       inputs.jump = true;
