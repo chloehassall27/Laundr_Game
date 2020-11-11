@@ -6,9 +6,9 @@
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
-const HEIGHT = 225;
-const WIDTH = HEIGHT * 4;
-let RESOLUTION = window.devicePixelRatio || 1;
+window.HEIGHT = 225;
+window.WIDTH = HEIGHT * 4;
+window.RESOLUTION = window.devicePixelRatio || 1;
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
@@ -126,12 +126,12 @@ function loadOnce(){
       app.stage.addChild(muteButton);
 
       //create player object - handles jumping + ducking
-      player = new Player(HEIGHT, WIDTH, app, jumpS);
+      player = new Player(app, jumpS);
       player.currSprite.stop();
       
       
       //restart functionality stuff
-      restartButton = new PIXI.Sprite(app.loader.resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
+      restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
       restartButton.scale.set(0.3)
       restartButton.anchor.set(0.5)
       restartButton.x = WIDTH / 2
@@ -148,10 +148,10 @@ function reload() {
   app.loader
     .load((loader, resources) => {
       //create our spawner - handles obstacles + tokens
-      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
+      spawner = new Spawner(app);
       player.speedY = 0;
-      player.currSprite.y = player.groundLevel;
-      player.currSprite.hitArea.y = player.groundLevel;
+      player.currSprite.y = groundLevel;
+      player.currSprite.hitArea.y = groundLevel;
     });
       
     speedInterval = setInterval(increaseSpeedScale, 20000);
