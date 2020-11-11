@@ -6,8 +6,6 @@
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
-window.HEIGHT = 225;
-window.WIDTH = HEIGHT * 4;
 window.RESOLUTION = window.devicePixelRatio || 1;
 
 const style = new PIXI.TextStyle({
@@ -22,9 +20,12 @@ const highscoreStyle = new PIXI.TextStyle({
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: WIDTH, height: HEIGHT, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
+  width: 900, height: 225, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
+
+window.HEIGHT = app.screen.height;
+window.WIDTH = app.screen.width;
 
 //app.ticker.add(gameLoop);
 
@@ -163,6 +164,7 @@ function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
     checkFocus();
+    
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
@@ -407,7 +409,7 @@ function touchStart(e) {
     let touch = e.targetTouches[i]
     // console.log(touch);
     // Top 2/3 of the canvas will call the jump function
-    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
+    if (touch.pageY < 2 * HEIGHT / 3) {
       window.inputs.jump = true;
 
       if (!started && firstLoad) {
@@ -418,7 +420,7 @@ function touchStart(e) {
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
-    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
+    else if (touch.pageY > HEIGHT / 3) {
       window.inputs.duck = true;
       break;
     }
@@ -433,13 +435,13 @@ function touchEnd(e) {
     // console.log(touch);
 
     // Top 2/3 of the canvas will stop the jump function
-    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
+    if (touch.pageY < 2 * HEIGHT / 3) {
       window.inputs.jump = false;
       break;
     }
 
     // Bottom 1/3 of the canvas will stop the duck function
-    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
+    else if (touch.pageY > HEIGHT / 3) {
       window.inputs.duck = false;
       break;
     }
@@ -458,13 +460,13 @@ function touchMove(e) {
     // console.log(touch);
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
-    if (touch.pageY < 2 * HEIGHT * RESOLUTION / 3) {
+    if (touch.pageY < 2 * HEIGHT / 3) {
       window.inputs.jump = true;
       window.inputs.duck = false;
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-    else if (touch.pageY > HEIGHT * RESOLUTION / 3) {
+    else if (touch.pageY > HEIGHT / 3) {
       window.inputs.duck = true;
       window.inputs.jump = false;
       break;
