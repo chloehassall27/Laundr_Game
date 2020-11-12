@@ -69,7 +69,7 @@ export default class Spawner {
         //console.log(obstacle.getBounds());
 
         obstacle.animationSpeed = .125;
-        obstacle.play()
+        obstacle.play();
         this.app.stage.addChild(obstacle);
         this.obstacles.push(obstacle);
 
