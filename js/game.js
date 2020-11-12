@@ -225,7 +225,7 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 3000 && !winTriggered && !gameOver) {//300000
+      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
