@@ -1,35 +1,39 @@
 export default class Spawner {
-    interval = 1100;
-    intDecAmt = 0.85;
-    intRangeMax = 2500;
-    intRangeMin = 1100;
-    smallestInt = 200;
-    rangeMin;
-    tokenTime;
-    app;
-    walkingLevel;
-    jumpLevel;
-    test;
+    
+    // rangeMin;
+    // tokenTime;
+    // app;
+    // walkingLevel;
+    // jumpLevel;
+    // test;
 
-    obstScale;
-    tokenScale;
-    ironRandScale;
-    ironRandAdd;
+    // obstScale;
+    // tokenScale;
+    // ironRandScale;
+    // ironRandAdd;
 
-    tokenTimeoutHold;
+    // tokenTimeoutHold;
 
-    startTime;
-    firstSpawn = true;
-
-    obstacles = [];
-    tokens = [];
-
-    gameOver = false;
-    focus = true;
+    // startTime;
+    
 
 
     constructor(app) {
         this.app = app;
+
+        this.interval = 1100;
+        this.intDecAmt = 0.85;
+        this.intRangeMax = 2500;
+        this.intRangeMin = 1100;
+        this.smallestInt = 200;
+
+        this.firstSpawn = true;
+
+        this.obstacles = [];
+        this.tokens = [];
+
+        this.gameOver = false;
+        this.focus = true;
 
         this.walkingLevel = HEIGHT - (HEIGHT * 0.25);
         this.jumpLevel = HEIGHT - (HEIGHT * 0.6);
