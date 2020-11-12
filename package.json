@@ -1,7 +1,7 @@
 {
   "name": "Laundr_Game",
   "version": "1.0.0",
-  "description": "Run with npm start after npm install. Serves @ localhost",
+  "description": "Run with npm start after npm install. Serves @ localhost:80 by default",
   "main": "server.js",
   "dependencies": {
     "minimist": "^1.2.5",
