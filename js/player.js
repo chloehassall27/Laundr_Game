@@ -1,27 +1,30 @@
 export default class Player {
-    groundLevel;
+    // groundLevel;
 
-    app;
-    gameOver = false;
-    loaded = false;
-    needsFall = false;
-    fallComplete = false;
-
-    speedY = 0;
-
-    currSprite;
-    running;
-    jumping;
-    jumpStatic;
-    ducking;
-    falling;
+    // app;
     
-    jumpS;
+
+    
+
+    // currSprite;
+    // running;
+    // jumping;
+    // jumpStatic;
+    // ducking;
+    // falling;
+    
+    // jumpS;
 
     constructor(app ,jumpS) {
         this.app = app;
 
         this.groundLevel = HEIGHT - (HEIGHT * .1);
+
+        this.speedY = 0;
+        this.gameOver = false;
+        this.loaded = false;
+        this.needsFall = false;
+        this.fallComplete = false;
 
         this.jumpS = jumpS;
 
