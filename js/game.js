@@ -56,6 +56,7 @@ window.inputs = {
   prevDuck: false
 };
 
+let endHouse;
 let restartButton;
 let muteButton;
 let score = 0;
@@ -78,6 +79,7 @@ let spawnerInterval;
 let speedInterval;
 let gameInterval;
 let timeout = 0;
+let winTimeoutTime = 0;
 // === End basic app setup === //
 
 // === Sprite setup === //
@@ -94,7 +96,7 @@ app.loader
 
 loadOnce();
 
-function loadOnce(){
+function loadOnce() {
   app.loader
     .load((loader, resources) => {
       //create tiling sprite that can be scrolled infinitely
@@ -118,7 +120,7 @@ function loadOnce(){
       app.stage.addChild(backgroundFront);
 
       createNoises();
-      
+
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
       muteButton.on('pointerdown', onClickMute);
@@ -129,8 +131,8 @@ function loadOnce(){
       //create player object - handles jumping + ducking
       player = new Player(app, jumpS);
       player.currSprite.stop();
-      
-      
+
+
       //restart functionality stuff
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
       restartButton.scale.set(0.3)
@@ -140,6 +142,15 @@ function loadOnce(){
       restartButton.interactive = true
       restartButton.buttonMode = true
       restartButton.on('pointerdown', onClickRestart);
+
+      let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
+      endHouse = new PIXI.Sprite(endHouseText);
+      //endHouse.scaleMode = PIXI.SCALE_MODES.NEAREST;
+      endHouse.scale.set(0.07);
+      endHouse.anchor.set(0.5);
+      endHouse.x = WIDTH * 1.5;
+      endHouse.y = HEIGHT / 2.4;
+      app.stage.addChild(endHouse);
     });
 
   reload();
@@ -154,9 +165,9 @@ function reload() {
       player.currSprite.y = groundLevel;
       player.currSprite.hitArea.y = groundLevel;
     });
-      
-    speedInterval = setInterval(increaseSpeedScale, 20000);
-    gameInterval = setInterval(gameLoop, 7);
+
+  speedInterval = setInterval(increaseSpeedScale, 20000);
+  gameInterval = setInterval(gameLoop, 7);
 }
 
 // === Main game loop === //
@@ -164,7 +175,7 @@ function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
     checkFocus();
-    
+
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
@@ -176,8 +187,10 @@ function gameLoop() {
       displayScore();
 
       //jump + duck stuff
-      player.updateJump();
-      player.updateDuck();
+      if (!(win && performance.now() > (winTimeoutTime + 1500) && player.currSprite.y === groundLevel && player.currSprite != player.ducking)) {
+        player.updateJump();
+        player.updateDuck();
+      }
 
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
@@ -212,16 +225,21 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 300000 && !winTriggered) {
+      if ((performance.now() - timeOffset) > 3000 && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
+        winTimeoutTime = performance.now();
         winTimeout = setTimeout(endGame, 3000);
       }
 
     }
   } else if (gameOver && player && player.needsFall) {
     endGameFall();
+  }
+
+  else if (gameOver && player && player.winSequence && !lose) {
+    player.currSprite.x += 2.5;
   }
 }
 
@@ -266,6 +284,10 @@ function checkCollision(a, b) {
 
 function endGame() {
   //call whatever clean up is needed, trigger popups, etc..
+  if (lose && winTriggered) {
+    winTriggered = false;
+    win = false;
+  }
   gameOver = true;
   player.endGame(win);
   spawner.endGame();
@@ -273,7 +295,7 @@ function endGame() {
   timeout = performance.now();
   clearTimeout(winTimeout);
 
-  if (!mute){
+  if (!mute) {
     if (lose) deathS.play();
     else if (win) winS.play();
   }
@@ -297,12 +319,13 @@ function onClickRestart() {
   cleanUp();
   reload();
 
+  winTimeoutTime = performance.now();
   player.switchSprite(player.running);
   player.ducking.play();
   startGame();
 }
 
-function onClickMute(){
+function onClickMute() {
   window.mute = !window.mute;
   player.mute = window.mute;
   if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
@@ -317,6 +340,7 @@ function collectToken(index) {
 }
 
 function cleanUp() {
+  if (win) player.reset();
   clearInterval(spawnerInterval);
   clearInterval(speedInterval);
   gameOver = false;
@@ -330,10 +354,11 @@ function cleanUp() {
   winTriggered = false;
   firstLoop = true;
   clearInterval(gameInterval);
+  endHouse.x = WIDTH * 1.5;
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++)
-      app.stage.removeChild(spawner.obstacles[i]);
+    app.stage.removeChild(spawner.obstacles[i]);
 
   app.stage.removeChild(endMessage);
   app.stage.removeChild(restartButton);
@@ -377,8 +402,12 @@ function keysDown(e) {
       //make the noises (they can only be created/started after player interraction due to PIXI limitations)
       startGame();
     }
-    if (gameOver && (performance.now() - timeout > 600)) {
-      onClickRestart();
+    if (gameOver) {
+      if (lose && (performance.now() - timeout > 600))
+        onClickRestart();
+      else if (win && (performance.now() - timeout > 1500))
+        onClickRestart();
+
     }
 
   }
@@ -477,6 +506,7 @@ function touchMove(e) {
 function increaseSpeedScale() {
   speedScale += 0.02;
   if (speedScale >= 1.3) {
+    speedScale = 1.3;
     clearInterval(speedInterval);
   }
 }
@@ -531,8 +561,10 @@ function moveBackground() {
   //background.tilePosition.x -= 3.5*speedScale;
 
   //parallax
+  speedScale = 1.3;
   backgroundFront.tilePosition.x -= 3.5 * speedScale;
   backgroundBack.tilePosition.x -= 1.2 * speedScale;
+  if (winTriggered && performance.now() >= (winTimeoutTime + 1700)) endHouse.x -= 3.5 * speedScale;
 }
 
 function endGameFall() {
