@@ -4,6 +4,10 @@
 
    Test:
    - Touch inputs on buttons on rest of page (maybe copy their 404 page and try testing what it will look like on there)
+
+  to test win functionality:
+   - change win time to a lower value (i usually use 3000 instead of 300000)
+   - uncomment out the line in moveBackground that sets speedScale = 1.3
 */
 
 import Spawner from "./spawner.js"
@@ -13,10 +17,9 @@ window.RESOLUTION = 1;
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth/4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
+  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
-
 PIXI.sound.context.paused = true;
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
@@ -24,7 +27,7 @@ PIXI.settings.ROUND_PIXELS = true;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
-window.SCALE = HEIGHT/225;
+window.SCALE = HEIGHT / 225;
 
 window.topOffset = app.view.offsetTop;
 window.bottomY = topOffset + HEIGHT;
@@ -34,13 +37,13 @@ window.bottomY = topOffset + HEIGHT;
 // Basic game variables
 
 const style = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*26, fill: '#4e4e4e'
+  fontFamily: 'Arial', fontSize: SCALE * 26, fill: '#4e4e4e'
 });
 const scoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#4b4b4b'
+  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#4b4b4b'
 })
 const highscoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#7c7c7c',
+  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#7c7c7c',
 })
 
 let spawner;
@@ -70,6 +73,8 @@ window.inputs = {
   prevDuck: false
 };
 
+let playerSpeedScale = 1;
+let endHouse;
 let restartButton;
 let muteButton;
 let score = 0;
@@ -92,6 +97,8 @@ let spawnerInterval;
 let speedInterval;
 let gameInterval;
 let timeout = 0;
+let winTimeoutTime = 0;
+let slowTimout;
 // === End basic app setup === //
 
 // === Sprite setup === //
@@ -134,9 +141,9 @@ function loadOnce(){
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
-      backgroundFront.tileScale.set(SCALE*.25);
-      backgroundFront.y = HEIGHT - SCALE*50.25;
-      backgroundBack.tileScale.set(SCALE*.25);
+      backgroundFront.tileScale.set(SCALE * .25);
+      backgroundFront.y = HEIGHT - SCALE * 50.25;
+      backgroundBack.tileScale.set(SCALE * .25);
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
 
@@ -152,11 +159,19 @@ function loadOnce(){
       muteButton.buttonMode = true
       app.stage.addChild(muteButton);
 
+      // Mute/unmute button
+      muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
+      muteButton.on('pointerdown', onClickMute);
+      muteButton.scale.set(SCALE)
+      muteButton.interactive = true
+      muteButton.buttonMode = true
+      app.stage.addChild(muteButton);
+
       //create player object - handles jumping + ducking
       player = new Player(app, jumpS);
       player.currSprite.stop();
-      
-      
+
+
       //restart functionality stuff
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
       restartButton.scale.set(SCALE * 0.3)
@@ -168,6 +183,15 @@ function loadOnce(){
       restartButton.on('pointerdown', onClickRestart);
       restartButton.on('pointerover', function () {restartButton.tint = 0xF0F0F0});
       restartButton.on('pointerout', function () {restartButton.tint = 0xFFFFFF});
+
+      let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
+      endHouse = new PIXI.Sprite(endHouseText);
+      //endHouse.scaleMode = PIXI.SCALE_MODES.NEAREST;
+      endHouse.scale.set(SCALE * 0.07);
+      endHouse.anchor.set(0.5);
+      endHouse.x = WIDTH * 1.5;
+      endHouse.y = HEIGHT / 2.4;
+      app.stage.addChild(endHouse);
     });
 
   reload();
@@ -182,9 +206,9 @@ function reload() {
       player.currSprite.y = groundLevel;
       player.currSprite.hitArea.y = groundLevel;
     });
-      
-    speedInterval = setInterval(increaseSpeedScale, 20000);
-    gameInterval = setInterval(gameLoop, 7);
+
+  speedInterval = setInterval(increaseSpeedScale, 20000);
+  gameInterval = setInterval(gameLoop, 7);
 }
 
 // === Main game loop === //
@@ -192,7 +216,6 @@ function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
     checkFocus();
-    
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
@@ -204,8 +227,10 @@ function gameLoop() {
       displayScore();
 
       //jump + duck stuff
-      player.updateJump();
-      player.updateDuck();
+      if (!(win && performance.now() > (winTimeoutTime + 1500) && player.currSprite.y === groundLevel && player.currSprite != player.ducking)) {
+        player.updateJump();
+        player.updateDuck();
+      }
 
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
@@ -240,16 +265,22 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 300000 && !winTriggered) {
+      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
+        winTimeoutTime = performance.now();
         winTimeout = setTimeout(endGame, 3000);
+        slowTimout = setInterval(slowMovement, 700);
       }
 
     }
   } else if (gameOver && player && player.needsFall) {
     endGameFall();
+  }
+
+  else if (gameOver && player && player.winSequence && !lose) {
+    player.currSprite.x += 3.5 * playerSpeedScale;
   }
 }
 
@@ -294,6 +325,10 @@ function checkCollision(a, b) {
 
 function endGame() {
   //call whatever clean up is needed, trigger popups, etc..
+  if (lose && winTriggered) {
+    winTriggered = false;
+    win = false;
+  }
   gameOver = true;
   player.endGame(win);
   spawner.endGame();
@@ -317,8 +352,30 @@ function endGame() {
   endMessage.x = WIDTH / 2;
   endMessage.y = HEIGHT / 4;
 
-  app.stage.addChild(endMessage);
-  app.stage.addChild(restartButton);
+  if (lose) {
+    if (!mute) {
+      deathS.play();
+    }
+    app.stage.addChild(endMessage);
+    app.stage.addChild(restartButton);
+  } else if (win) {
+    setTimeout(() => {
+      if (!mute) {
+        winS.play();
+      }
+      app.stage.addChild(endMessage);
+      app.stage.addChild(restartButton);
+    }, 950);
+  }
+
+}
+
+function slowMovement() {
+  if (winTriggered) {
+    speedScale *= 0.6;
+    if (player.winSequence)
+      playerSpeedScale *= 0.65;
+  }
 }
 
 // restart game on command
@@ -326,6 +383,7 @@ function onClickRestart() {
   cleanUp();
   reload();
 
+  winTimeoutTime = performance.now();
   player.switchSprite(player.running);
   player.ducking.play();
   startGame();
@@ -351,6 +409,10 @@ function collectToken(index) {
 }
 
 function cleanUp() {
+  if (win) {
+    player.reset();
+    clearInterval(slowTimout);
+  }
   clearInterval(spawnerInterval);
   clearInterval(speedInterval);
   gameOver = false;
@@ -359,15 +421,17 @@ function cleanUp() {
   lose = false;
   score = 0;
   speedScale = 1.0;
+  playerSpeedScale = 1.0;
   player.needsFall = false;
   player.fallComplete = false;
   winTriggered = false;
   firstLoop = true;
   clearInterval(gameInterval);
+  endHouse.x = WIDTH * 1.5;
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++)
-      app.stage.removeChild(spawner.obstacles[i]);
+    app.stage.removeChild(spawner.obstacles[i]);
 
   app.stage.removeChild(endMessage);
   app.stage.removeChild(restartButton);
@@ -396,11 +460,18 @@ window.addEventListener("keyup", keysUp);
 function keysDown(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     window.inputs.jump = true;
-    if (!started && firstLoad)
+    if (!started && firstLoad) 
       startGame();
-    if (gameOver && (performance.now() - timeout > 600))
-      onClickRestart();
+
+    if (gameOver) {
+      if (lose && (performance.now() - timeout > 600))
+        onClickRestart();
+      else if (win && (performance.now() - timeout > 2500))
+        onClickRestart();
+    }
+
   }
+
   if (e.key == "ArrowDown") {
     window.inputs.duck = true;
   }
@@ -410,6 +481,7 @@ function keysUp(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     window.inputs.jump = false;
   }
+  
   if (e.key == "ArrowDown") {
     window.inputs.duck = false;
   }
@@ -436,7 +508,7 @@ function touchStart(e) {
     if(touch.identifier !== currentTouchID || touchDisable) continue;
 
     // Top 2/3 of the canvas will call the jump function
-    if (touch.pageY < ((2 * HEIGHT / 3) + topOffset)) {
+    if (touch.pageY < (2 * HEIGHT / 3 + topOffset) ) {
       inputs.jump = true;
 
       if (!started && firstLoad) 
@@ -446,7 +518,7 @@ function touchStart(e) {
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
-    else if (touch.pageY > (HEIGHT / 3) + topOffset) {
+    else if (touch.pageY > (HEIGHT / 3 + topOffset) ) {
       inputs.duck = true;
       break;
     }
@@ -461,13 +533,13 @@ function touchMove(e) {
     if(touch.identifier !== currentTouchID) continue;
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
-    if (touch.pageY < (2 * HEIGHT / 3) + topOffset) {
+    if (touch.pageY < (2 * HEIGHT / 3 + topOffset) ) {
       inputs.jump = true;
       inputs.duck = false;
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-    else if (touch.pageY > (HEIGHT / 3) + topOffset) {
+    else if (touch.pageY > (HEIGHT / 3 + topOffset) ) {
       inputs.duck = true;
       inputs.jump = false;
       break;
@@ -507,6 +579,7 @@ function touchCancel(e) {
 function increaseSpeedScale() {
   speedScale += 0.02;
   if (speedScale >= 1.3) {
+    speedScale = 1.3;
     clearInterval(speedInterval);
   }
 }
@@ -558,7 +631,7 @@ window.addEventListener('resize', resize);
 function resize(){
   RESOLUTION = window.innerWidth / 900 / SCALE;
   app.renderer.resolution = RESOLUTION;
-  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth/4/RESOLUTION)
+  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth / 4 / RESOLUTION)
   window.topOffset = app.view.offsetTop;
   window.bottomY = topOffset + app.view.height;
 }
@@ -569,10 +642,13 @@ function resize(){
 function moveBackground() {
   //non parallax
   //background.tilePosition.x -= 3.5*speedScale;
-
   //parallax
+
+  //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
+  //speedScale = 1.3;
   backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale;
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale;
+  if (winTriggered && performance.now() >= (winTimeoutTime + 1600)) endHouse.x -= SCALE * 3.5 * speedScale;
 }
 
 function endGameFall() {
