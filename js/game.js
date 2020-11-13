@@ -6,35 +6,39 @@
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
-window.RESOLUTION = window.devicePixelRatio || 1;
-
-const style = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
-});
-const scoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: 23, fill: '#4b4b4b'
-})
-const highscoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: 23, fill: '#7c7c7c',
-})
+window.RESOLUTION = 1;
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: 900, height: 225, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
+  width: window.innerWidth, height: window.innerWidth/4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
 
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+PIXI.settings.ROUND_PIXELS = true;
+
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
-
+window.SCALE = HEIGHT/225;
 //app.ticker.add(gameLoop);
 
 // Basic game variables
+
+const style = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: SCALE*26, fill: '#4e4e4e'
+});
+const scoreStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#4b4b4b'
+})
+const highscoreStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#7c7c7c',
+})
+
 let spawner;
 let player;
 // let background;
 let backgroundFront, backgroundBack;
-window.groundLevel = HEIGHT - (HEIGHT * .1);
+window.groundLevel = HEIGHT * .9;
 
 let win = false;
 let lose = false;
@@ -111,9 +115,9 @@ function loadOnce(){
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
-      backgroundFront.tileScale.set(0.25);
-      backgroundFront.y = HEIGHT - 50.25;
-      backgroundBack.tileScale.set(0.25);
+      backgroundFront.tileScale.set(SCALE*.25);
+      backgroundFront.y = HEIGHT - SCALE*50.25;
+      backgroundBack.tileScale.set(SCALE*.25);
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
 
@@ -122,6 +126,7 @@ function loadOnce(){
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
       muteButton.on('pointerdown', onClickMute);
+      muteButton.scale.set(SCALE)
       muteButton.interactive = true
       muteButton.buttonMode = true
       app.stage.addChild(muteButton);
@@ -133,7 +138,7 @@ function loadOnce(){
       
       //restart functionality stuff
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
-      restartButton.scale.set(0.3)
+      restartButton.scale.set(SCALE * 0.3)
       restartButton.anchor.set(0.5)
       restartButton.x = WIDTH / 2
       restartButton.y = HEIGHT / 1.75
@@ -182,8 +187,8 @@ function gameLoop() {
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
         const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-        spawner.obstacles[i].x -= 3.5 * speedScale;
-        spawner.obstacles[i].hitArea.x -= 3.5 * speedScale;
+        spawner.obstacles[i].x -= SCALE * 3.5 * speedScale;
+        spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale;
 
         //check collision
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
@@ -199,8 +204,8 @@ function gameLoop() {
       }
       for (var i = 0; i < spawner.tokens.length; i++) {
         const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-        spawner.tokens[i].x -= 3.5 * speedScale;
-        spawner.tokens[i].hitArea.x -= 3.5 * speedScale;
+        spawner.tokens[i].x -= SCALE * 3.5 * speedScale;
+        spawner.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale;
 
         if (checkCollision(player.currSprite, spawner.tokens[i]))
           collectToken(i);
@@ -285,7 +290,8 @@ function endGame() {
 
   if (lose) endMessage = new PIXI.Text('G A M E  O V E R', style);
   else if (win) endMessage = new PIXI.Text('W I N N E R', style);
-  endMessage.x = WIDTH / 2.6;
+  endMessage.anchor.set(.5, 0);
+  endMessage.x = WIDTH / 2;
   endMessage.y = HEIGHT / 4;
 
   app.stage.addChild(endMessage);
@@ -523,6 +529,14 @@ function checkFocus() {
   }
 }
 
+
+window.addEventListener('resize', resize);
+function resize(){
+  RESOLUTION = window.innerWidth / 900 / SCALE;
+  app.renderer.resolution = RESOLUTION;
+  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth/4/RESOLUTION)
+}
+
 // === End helper functions === //
 
 // === Game functions === //
@@ -531,8 +545,8 @@ function moveBackground() {
   //background.tilePosition.x -= 3.5*speedScale;
 
   //parallax
-  backgroundFront.tilePosition.x -= 3.5 * speedScale;
-  backgroundBack.tilePosition.x -= 1.2 * speedScale;
+  backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale;
+  backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale;
 }
 
 function endGameFall() {
