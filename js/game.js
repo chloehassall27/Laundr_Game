@@ -1,6 +1,10 @@
 /*
   current bugs:
    - Jump/duck spam
+
+  to test win functionality:
+   - change win time to a lower value (i usually use 3000 instead of 300000)
+   - uncomment out the line in moveBackground that sets speedScale = 1.3
 */
 
 import Spawner from "./spawner.js"
@@ -10,7 +14,7 @@ window.RESOLUTION = 1;
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth/4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
+  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
 
@@ -19,19 +23,19 @@ PIXI.settings.ROUND_PIXELS = true;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
-window.SCALE = HEIGHT/225;
+window.SCALE = HEIGHT / 225;
 //app.ticker.add(gameLoop);
 
 // Basic game variables
 
 const style = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*26, fill: '#4e4e4e'
+  fontFamily: 'Arial', fontSize: SCALE * 26, fill: '#4e4e4e'
 });
 const scoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#4b4b4b'
+  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#4b4b4b'
 })
 const highscoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#7c7c7c',
+  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#7c7c7c',
 })
 
 let spawner;
@@ -60,6 +64,8 @@ window.inputs = {
   prevDuck: false
 };
 
+let playerSpeedScale = 1;
+let endHouse;
 let restartButton;
 let muteButton;
 let score = 0;
@@ -82,6 +88,8 @@ let spawnerInterval;
 let speedInterval;
 let gameInterval;
 let timeout = 0;
+let winTimeoutTime = 0;
+let slowTimout;
 // === End basic app setup === //
 
 // === Sprite setup === //
@@ -98,7 +106,7 @@ app.loader
 
 loadOnce();
 
-function loadOnce(){
+function loadOnce() {
   app.loader
     .load((loader, resources) => {
       //create tiling sprite that can be scrolled infinitely
@@ -115,14 +123,14 @@ function loadOnce(){
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
-      backgroundFront.tileScale.set(SCALE*.25);
-      backgroundFront.y = HEIGHT - SCALE*50.25;
-      backgroundBack.tileScale.set(SCALE*.25);
+      backgroundFront.tileScale.set(SCALE * .25);
+      backgroundFront.y = HEIGHT - SCALE * 50.25;
+      backgroundBack.tileScale.set(SCALE * .25);
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
 
       createNoises();
-      
+
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
       muteButton.on('pointerdown', onClickMute);
@@ -134,8 +142,8 @@ function loadOnce(){
       //create player object - handles jumping + ducking
       player = new Player(app, jumpS);
       player.currSprite.stop();
-      
-      
+
+
       //restart functionality stuff
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
       restartButton.scale.set(SCALE * 0.3)
@@ -145,6 +153,15 @@ function loadOnce(){
       restartButton.interactive = true
       restartButton.buttonMode = true
       restartButton.on('pointerdown', onClickRestart);
+
+      let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
+      endHouse = new PIXI.Sprite(endHouseText);
+      //endHouse.scaleMode = PIXI.SCALE_MODES.NEAREST;
+      endHouse.scale.set(SCALE * 0.07);
+      endHouse.anchor.set(0.5);
+      endHouse.x = WIDTH * 1.5;
+      endHouse.y = HEIGHT / 2.4;
+      app.stage.addChild(endHouse);
     });
 
   reload();
@@ -159,9 +176,9 @@ function reload() {
       player.currSprite.y = groundLevel;
       player.currSprite.hitArea.y = groundLevel;
     });
-      
-    speedInterval = setInterval(increaseSpeedScale, 20000);
-    gameInterval = setInterval(gameLoop, 7);
+
+  speedInterval = setInterval(increaseSpeedScale, 20000);
+  gameInterval = setInterval(gameLoop, 7);
 }
 
 // === Main game loop === //
@@ -169,7 +186,7 @@ function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
     checkFocus();
-    
+
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
@@ -181,8 +198,10 @@ function gameLoop() {
       displayScore();
 
       //jump + duck stuff
-      player.updateJump();
-      player.updateDuck();
+      if (!(win && performance.now() > (winTimeoutTime + 1500) && player.currSprite.y === groundLevel && player.currSprite != player.ducking)) {
+        player.updateJump();
+        player.updateDuck();
+      }
 
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
@@ -217,16 +236,22 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 300000 && !winTriggered) {
+      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
+        winTimeoutTime = performance.now();
         winTimeout = setTimeout(endGame, 3000);
+        slowTimout = setInterval(slowMovement, 700);
       }
 
     }
   } else if (gameOver && player && player.needsFall) {
     endGameFall();
+  }
+
+  else if (gameOver && player && player.winSequence && !lose) {
+    player.currSprite.x += 3.5 * playerSpeedScale;
   }
 }
 
@@ -271,6 +296,10 @@ function checkCollision(a, b) {
 
 function endGame() {
   //call whatever clean up is needed, trigger popups, etc..
+  if (lose && winTriggered) {
+    winTriggered = false;
+    win = false;
+  }
   gameOver = true;
   player.endGame(win);
   spawner.endGame();
@@ -278,10 +307,7 @@ function endGame() {
   timeout = performance.now();
   clearTimeout(winTimeout);
 
-  if (!mute){
-    if (lose) deathS.play();
-    else if (win) winS.play();
-  }
+
 
   if (score > highscore) {
     highscore = score;
@@ -294,8 +320,30 @@ function endGame() {
   endMessage.x = WIDTH / 2;
   endMessage.y = HEIGHT / 4;
 
-  app.stage.addChild(endMessage);
-  app.stage.addChild(restartButton);
+  if (lose) {
+    if (!mute) {
+      deathS.play();
+    }
+    app.stage.addChild(endMessage);
+    app.stage.addChild(restartButton);
+  } else if (win) {
+    setTimeout(() => {
+      if (!mute) {
+        winS.play();
+      }
+      app.stage.addChild(endMessage);
+      app.stage.addChild(restartButton);
+    }, 950);
+  }
+
+}
+
+function slowMovement() {
+  if (winTriggered) {
+    speedScale *= 0.6;
+    if (player.winSequence)
+      playerSpeedScale *= 0.65;
+  }
 }
 
 // restart game on command
@@ -303,12 +351,13 @@ function onClickRestart() {
   cleanUp();
   reload();
 
+  winTimeoutTime = performance.now();
   player.switchSprite(player.running);
   player.ducking.play();
   startGame();
 }
 
-function onClickMute(){
+function onClickMute() {
   window.mute = !window.mute;
   player.mute = window.mute;
   if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
@@ -323,6 +372,10 @@ function collectToken(index) {
 }
 
 function cleanUp() {
+  if (win) {
+    player.reset();
+    clearInterval(slowTimout);
+  }
   clearInterval(spawnerInterval);
   clearInterval(speedInterval);
   gameOver = false;
@@ -331,15 +384,17 @@ function cleanUp() {
   lose = false;
   score = 0;
   speedScale = 1.0;
+  playerSpeedScale = 1.0;
   player.needsFall = false;
   player.fallComplete = false;
   winTriggered = false;
   firstLoop = true;
   clearInterval(gameInterval);
+  endHouse.x = WIDTH * 1.5;
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++)
-      app.stage.removeChild(spawner.obstacles[i]);
+    app.stage.removeChild(spawner.obstacles[i]);
 
   app.stage.removeChild(endMessage);
   app.stage.removeChild(restartButton);
@@ -383,8 +438,12 @@ function keysDown(e) {
       //make the noises (they can only be created/started after player interraction due to PIXI limitations)
       startGame();
     }
-    if (gameOver && (performance.now() - timeout > 600)) {
-      onClickRestart();
+    if (gameOver) {
+      if (lose && (performance.now() - timeout > 600))
+        onClickRestart();
+      else if (win && (performance.now() - timeout > 2500))
+        onClickRestart();
+
     }
 
   }
@@ -483,6 +542,7 @@ function touchMove(e) {
 function increaseSpeedScale() {
   speedScale += 0.02;
   if (speedScale >= 1.3) {
+    speedScale = 1.3;
     clearInterval(speedInterval);
   }
 }
@@ -531,10 +591,10 @@ function checkFocus() {
 
 
 window.addEventListener('resize', resize);
-function resize(){
+function resize() {
   RESOLUTION = window.innerWidth / 900 / SCALE;
   app.renderer.resolution = RESOLUTION;
-  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth/4/RESOLUTION)
+  app.renderer.resize(window.innerWidth / RESOLUTION, window.innerWidth / 4 / RESOLUTION)
 }
 
 // === End helper functions === //
@@ -543,10 +603,14 @@ function resize(){
 function moveBackground() {
   //non parallax
   //background.tilePosition.x -= 3.5*speedScale;
-
   //parallax
+
+
+  //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
+  //speedScale = 1.3;
   backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale;
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale;
+  if (winTriggered && performance.now() >= (winTimeoutTime + 1600)) endHouse.x -= SCALE * 3.5 * speedScale;
 }
 
 function endGameFall() {
