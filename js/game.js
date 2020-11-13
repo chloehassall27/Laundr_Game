@@ -55,7 +55,6 @@ window.groundLevel = HEIGHT * .9;
 let win = false;
 let lose = false;
 let gameOver = false;
-let noisesCreated = false;
 let speedScale = 1.0;
 let focus = true;
 let visible = true;
@@ -154,17 +153,9 @@ function loadOnce(){
       muteButton.on('pointerup', onReleaseMute);
       muteButton.on('pointercancel', onReleaseMute);
       muteButton.on('pointerout', onReleaseMute);
-      muteButton.scale.set(SCALE)
-      muteButton.interactive = true
-      muteButton.buttonMode = true
-      app.stage.addChild(muteButton);
-
-      // Mute/unmute button
-      muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
-      muteButton.on('pointerdown', onClickMute);
-      muteButton.scale.set(SCALE)
-      muteButton.interactive = true
-      muteButton.buttonMode = true
+      muteButton.scale.set(SCALE);
+      muteButton.interactive = true;
+      muteButton.buttonMode = true;
       app.stage.addChild(muteButton);
 
       //create player object - handles jumping + ducking
@@ -174,15 +165,15 @@ function loadOnce(){
 
       //restart functionality stuff
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
-      restartButton.scale.set(SCALE * 0.3)
-      restartButton.anchor.set(0.5)
-      restartButton.x = WIDTH / 2
-      restartButton.y = HEIGHT / 1.75
-      restartButton.interactive = true
-      restartButton.buttonMode = true
+      restartButton.scale.set(SCALE * 0.3);
+      restartButton.anchor.set(0.5);
+      restartButton.x = WIDTH / 2;
+      restartButton.y = HEIGHT / 1.75;
+      restartButton.interactive = true;
+      restartButton.buttonMode = true;
       restartButton.on('pointerdown', onClickRestart);
-      restartButton.on('pointerover', function () {restartButton.tint = 0xF0F0F0});
-      restartButton.on('pointerout', function () {restartButton.tint = 0xFFFFFF});
+      restartButton.on('pointerover', function () {restartButton.tint = 0xF0F0F0;});
+      restartButton.on('pointerout', function () {restartButton.tint = 0xFFFFFF;});
 
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
       endHouse = new PIXI.Sprite(endHouseText);
@@ -202,9 +193,6 @@ function reload() {
     .load((loader, resources) => {
       //create our spawner - handles obstacles + tokens
       spawner = new Spawner(app);
-      player.speedY = 0;
-      player.currSprite.y = groundLevel;
-      player.currSprite.hitArea.y = groundLevel;
     });
 
   speedInterval = setInterval(increaseSpeedScale, 20000);
@@ -424,6 +412,7 @@ function cleanUp() {
   playerSpeedScale = 1.0;
   player.needsFall = false;
   player.fallComplete = false;
+  player.speedY = 0;
   winTriggered = false;
   firstLoop = true;
   clearInterval(gameInterval);
@@ -569,7 +558,6 @@ function touchEnd(e) {
     break;
   }
 }
-
 
 function touchCancel(e) {
   inputs.jump = false;
