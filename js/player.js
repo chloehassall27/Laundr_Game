@@ -130,7 +130,7 @@ export default class Player {
 
     createSprites() {
         //only call this the one time in the construtor!!
-        let height = SCALE * 1 / (1 * 1.7);
+        let height = SCALE / 1.7;
 
         let spriteWidth = -(WIDTH - (WIDTH * 0.22)) / 9.3;
         let spriteHeight = -(WIDTH - (WIDTH * 0.22)) / 10;
@@ -184,5 +184,19 @@ export default class Player {
         this.app.stage.addChild(this.currSprite);
         this.loaded = true;
 
+    }
+    
+    resize(){
+        let height = SCALE / 1.7;
+        this.falling.scale.set(height);
+        this.jumping.scale.set(height);
+        this.jumpStatic.scale.set(height);
+        this.ducking.scale.set(height);
+        this.currSprite.scale.set(height);
+        this.falling.hitArea.scale.set(height);
+        this.jumping.hitArea.scale.set(height);
+        this.jumpStatic.hitArea.scale.set(height);
+        this.ducking.hitArea.scale.set(height);
+        this.currSprite.hitArea.scale.set(height);
     }
 }
