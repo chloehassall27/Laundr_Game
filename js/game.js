@@ -32,6 +32,12 @@ window.SCALE = HEIGHT / 225;
 window.topOffset = app.view.offsetTop;
 window.bottomY = topOffset + HEIGHT;
 
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+PIXI.settings.ROUND_PIXELS = true;
+
+window.HEIGHT = app.screen.height;
+window.WIDTH = app.screen.width;
+window.SCALE = HEIGHT / 225;
 //app.ticker.add(gameLoop);
 
 // Basic game variables
@@ -125,7 +131,7 @@ function loadOnce(){
       tokenS.volume = 0.4;
       winS = PIXI.sound.Sound.from(resources.winSound);
       winS.volume = 0.35;
-
+    
       //create tiling sprite that can be scrolled infinitely
       //currently set up for parallax effect, if disliked, switch which things are commented out
 
@@ -145,7 +151,6 @@ function loadOnce(){
       backgroundBack.tileScale.set(SCALE * .25);
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
-
       
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
@@ -204,6 +209,7 @@ function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
     checkFocus();
+
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
@@ -323,11 +329,6 @@ function endGame() {
   started = false;
   timeout = performance.now();
   clearTimeout(winTimeout);
-
-  if (!mute){
-    if (lose) deathS.play();
-    else if (win) winS.play();
-  }
 
   if (score > highscore) {
     highscore = score;
@@ -451,7 +452,7 @@ function keysDown(e) {
     window.inputs.jump = true;
     if (!started && firstLoad) 
       startGame();
-
+    
     if (gameOver) {
       if (lose && (performance.now() - timeout > 600))
         onClickRestart();
@@ -507,6 +508,7 @@ function touchStart(e) {
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
+
     else if (touch.pageY > (HEIGHT / 3 + topOffset) ) {
       inputs.duck = true;
       break;
