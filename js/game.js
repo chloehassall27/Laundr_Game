@@ -1,6 +1,6 @@
 /*
   current bugs:
-   - None known
+   - Restart button hitbox remains in same place when resizing, might move everything into a container
 
    Test:
    - Touch inputs on buttons on rest of page (maybe copy their 404 page and try testing what it will look like on there)
@@ -21,6 +21,8 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 PIXI.sound.context.paused = true;
+
+// window.container = new PIXI.container
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
 PIXI.settings.ROUND_PIXELS = true;
@@ -172,8 +174,6 @@ function loadOnce(){
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
       restartButton.scale.set(SCALE * 0.3);
       restartButton.anchor.set(0.5);
-      restartButton.x = WIDTH / 2;
-      restartButton.y = HEIGHT / 1.75;
       restartButton.interactive = true;
       restartButton.buttonMode = true;
       restartButton.on('pointerdown', onClickRestart);
@@ -340,6 +340,10 @@ function endGame() {
   endMessage.anchor.set(.5, 0);
   endMessage.x = WIDTH / 2;
   endMessage.y = HEIGHT / 4;
+
+  restartButton.x = WIDTH / 2;
+  restartButton.y = HEIGHT / 1.75;
+  restartButton.scale.set(SCALE * 0.3);
 
   if (lose) {
     if (!mute) {
