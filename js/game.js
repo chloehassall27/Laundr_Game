@@ -9,37 +9,44 @@
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
-const HEIGHT = 225;
-const WIDTH = HEIGHT * 4;
-let RESOLUTION = window.devicePixelRatio || 1;
-
-const style = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: 26, fill: '#4e4e4e',
-});
-const scoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: 23, fill: '#4b4b4b'
-})
-const highscoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: 23, fill: '#7c7c7c',
-})
+window.RESOLUTION = 1;
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: WIDTH, height: HEIGHT, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
+  width: window.innerWidth, height: window.innerWidth/4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
 
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+PIXI.settings.ROUND_PIXELS = true;
+
+window.HEIGHT = app.screen.height;
+window.WIDTH = app.screen.width;
+window.SCALE = HEIGHT/225;
+window.SCALED_HEIGHT = SCALE*HEIGHT;
+window.SCALED_WIDTH = SCALE*WIDTH;
+
 window.topOffset = app.view.offsetTop;
 window.bottomY = topOffset + HEIGHT;
-
 //app.ticker.add(gameLoop);
 
 // Basic game variables
+
+const style = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: SCALE*26, fill: '#4e4e4e'
+});
+const scoreStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#4b4b4b'
+})
+const highscoreStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#7c7c7c',
+})
+
 let spawner;
 let player;
-let background;
+// let background;
 let backgroundFront, backgroundBack;
-const groundY = HEIGHT - (HEIGHT * .1);
+window.groundLevel = HEIGHT * .9;
 
 let win = false;
 let lose = false;
@@ -48,19 +55,22 @@ let gameStart = false;
 let speedScale = 1.0;
 let focus = true;
 let visible = true;
+window.mute = false;
 let winTriggered = false;
 let winTimeout;
 let timeOffset;
 let firstLoop = true;
+let endMessage;
 
-let inputs = {
+window.inputs = {
   jump: false,
   duck: false,
   prevDuck: false
 };
 
 let restartButton;
-let score;
+let muteButton;
+let score = 0;
 let scoreText = new PIXI.Text(score, scoreStyle);
 scoreText.x = WIDTH / 1.07;
 
@@ -73,7 +83,6 @@ let deathS;
 let jumpS;
 let tokenS;
 let winS;
-// === End basic app setup === //
 
 let started = false;
 let firstLoad = true;
@@ -81,7 +90,7 @@ let spawnerInterval;
 let speedInterval;
 let gameInterval;
 let timeout = 0;
-
+// === End basic app setup === //
 
 // === Sprite setup === //
 app.loader
@@ -89,18 +98,17 @@ app.loader
   .add('obSheet', "sprites/obstacleSprites.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
   .add('buttonSheet', "sprites/PodsAndButtons.json")
+  .add('muteSheet', "sprites/MuteUnmute.json")
   .add('deathSound', "sounds/death.wav")
   .add('jumpSound', "sounds/jump.wav")
   .add('tokenSound', "sounds/jelly2.wav")
   .add('winSound', "sounds/BETTERWin3.wav");
 
-load();
+loadOnce();
 
-function load() {
+function loadOnce(){
   app.loader
     .load((loader, resources) => {
-      score = 0;
-
       //create tiling sprite that can be scrolled infinitely
       //currently set up for parallax effect, if disliked, switch which things are commented out
 
@@ -115,36 +123,52 @@ function load() {
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
-      backgroundFront.tileScale.set(0.25);
-      backgroundFront.y = HEIGHT - 50.25;
-      backgroundBack.tileScale.set(0.25);
+      backgroundFront.tileScale.set(SCALE*.25);
+      backgroundFront.y = HEIGHT - SCALE*50.25;
+      backgroundBack.tileScale.set(SCALE*.25);
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
 
+      
+      // Mute/unmute button
+      muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
+      muteButton.on('pointerdown', onClickMute);
+      muteButton.scale.set(SCALE)
+      muteButton.interactive = true
+      muteButton.buttonMode = true
+      app.stage.addChild(muteButton);
+
       //create player object - handles jumping + ducking
-      player = new Player(HEIGHT, WIDTH, app);
+      player = new Player(app, jumpS);
       player.currSprite.stop();
-
-      //create our spawner - handles obstacles + tokens
-      spawner = new Spawner(HEIGHT, WIDTH, app, player.groundLevel);
-
-      //ensure things speed up over time
-      speedInterval = setInterval(increaseSpeedScale, 20000);
-
+      
+      
       //restart functionality stuff
-      restartButton = new PIXI.Sprite(app.loader.resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
-      restartButton.scale.set(0.3)
+      restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
+      restartButton.scale.set(SCALE * 0.3)
       restartButton.anchor.set(0.5)
       restartButton.x = WIDTH / 2
       restartButton.y = HEIGHT / 1.75
-
       restartButton.interactive = true
       restartButton.buttonMode = true
-
       restartButton.on('pointerdown', onClickRestart);
+    });
 
-      gameInterval = setInterval(gameLoop, 7);
-    })
+  reload();
+}
+
+function reload() {
+  app.loader
+    .load((loader, resources) => {
+      //create our spawner - handles obstacles + tokens
+      spawner = new Spawner(app);
+      player.speedY = 0;
+      player.currSprite.y = groundLevel;
+      player.currSprite.hitArea.y = groundLevel;
+    });
+      
+    speedInterval = setInterval(increaseSpeedScale, 20000);
+    gameInterval = setInterval(gameLoop, 7);
 }
 
 // === Main game loop === //
@@ -152,6 +176,7 @@ function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
     checkFocus();
+    
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
@@ -163,14 +188,14 @@ function gameLoop() {
       displayScore();
 
       //jump + duck stuff
-      player.updateJump(inputs);
-      player.updateDuck(inputs);
+      player.updateJump();
+      player.updateDuck();
 
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
         const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-        spawner.obstacles[i].x -= 3.5 * speedScale;
-        spawner.obstacles[i].hitArea.x -= 3.5 * speedScale;
+        spawner.obstacles[i].x -= SCALE * 3.5 * speedScale;
+        spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale;
 
         //check collision
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
@@ -186,8 +211,8 @@ function gameLoop() {
       }
       for (var i = 0; i < spawner.tokens.length; i++) {
         const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-        spawner.tokens[i].x -= 3.5 * speedScale;
-        spawner.tokens[i].hitArea.x -= 3.5 * speedScale;
+        spawner.tokens[i].x -= SCALE * 3.5 * speedScale;
+        spawner.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale;
 
         if (checkCollision(player.currSprite, spawner.tokens[i]))
           collectToken(i);
@@ -260,32 +285,41 @@ function endGame() {
   timeout = performance.now();
   clearTimeout(winTimeout);
 
-  if (lose) deathS.play();
-  else if (win) winS.play();
+  if (!mute){
+    if (lose) deathS.play();
+    else if (win) winS.play();
+  }
 
   if (score > highscore) {
     highscore = score;
     displayHighScore();
   }
 
-  let message;
-  if (lose) message = new PIXI.Text('G A M E  O V E R', style);
-  else if (win) message = new PIXI.Text('W I N N E R', style);
-  message.x = WIDTH / 2.6;
-  message.y = HEIGHT / 4;
+  if (lose) endMessage = new PIXI.Text('G A M E  O V E R', style);
+  else if (win) endMessage = new PIXI.Text('W I N N E R', style);
+  endMessage.anchor.set(.5, 0);
+  endMessage.x = WIDTH / 2;
+  endMessage.y = HEIGHT / 4;
 
-  app.stage.addChild(message);
+  app.stage.addChild(endMessage);
   app.stage.addChild(restartButton);
 }
 
 // restart game on command
 function onClickRestart() {
-  app.stage.removeChild(restartButton);
   cleanUp();
-  load();
+  reload();
+
   player.switchSprite(player.running);
   player.ducking.play();
   startGame();
+}
+
+function onClickMute(){
+  window.mute = !window.mute;
+  player.mute = window.mute;
+  if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
+  else muteButton.gotoAndStop(1);
 }
 
 function collectToken(index) {
@@ -310,6 +344,12 @@ function cleanUp() {
   firstLoop = true;
   clearInterval(gameInterval);
 
+  // Remove obstacles
+  for (var i = 0; i < spawner.obstacles.length; i++)
+      app.stage.removeChild(spawner.obstacles[i]);
+
+  app.stage.removeChild(endMessage);
+  app.stage.removeChild(restartButton);
 }
 
 function startGame() {
@@ -348,22 +388,24 @@ window.addEventListener("keyup", keysUp);
 
 function keysDown(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
-    inputs.jump = true;
+    window.inputs.jump = true;
     if (!started && firstLoad)
       startGame();
     if (gameOver && (performance.now() - timeout > 600))
       onClickRestart();
   }
-
-  if (e.key == "ArrowDown")
-    inputs.duck = true;
+  if (e.key == "ArrowDown") {
+    window.inputs.duck = true;
+  }
 }
 
 function keysUp(e) {
-  if (e.key == "ArrowUp" || e.key == " ")
-    inputs.jump = false;
-  if (e.key == "ArrowDown")
-    inputs.duck = false;
+  if (e.key == "ArrowUp" || e.key == " ") {
+    window.inputs.jump = false;
+  }
+  if (e.key == "ArrowDown") {
+    window.inputs.duck = false;
+  }
 }
 
 
@@ -387,7 +429,7 @@ function touchStart(e) {
     if(touch.identifier !== currentTouchID) continue;
 
     // Top 2/3 of the canvas will call the jump function
-    if (touch.pageY < (2 * HEIGHT * RESOLUTION / 3) + topOffset) {
+    if (touch.pageY < 2 * (SCALED_HEIGHT / 3) + topOffset) {
       inputs.jump = true;
 
       if (!started && firstLoad) 
@@ -397,9 +439,10 @@ function touchStart(e) {
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
-    else if (touch.pageY > (HEIGHT * RESOLUTION / 3) + topOffset)
+    else if (touch.pageY > (SCALED_HEIGHT / 3) + topOffset) {
       inputs.duck = true;
-
+      break;
+    }
   }
 }
 
@@ -411,13 +454,13 @@ function touchMove(e) {
     if(touch.identifier !== currentTouchID) continue;
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
-    if (touch.pageY < (2 * HEIGHT * RESOLUTION / 3) + topOffset) {
+    if (touch.pageY < 2 * (SCALED_HEIGHT / 3) + topOffset) {
       inputs.jump = true;
       inputs.duck = false;
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-    else if (touch.pageY > (HEIGHT * RESOLUTION / 3) + topOffset) {
+    else if (touch.pageY > (SCALED_HEIGHT / 3) + topOffset) {
       inputs.duck = true;
       inputs.jump = false;
       break;
@@ -448,6 +491,7 @@ function touchEnd(e) {
   }
 }
 
+
 function touchCancel(e) {
   inputs.jump = false;
   inputs.duck = false;
@@ -462,7 +506,7 @@ function increaseSpeedScale() {
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') {
-    console.log("hidden!");
+    // console.log("hidden!");
     visible = false;
     spawner.loseFocus();
   }
@@ -489,6 +533,9 @@ function checkFocus() {
     spawner.loseFocus();
     focus = false;
 
+    window.inputs.duck = false;
+    window.inputs.jump = false;
+
     player.running.stop();
     for (let i = 0; i < spawner.obstacles.length; i++) {
       spawner.obstacles[i].stop();
@@ -499,6 +546,14 @@ function checkFocus() {
   }
 }
 
+
+window.addEventListener('resize', resize);
+function resize(){
+  RESOLUTION = window.innerWidth / 900 / SCALE;
+  app.renderer.resolution = RESOLUTION;
+  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth/4/RESOLUTION)
+}
+
 // === End helper functions === //
 
 // === Game functions === //
@@ -507,8 +562,8 @@ function moveBackground() {
   //background.tilePosition.x -= 3.5*speedScale;
 
   //parallax
-  backgroundFront.tilePosition.x -= 3.5 * speedScale;
-  backgroundBack.tilePosition.x -= 1.2 * speedScale;
+  backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale;
+  backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale;
 }
 
 function endGameFall() {
