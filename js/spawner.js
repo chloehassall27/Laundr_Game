@@ -36,8 +36,8 @@ export default class Spawner {
         this.tokenTime = false;
         this.rangeMin = false;
 
-        this.obstScale = HEIGHT / (HEIGHT * 2.41);
-        this.tokenScale = HEIGHT / (HEIGHT * 2.6);
+        this.obstScale = SCALE * 1 / 2.41;
+        this.tokenScale = SCALE * 1 / 2.6;
         this.ironRandScale = (window.groundLevel / 2 + HEIGHT * 0.135) - (window.groundLevel / 2 + HEIGHT * 0.4) + 1;
         this.ironRandAdd = window.groundLevel / 2 + HEIGHT * 0.32;
 

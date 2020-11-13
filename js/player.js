@@ -61,8 +61,8 @@ export default class Player {
         //     this.switchSprite(this.jumpStatic);
         // }
 
-        this.currSprite.y -= this.speedY;
-        this.currSprite.hitArea.y -= this.speedY;
+        this.currSprite.y -= SCALE * this.speedY;
+        this.currSprite.hitArea.y -= SCALE * this.speedY;
     }
 
     updateDuck() {
@@ -130,7 +130,7 @@ export default class Player {
 
     createSprites() {
         //only call this the one time in the construtor!!
-        let height = HEIGHT / (HEIGHT * 1.7);
+        let height = SCALE * 1 / (1 * 1.7);
 
         let spriteWidth = -(WIDTH - (WIDTH * 0.22)) / 9.3;
         let spriteHeight = -(WIDTH - (WIDTH * 0.22)) / 10;
