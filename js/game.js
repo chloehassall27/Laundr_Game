@@ -56,6 +56,7 @@ window.inputs = {
   prevDuck: false
 };
 
+let playerSpeedScale = 1;
 let endHouse;
 let restartButton;
 let muteButton;
@@ -80,6 +81,7 @@ let speedInterval;
 let gameInterval;
 let timeout = 0;
 let winTimeoutTime = 0;
+let slowTimout;
 // === End basic app setup === //
 
 // === Sprite setup === //
@@ -225,12 +227,13 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {
+      if ((performance.now() - timeOffset) > 3000 && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
         winTimeoutTime = performance.now();
         winTimeout = setTimeout(endGame, 3000);
+        slowTimout = setInterval(slowMovement, 800);
       }
 
     }
@@ -239,7 +242,7 @@ function gameLoop() {
   }
 
   else if (gameOver && player && player.winSequence && !lose) {
-    player.currSprite.x += 2.5;
+    player.currSprite.x += 2.5 * playerSpeedScale;
   }
 }
 
@@ -295,10 +298,7 @@ function endGame() {
   timeout = performance.now();
   clearTimeout(winTimeout);
 
-  if (!mute) {
-    if (lose) deathS.play();
-    else if (win) winS.play();
-  }
+
 
   if (score > highscore) {
     highscore = score;
@@ -310,8 +310,31 @@ function endGame() {
   endMessage.x = WIDTH / 2.6;
   endMessage.y = HEIGHT / 4;
 
-  app.stage.addChild(endMessage);
-  app.stage.addChild(restartButton);
+  if (lose) {
+    if (!mute) {
+      deathS.play();
+    }
+    app.stage.addChild(endMessage);
+    app.stage.addChild(restartButton);
+  } else if (win) {
+    setTimeout(() => {
+      if (!mute) {
+        winS.play();
+      }
+      app.stage.addChild(endMessage);
+      app.stage.addChild(restartButton);
+    }, 950);
+  }
+
+}
+
+function slowMovement() {
+  console.log("called");
+  if (winTriggered) {
+    speedScale *= 0.7;
+    if (player.winSequence)
+      playerSpeedScale *= 0.7;
+  }
 }
 
 // restart game on command
@@ -340,7 +363,10 @@ function collectToken(index) {
 }
 
 function cleanUp() {
-  if (win) player.reset();
+  if (win) {
+    player.reset();
+    clearInterval(slowTimout);
+  }
   clearInterval(spawnerInterval);
   clearInterval(speedInterval);
   gameOver = false;
@@ -349,6 +375,7 @@ function cleanUp() {
   lose = false;
   score = 0;
   speedScale = 1.0;
+  playerSpeedScale = 1.0;
   player.needsFall = false;
   player.fallComplete = false;
   winTriggered = false;
@@ -405,7 +432,7 @@ function keysDown(e) {
     if (gameOver) {
       if (lose && (performance.now() - timeout > 600))
         onClickRestart();
-      else if (win && (performance.now() - timeout > 1500))
+      else if (win && (performance.now() - timeout > 2500))
         onClickRestart();
 
     }
@@ -559,12 +586,14 @@ function checkFocus() {
 function moveBackground() {
   //non parallax
   //background.tilePosition.x -= 3.5*speedScale;
-
   //parallax
+
+  //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
   speedScale = 1.3;
+
   backgroundFront.tilePosition.x -= 3.5 * speedScale;
   backgroundBack.tilePosition.x -= 1.2 * speedScale;
-  if (winTriggered && performance.now() >= (winTimeoutTime + 1700)) endHouse.x -= 3.5 * speedScale;
+  if (winTriggered && performance.now() >= (winTimeoutTime + 1550)) endHouse.x -= 3.5 * speedScale;
 }
 
 function endGameFall() {
