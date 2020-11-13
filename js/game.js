@@ -24,7 +24,7 @@ window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
 window.SCALE = HEIGHT/225;
 window.SCALED_HEIGHT = SCALE*HEIGHT;
-window.SCALED_WIDTH = SCALE*WIDTH;
+window.SCALED_WIDTH = SCALE*SCALED_HEIGHT;
 
 window.topOffset = app.view.offsetTop;
 window.bottomY = topOffset + HEIGHT;
@@ -61,6 +61,7 @@ let winTimeout;
 let timeOffset;
 let firstLoop = true;
 let endMessage;
+let touchDisable = false;
 
 window.inputs = {
   jump: false,
@@ -133,6 +134,9 @@ function loadOnce(){
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
       muteButton.on('pointerdown', onClickMute);
+      muteButton.on('pointerup', onReleaseMute);
+      muteButton.on('pointercancel', onReleaseMute);
+      muteButton.on('pointerout', onReleaseMute);
       muteButton.scale.set(SCALE)
       muteButton.interactive = true
       muteButton.buttonMode = true
@@ -316,10 +320,15 @@ function onClickRestart() {
 }
 
 function onClickMute(){
+  touchDisable = true;
   window.mute = !window.mute;
   player.mute = window.mute;
   if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
   else muteButton.gotoAndStop(1);
+}
+
+function onReleaseMute(){
+  touchDisable = false;
 }
 
 function collectToken(index) {
@@ -426,10 +435,10 @@ function touchStart(e) {
     if (currentTouchID === -1) currentTouchID = touch.identifier
     
     // We only care about the current touch, so skip if this isn't it
-    if(touch.identifier !== currentTouchID) continue;
+    if(touch.identifier !== currentTouchID || touchDisable) continue;
 
     // Top 2/3 of the canvas will call the jump function
-    if (touch.pageY < 2 * (SCALED_HEIGHT / 3) + topOffset) {
+    if (touch.pageY < ((2 * HEIGHT / 3) + topOffset)) {
       inputs.jump = true;
 
       if (!started && firstLoad) 
@@ -439,7 +448,7 @@ function touchStart(e) {
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
-    else if (touch.pageY > (SCALED_HEIGHT / 3) + topOffset) {
+    else if (touch.pageY > (HEIGHT / 3) + topOffset) {
       inputs.duck = true;
       break;
     }
@@ -454,13 +463,13 @@ function touchMove(e) {
     if(touch.identifier !== currentTouchID) continue;
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
-    if (touch.pageY < 2 * (SCALED_HEIGHT / 3) + topOffset) {
+    if (touch.pageY < (2 * HEIGHT / 3) + topOffset) {
       inputs.jump = true;
       inputs.duck = false;
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-    else if (touch.pageY > (SCALED_HEIGHT / 3) + topOffset) {
+    else if (touch.pageY > (HEIGHT / 3) + topOffset) {
       inputs.duck = true;
       inputs.jump = false;
       break;
@@ -473,7 +482,7 @@ function touchEnd(e) {
 
   // Set currentTouchID to most recent touch that's not the one being released that is within the canvas
   for (var i = 0; i < e.touches.length; i++) {
-    if (e.touches[i].pageY < HEIGHT * RESOLUTION) currentTouchID = e.touches[i].identifier;
+    if (e.touches[i].pageY < bottomY && e.touches[i].pageY > topOffset) currentTouchID = e.touches[i].identifier;
   }
   
   if(currentTouchID === oldTouchID) currentTouchID = -1;
@@ -552,6 +561,8 @@ function resize(){
   RESOLUTION = window.innerWidth / 900 / SCALE;
   app.renderer.resolution = RESOLUTION;
   app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth/4/RESOLUTION)
+  window.topOffset = app.view.offsetTop;
+  window.bottomY = topOffset + app.view.height;
 }
 
 // === End helper functions === //
