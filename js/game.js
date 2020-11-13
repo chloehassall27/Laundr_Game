@@ -20,8 +20,6 @@ PIXI.settings.ROUND_PIXELS = true;
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
 window.SCALE = HEIGHT/225;
-window.SCALED_HEIGHT = SCALE*HEIGHT;
-window.SCALED_WIDTH = SCALE*WIDTH;
 //app.ticker.add(gameLoop);
 
 // Basic game variables
@@ -417,7 +415,7 @@ function touchStart(e) {
     let touch = e.targetTouches[i]
     // console.log(touch);
     // Top 2/3 of the canvas will call the jump function
-    if (touch.pageY < 2 * SCALED_HEIGHT / 3) {
+    if (touch.pageY < 2 * HEIGHT / 3) {
       window.inputs.jump = true;
 
       if (!started && firstLoad) {
@@ -428,7 +426,7 @@ function touchStart(e) {
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function
-    else if (touch.pageY > SCALED_HEIGHT / 3) {
+    else if (touch.pageY > HEIGHT / 3) {
       window.inputs.duck = true;
       break;
     }
@@ -443,13 +441,13 @@ function touchEnd(e) {
     // console.log(touch);
 
     // Top 2/3 of the canvas will stop the jump function
-    if (touch.pageY < 2 * SCALED_HEIGHT / 3) {
+    if (touch.pageY < 2 * HEIGHT / 3) {
       window.inputs.jump = false;
       break;
     }
 
     // Bottom 1/3 of the canvas will stop the duck function
-    else if (touch.pageY > SCALED_HEIGHT / 3) {
+    else if (touch.pageY > HEIGHT / 3) {
       window.inputs.duck = false;
       break;
     }
@@ -468,13 +466,13 @@ function touchMove(e) {
     // console.log(touch);
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
-    if (touch.pageY < 2 * SCALED_HEIGHT / 3) {
+    if (touch.pageY < 2 * HEIGHT / 3) {
       window.inputs.jump = true;
       window.inputs.duck = false;
       break;
     }
     // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-    else if (touch.pageY > SCALED_HEIGHT / 3) {
+    else if (touch.pageY > HEIGHT / 3) {
       window.inputs.duck = true;
       window.inputs.jump = false;
       break;
