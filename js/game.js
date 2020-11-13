@@ -227,7 +227,7 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 3000 && !winTriggered && !gameOver) {//300000
+      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
@@ -589,7 +589,7 @@ function moveBackground() {
   //parallax
 
   //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
-  speedScale = 1.3;
+  //speedScale = 1.3;
 
   backgroundFront.tilePosition.x -= 3.5 * speedScale;
   backgroundBack.tilePosition.x -= 1.2 * speedScale;
