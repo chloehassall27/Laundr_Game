@@ -1,6 +1,10 @@
 /*
   current bugs:
    - Jump/duck spam
+
+  to test win functionality:
+   - change win time to a lower value (i usually use 3000 instead of 300000)
+   - uncomment out the line in moveBackground that sets speedScale = 1.3
 */
 
 import Spawner from "./spawner.js"
@@ -10,7 +14,7 @@ window.RESOLUTION = 1;
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth/4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
+  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
 });
 document.body.appendChild(app.view);
 
@@ -19,19 +23,19 @@ PIXI.settings.ROUND_PIXELS = true;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
-window.SCALE = HEIGHT/225;
+window.SCALE = HEIGHT / 225;
 //app.ticker.add(gameLoop);
 
 // Basic game variables
 
 const style = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*26, fill: '#4e4e4e'
+  fontFamily: 'Arial', fontSize: SCALE * 26, fill: '#4e4e4e'
 });
 const scoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#4b4b4b'
+  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#4b4b4b'
 })
 const highscoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE*23, fill: '#7c7c7c',
+  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#7c7c7c',
 })
 
 let spawner;
@@ -119,9 +123,9 @@ function loadOnce() {
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
-      backgroundFront.tileScale.set(SCALE*.25);
-      backgroundFront.y = HEIGHT - SCALE*50.25;
-      backgroundBack.tileScale.set(SCALE*.25);
+      backgroundFront.tileScale.set(SCALE * .25);
+      backgroundFront.y = HEIGHT - SCALE * 50.25;
+      backgroundBack.tileScale.set(SCALE * .25);
       app.stage.addChild(backgroundBack);
       app.stage.addChild(backgroundFront);
 
@@ -153,7 +157,7 @@ function loadOnce() {
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
       endHouse = new PIXI.Sprite(endHouseText);
       //endHouse.scaleMode = PIXI.SCALE_MODES.NEAREST;
-      endHouse.scale.set(0.07);
+      endHouse.scale.set(SCALE * 0.07);
       endHouse.anchor.set(0.5);
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
@@ -238,7 +242,7 @@ function gameLoop() {
         spawner.gameOver = true;
         winTimeoutTime = performance.now();
         winTimeout = setTimeout(endGame, 3000);
-        slowTimout = setInterval(slowMovement, 800);
+        slowTimout = setInterval(slowMovement, 700);
       }
 
     }
@@ -247,7 +251,7 @@ function gameLoop() {
   }
 
   else if (gameOver && player && player.winSequence && !lose) {
-    player.currSprite.x += 2.5 * playerSpeedScale;
+    player.currSprite.x += 3.5 * playerSpeedScale;
   }
 }
 
@@ -335,11 +339,10 @@ function endGame() {
 }
 
 function slowMovement() {
-  console.log("called");
   if (winTriggered) {
-    speedScale *= 0.7;
+    speedScale *= 0.6;
     if (player.winSequence)
-      playerSpeedScale *= 0.7;
+      playerSpeedScale *= 0.65;
   }
 }
 
@@ -588,10 +591,10 @@ function checkFocus() {
 
 
 window.addEventListener('resize', resize);
-function resize(){
+function resize() {
   RESOLUTION = window.innerWidth / 900 / SCALE;
   app.renderer.resolution = RESOLUTION;
-  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth/4/RESOLUTION)
+  app.renderer.resize(window.innerWidth / RESOLUTION, window.innerWidth / 4 / RESOLUTION)
 }
 
 // === End helper functions === //
@@ -602,12 +605,12 @@ function moveBackground() {
   //background.tilePosition.x -= 3.5*speedScale;
   //parallax
 
-  
+
   //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
   //speedScale = 1.3;
   backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale;
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale;
-  if (winTriggered && performance.now() >= (winTimeoutTime + 1550)) endHouse.x -= SCALE * 3.5 * speedScale;
+  if (winTriggered && performance.now() >= (winTimeoutTime + 1600)) endHouse.x -= SCALE * 3.5 * speedScale;
 }
 
 function endGameFall() {
