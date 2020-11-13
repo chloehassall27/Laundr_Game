@@ -12,15 +12,16 @@
         document.write('<script src="js/pixi.min.js">\x3C/script>');
     }
   </script>
+  <style> canvas {width:100%} </style>
+  <!-- This style line (IN ADDITION TO HOW RESIZING WORKS IN game.js) may cause unexpected behavior when inserting it into their page for a demo, depending how it is inserted (iframe, js directly in their site, etc).
+    If directly inserting js into their page, you may want to look into using js to insert the app.view into a div which you can then work with
+    There also will probably be problems with the touchscreen code
+  -->
   <script src="/node_modules/pixi-sound/dist/pixi-sound.js"></script>
 </head>
 
 <body>
   <script type="module" src="/js/game.js"></script>
-  <p>Test</p>
-  <p>Test</p>
-  <p>Test</p>
-  <p>Test</p>
 </body>
 
 </html>

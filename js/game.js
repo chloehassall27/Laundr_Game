@@ -17,17 +17,18 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
+PIXI.sound.context.paused = true;
+
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
 PIXI.settings.ROUND_PIXELS = true;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
 window.SCALE = HEIGHT/225;
-window.SCALED_HEIGHT = SCALE*HEIGHT;
-window.SCALED_WIDTH = SCALE*SCALED_HEIGHT;
 
 window.topOffset = app.view.offsetTop;
 window.bottomY = topOffset + HEIGHT;
+
 //app.ticker.add(gameLoop);
 
 // Basic game variables
@@ -51,7 +52,7 @@ window.groundLevel = HEIGHT * .9;
 let win = false;
 let lose = false;
 let gameOver = false;
-let gameStart = false;
+let noisesCreated = false;
 let speedScale = 1.0;
 let focus = true;
 let visible = true;
@@ -110,6 +111,15 @@ loadOnce();
 function loadOnce(){
   app.loader
     .load((loader, resources) => {
+      deathS = PIXI.sound.Sound.from(resources.deathSound);
+      deathS.volume = 0.4;
+      jumpS = PIXI.sound.Sound.from(resources.jumpSound);
+      jumpS.volume = 0.4;
+      tokenS = PIXI.sound.Sound.from(resources.tokenSound);
+      tokenS.volume = 0.4;
+      winS = PIXI.sound.Sound.from(resources.winSound);
+      winS.volume = 0.35;
+
       //create tiling sprite that can be scrolled infinitely
       //currently set up for parallax effect, if disliked, switch which things are commented out
 
@@ -156,6 +166,8 @@ function loadOnce(){
       restartButton.interactive = true
       restartButton.buttonMode = true
       restartButton.on('pointerdown', onClickRestart);
+      restartButton.on('pointerover', function () {restartButton.tint = 0xF0F0F0});
+      restartButton.on('pointerout', function () {restartButton.tint = 0xFFFFFF});
     });
 
   reload();
@@ -362,7 +374,7 @@ function cleanUp() {
 }
 
 function startGame() {
-  createNoises();
+  PIXI.sound.context.audioContext.resume();
 
   //now the player sprite is allowed to animate
   player.currSprite.play();
@@ -375,20 +387,6 @@ function startGame() {
   firstLoad = false;
 }
 
-function createNoises() {
-  app.loader
-    .load((loader, resources) => {
-      deathS = PIXI.sound.Sound.from(resources.deathSound);
-      deathS.volume = 0.4;
-      jumpS = PIXI.sound.Sound.from(resources.jumpSound);
-      jumpS.volume = 0.4;
-      player.jumpS = jumpS;
-      tokenS = PIXI.sound.Sound.from(resources.tokenSound);
-      tokenS.volume = 0.4;
-      winS = PIXI.sound.Sound.from(resources.winSound);
-      winS.volume = 0.35;
-    });
-}
 
 // === Helper functions === //
 // Keypress functions
