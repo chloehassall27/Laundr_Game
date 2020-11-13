@@ -185,18 +185,4 @@ export default class Player {
         this.loaded = true;
 
     }
-    
-    resize(){
-        let height = SCALE / 1.7;
-        this.falling.scale.set(height);
-        this.jumping.scale.set(height);
-        this.jumpStatic.scale.set(height);
-        this.ducking.scale.set(height);
-        this.currSprite.scale.set(height);
-        this.falling.hitArea.scale.set(height);
-        this.jumping.hitArea.scale.set(height);
-        this.jumpStatic.hitArea.scale.set(height);
-        this.ducking.hitArea.scale.set(height);
-        this.currSprite.hitArea.scale.set(height);
-    }
 }

@@ -535,8 +535,8 @@ function checkFocus() {
 window.addEventListener('resize', resize);
 function resize(){
   RESOLUTION = window.innerWidth / 900 / SCALE;
-  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth/4/RESOLUTION)
   app.renderer.resolution = RESOLUTION;
+  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth/4/RESOLUTION)
 }
 
 // === End helper functions === //
