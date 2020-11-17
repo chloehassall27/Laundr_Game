@@ -5,9 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 - Game found!</title>
-</head>
 
-<body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
   <!-- <script src='js/pixi.min.js'></script> -->
   <!-- Provided in case cdnjs stops hosting our file -->
@@ -20,16 +18,28 @@
 
   <script src="/node_modules/pixi-sound/dist/pixi-sound.js"></script>
   <script type="module" src="/js/game.js"></script>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v9.0"
+    nonce="nU5nxJVO"></script>
+
+</head>
+
+<body>
+
 
   <!-- The game itself will render inside the canvas element -->
   <div class="container">
-    <div class="laundr-game" id="laundr-game">
+    <div class="laundr-game" id="laundr-game" style="position: relative;">
       <canvas class="pixiCanvas" id="pixiCanvas"></canvas>
 
-      <!-- experimental. trying to get the buttons to be proper html buttons rather than pixi button enabled sprites -->
+      <!-- html version of social sharing options -->
       <div class="socials" id="socials">
-        <div class="twt" id="twt"></div>
-        <div class="fb" id="fb"></div>
+        <div class="twtDiv" id="twtDiv" style="display: inline-block;"></div>
+        <div id="fb-root"></div>
+        <div class="fbDiv fb-share-button" id="fbDiv" data-href="https://www.laundr.io/404" data-layout="button"
+          data-size="small" style="display: inline-block;"><a target="_blank"
+            href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.laundr.io%2F404&amp;src=sdkpreparse"
+            class="fb-xfbml-parse-ignore">Share</a></div>
       </div>
 
     </div>

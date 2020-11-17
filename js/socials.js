@@ -7,30 +7,34 @@ export default class socials {
     twtDiv;
     fbDiv;
     socialsDiv;
-    twtTemplate;
-    fbTemplate;
 
     constructor(app) {
         this.app = app;
-        this.setupPixiBtns();
-        //this.setupHTMLBtns();
+        //this.setupPixiBtns();
+        this.setupHTMLBtns();
+
     }
 
     endGame(score) {
         this.score = Math.round(score);
 
         //pixi interactable sprites method
-        this.app.stage.addChild(this.tweet);
-        this.app.stage.addChild(this.fbShare);
+        //this.app.stage.addChild(this.tweet);
+        //this.app.stage.addChild(this.fbShare);
 
-        //other method (still in progress, does not work right now)
-        //this.renderhtml(this.twtTemplate, document.querySelector('#twt'));
-        //this.renderhtml(this.fbTemplate, document.querySelector('#fb'));
+        //html method
+        this.renderTwt(this.twtDiv);
+        this.fbDiv.style.opacity = "1";
+        this.fbDiv.style.pointerEvents = "fill";
     }
 
     resetGame() {
-        this.app.stage.removeChild(this.tweet);
-        this.app.stage.removeChild(this.fbShare);
+        //this.app.stage.removeChild(this.tweet);
+        //this.app.stage.removeChild(this.fbShare);
+
+        this.twtDiv.innerHTML = "";
+        this.fbDiv.style.opacity = "0";
+        this.fbDiv.style.pointerEvents = "none";
     }
 
     onClickTweet() {
@@ -40,15 +44,15 @@ export default class socials {
     }
 
     onClickFBShare() {
-        //we can't prefill text for a facebook post - not only is there no known way to do so, but it's literally against fb's tos, so we shouldn't even try. best we can do is link to the 404 page.
+        //we can't prefill text for a facebook post - not only is there no known way to do so, but it's literally against fb's tos, so we shouldn't even try
+
         let link = "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.laundr.io%2F404&amp;src=sdkpreparse";
 
         window.open(link);
     }
 
-    //pixi button-enabled sprites method. works, not sure if it's the "correct" method though
+    //pixi button-enabled sprites method
     setupPixiBtns() {
-        //let tweetTexture = PIXI.Texture.from("../sprites/Twitter_Icon_resize.png");
         let tweetTexture = PIXI.Texture.from("../sprites/social_icons/Twitter_Icon_Circle.png");
         this.tweet = new PIXI.Sprite(tweetTexture);
 
@@ -72,21 +76,27 @@ export default class socials {
         this.fbShare.on('pointerdown', this.onClickFBShare.bind(this));
     }
 
-    //experimental, rendering html elements on top of the canvas. not even remotely close to working >.>
+    //html method
     setupHTMLBtns() {
         this.socialsDiv = document.getElementById('socials');
+        this.twtDiv = document.getElementById('twtDiv');
+        this.fbDiv = document.getElementById('fbDiv');
+
         this.socialsDiv.style.position = "absolute";
         this.socialsDiv.style.zIndex = "10";
-        this.socialsDiv.style.top = "50%";
-        this.socialsDiv.style.width = "100%";
+        this.socialsDiv.style.top = "80%";
+        this.socialsDiv.style.left = "50%";
+        this.socialsDiv.style.transform = "translate(-50%, -50%)";
         this.socialsDiv.style.textAlign = "center";
-        this.socialsDiv.style.height = HEIGHT;
 
-        this.twtTemplate = '<h4>owo</h4>';
-        this.fbTemplate = '<h4>uwu</h4>';
+        this.fbDiv.style.opacity = "0";
+        this.fbDiv.style.pointerEvents = "none";
     }
 
-    renderhtml(template, node) {
-        node.innerHTML = template;
+    renderTwt(node) {
+        let text = `I just got a score of ` + this.score + ` on @LaundrOfficial's hidden #laundr404game!\n\nThink you can do better? Take it for a spin here:\n`;
+        twttr.widgets.createShareButton('https://www.laundr.io/404', node, {
+            text: text
+        });
     }
 }
