@@ -62,6 +62,7 @@ let highscore = 0;
 let highscoreText = new PIXI.Text(highscore, highscoreStyle);
 highscoreText.x = WIDTH / 1.21;
 
+let couponCode;
 //noises
 let deathS;
 let jumpS;
@@ -75,7 +76,13 @@ let spawnerInterval;
 let speedInterval;
 let gameInterval;
 let timeout = 0;
-
+// === Loading the coupon code txt file === //
+fetch('couponCode/couponCode.txt')
+  .then(response => response.text())
+  .then(data => { 
+    couponCode = data;
+    console.log(couponCode)
+  })
 
 // === Sprite setup === //
 app.loader
@@ -143,6 +150,7 @@ function load() {
       gameInterval = setInterval(gameLoop, 7);
     })
 }
+
 
 // === Main game loop === //
 function gameLoop() {
