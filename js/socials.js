@@ -1,3 +1,10 @@
+/*
+CURRENT BUGS:
+-in order to ensure the sprites have dimensions to the power of 2, they have a lot of blank png space on each side of them, which means you can click them without actually clicking the button itself
+    -look into hit area but for button sprites?
+-still stupidly fuzzy looking >:T
+*/
+
 export default class socials {
     app;
     tweet;
