@@ -10,8 +10,8 @@ export default class socials {
 
     constructor(app) {
         this.app = app;
-        //this.setupPixiBtns();
-        this.setupHTMLBtns();
+        this.setupPixiBtns();
+        //this.setupHTMLBtns();
 
     }
 
@@ -19,22 +19,22 @@ export default class socials {
         this.score = Math.round(score);
 
         //pixi interactable sprites method
-        //this.app.stage.addChild(this.tweet);
-        //this.app.stage.addChild(this.fbShare);
+        this.app.stage.addChild(this.tweet);
+        this.app.stage.addChild(this.fbShare);
 
         //html method
-        this.renderTwt(this.twtDiv);
-        this.fbDiv.style.opacity = "1";
-        this.fbDiv.style.pointerEvents = "fill";
+        // this.renderTwt(this.twtDiv);
+        // this.fbDiv.style.opacity = "1";
+        // this.fbDiv.style.pointerEvents = "fill";
     }
 
     resetGame() {
-        //this.app.stage.removeChild(this.tweet);
-        //this.app.stage.removeChild(this.fbShare);
+        this.app.stage.removeChild(this.tweet);
+        this.app.stage.removeChild(this.fbShare);
 
-        this.twtDiv.innerHTML = "";
-        this.fbDiv.style.opacity = "0";
-        this.fbDiv.style.pointerEvents = "none";
+        // this.twtDiv.innerHTML = "";
+        // this.fbDiv.style.opacity = "0";
+        // this.fbDiv.style.pointerEvents = "none";
     }
 
     onClickTweet() {
@@ -53,26 +53,34 @@ export default class socials {
 
     //pixi button-enabled sprites method
     setupPixiBtns() {
-        let tweetTexture = PIXI.Texture.from("../sprites/social_icons/Twitter_Icon_Circle.png");
+        let tweetTexture = PIXI.Texture.from("../sprites/social_icons/tweet_button_small.png");
+        tweetTexture.baseTexture.setSize(64, 128, 5);
         this.tweet = new PIXI.Sprite(tweetTexture);
 
-        this.tweet.scale.set(SCALE * 0.05);
         this.tweet.anchor.set(0.5);
-        this.tweet.x = WIDTH / 2.1;
+        this.tweet.x = WIDTH / 2.2;
         this.tweet.y = HEIGHT / 1.25;
         this.tweet.interactive = true;
         this.tweet.buttonMode = true;
+        // this.tweet.antialias = false;
+        this.tweet.resolution = 2;
+        this.tweet.scale.set(SCALE * 0.5);
+
         this.tweet.on('pointerdown', this.onClickTweet.bind(this));
 
-        let fbTexture = PIXI.Texture.from("../sprites/social_icons/Facebook_Icon.png");
+        let fbTexture = PIXI.Texture.from("../sprites/social_icons/fb_button.png");
+        fbTexture.baseTexture.setSize(64, 128, 5);
         this.fbShare = new PIXI.Sprite(fbTexture);
 
-        this.fbShare.scale.set(SCALE * 0.05);
         this.fbShare.anchor.set(0.5);
-        this.fbShare.x = WIDTH / 1.92;
+        this.fbShare.x = WIDTH / 1.85;
         this.fbShare.y = HEIGHT / 1.25;
         this.fbShare.interactive = true;
         this.fbShare.buttonMode = true;
+        this.tweet.resolution = 2;
+        this.fbShare.scale.set(SCALE * 0.5);
+
+
         this.fbShare.on('pointerdown', this.onClickFBShare.bind(this));
     }
 
