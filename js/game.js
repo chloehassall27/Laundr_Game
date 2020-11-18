@@ -134,9 +134,9 @@ function loadOnce() {
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
       muteButton.on('pointerdown', onClickMute);
+      muteButton.interactive = true;
+      muteButton.buttonMode = true;
       muteButton.scale.set(SCALE)
-      muteButton.interactive = true
-      muteButton.buttonMode = true
       app.stage.addChild(muteButton);
 
       //create player object - handles jumping + ducking
@@ -146,12 +146,12 @@ function loadOnce() {
 
       //restart functionality stuff
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
-      restartButton.scale.set(SCALE * 0.3)
-      restartButton.anchor.set(0.5)
-      restartButton.x = WIDTH / 2
-      restartButton.y = HEIGHT / 1.75
-      restartButton.interactive = true
-      restartButton.buttonMode = true
+      restartButton.scale.set(SCALE * 0.3);
+      restartButton.anchor.set(0.5);
+      restartButton.x = WIDTH / 2;
+      restartButton.y = HEIGHT / 1.75;
+      restartButton.interactive = true;
+      restartButton.buttonMode = true;
       restartButton.on('pointerdown', onClickRestart);
 
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
@@ -289,7 +289,7 @@ function checkCollision(a, b) {
   let obsTop = bBox.y;
 
   if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom))
-    return true
+    return true;
   else
     return false;
 }
@@ -359,7 +359,6 @@ function onClickRestart() {
 
 function onClickMute() {
   window.mute = !window.mute;
-  player.mute = window.mute;
   if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
   else muteButton.gotoAndStop(1);
 }
@@ -521,7 +520,7 @@ function touchCancel(e) {
 function touchMove(e) {
   // console.log(e);
   for (var i = 0; i < e.changedTouches.length; i++) {
-    let touch = e.changedTouches[i]
+    let touch = e.changedTouches[i];
     // console.log(touch);
 
     // Top 2/3 of the canvas will call the jump function and stop the duck function
