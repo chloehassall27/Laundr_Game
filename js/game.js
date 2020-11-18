@@ -24,7 +24,8 @@ const app = new PIXI.Application({
 document.body.appendChild(app.view);
 PIXI.sound.context.paused = true;
 
-// window.container = new PIXI.container
+window.container = new PIXI.Container();
+app.stage.addChild(container);
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
 PIXI.settings.ROUND_PIXELS = true;
@@ -146,8 +147,8 @@ function loadOnce(){
       backgroundFront.tileScale.set(SCALE * .25);
       backgroundFront.y = HEIGHT - SCALE * 50.25;
       backgroundBack.tileScale.set(SCALE * .25);
-      app.stage.addChild(backgroundBack);
-      app.stage.addChild(backgroundFront);
+      container.addChild(backgroundBack);
+      container.addChild(backgroundFront);
       
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
@@ -158,7 +159,7 @@ function loadOnce(){
       muteButton.scale.set(SCALE);
       muteButton.interactive = true;
       muteButton.buttonMode = true;
-      app.stage.addChild(muteButton);
+      container.addChild(muteButton);
 
       //create player object - handles jumping + ducking
       player = new Player(app, jumpS);
@@ -182,7 +183,7 @@ function loadOnce(){
       endHouse.anchor.set(0.5);
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
-      app.stage.addChild(endHouse);
+      container.addChild(endHouse);
     });
 
   reload();
@@ -208,7 +209,7 @@ function gameLoop() {
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
-        app.stage.addChild(scoreText);
+        container.addChild(scoreText);
         firstLoop = false;
       }
 
@@ -235,7 +236,7 @@ function gameLoop() {
 
         //remove box if it's offscreen
         if (xBox === 0) {
-          app.stage.removeChild(spawner.obstacles[i]);
+          container.removeChild(spawner.obstacles[i]);
           spawner.obstacles.shift();
         }
       }
@@ -248,7 +249,7 @@ function gameLoop() {
           collectToken(i);
 
         if (xBox === 0) {
-          app.stage.removeChild(tokens[i]);
+          container.removeChild(tokens[i]);
           spawner.tokens.shift();
         }
       }
@@ -287,7 +288,7 @@ function displayScore() {
 function displayHighScore() {
   if (highscore > 0) {
     highscoreText.text = 'HI ' + Math.round(highscore);
-    app.stage.addChild(highscoreText);
+    container.addChild(highscoreText);
   }
 }
 
@@ -344,15 +345,15 @@ function endGame() {
     if (!mute) {
       deathS.play();
     }
-    app.stage.addChild(endMessage);
-    app.stage.addChild(restartButton);
+    container.addChild(endMessage);
+    container.addChild(restartButton);
   } else if (win) {
     setTimeout(() => {
       if (!mute) {
         winS.play();
       }
-      app.stage.addChild(endMessage);
-      app.stage.addChild(restartButton);
+      container.addChild(endMessage);
+      container.addChild(restartButton);
     }, 950);
   }
 
@@ -419,11 +420,11 @@ function cleanUp() {
   endHouse.x = WIDTH * 1.5;
 
   // Remove obstacles
-  for (var i = 0; i < spawner.obstacles.length; i++)
-    app.stage.removeChild(spawner.obstacles[i]);
-
-  app.stage.removeChild(endMessage);
-  app.stage.removeChild(restartButton);
+  for (var i = 0; i < spawner.obstacles.length; i++){
+    container.removeChild(spawner.obstacles[i]);
+  }
+  container.removeChild(endMessage);
+  container.removeChild(restartButton);
 }
 
 function startGame() {

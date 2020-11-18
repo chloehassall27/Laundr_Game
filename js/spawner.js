@@ -70,7 +70,7 @@ export default class Spawner {
 
         obstacle.animationSpeed = .125;
         obstacle.play()
-        this.app.stage.addChild(obstacle);
+        container.addChild(obstacle);
         this.obstacles.push(obstacle);
 
     }
@@ -89,7 +89,7 @@ export default class Spawner {
 
         token.animationSpeed = 0.135;
         token.play();
-        this.app.stage.addChild(token);
+        container.addChild(token);
 
         this.tokens.push(token);
     }
@@ -222,7 +222,7 @@ export default class Spawner {
     }
 
     collectToken(index) {
-        this.app.stage.removeChild(this.tokens[index]);
+        container.removeChild(this.tokens[index]);
         this.tokens.splice(index, 1);
     }
 
