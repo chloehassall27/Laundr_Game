@@ -40,8 +40,8 @@ export default class Spawner {
         this.tokenTime = false;
         this.rangeMin = false;
 
-        this.obstScale = HEIGHT / (HEIGHT * 2.41);
-        this.tokenScale = HEIGHT / (HEIGHT * 2.6);
+        this.obstScale = SCALE * 1 / 2.41;
+        this.tokenScale = SCALE * 1 / 2.6;
         this.ironRandScale = (window.groundLevel / 2 + HEIGHT * 0.135) - (window.groundLevel / 2 + HEIGHT * 0.4) + 1;
         this.ironRandAdd = window.groundLevel / 2 + HEIGHT * 0.32;
 
@@ -57,7 +57,7 @@ export default class Spawner {
         //the laundry sprite doesn't line up well with the washer one, so offset it a bit
         if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
 
-        obstacle.x = WIDTH;
+        obstacle.x = WIDTH * 1.1;
         obstacle.x += xOffset;
         obstacle.y = posy;
         //console.log(obstacle.getBounds());
@@ -87,7 +87,7 @@ export default class Spawner {
         const rand = Math.floor(Math.random() * 6);
         if (rand % 3 == 0) token.y = this.jumpLevel;
         else token.y = this.walkingLevel;
-        token.x = WIDTH;
+        token.x = WIDTH * 1.1;
 
         token.hitArea = new PIXI.Rectangle(token.x - (token.width * 0.25), token.y - (token.height * 0.28), token.width * 0.52, token.height * 0.55);
 

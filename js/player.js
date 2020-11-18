@@ -15,7 +15,7 @@ export default class Player {
     
     // jumpS;
 
-    constructor(app ,jumpS) {
+    constructor(app, jumpS) {
         this.app = app;
 
         this.groundLevel = HEIGHT - (HEIGHT * .1);
@@ -40,7 +40,7 @@ export default class Player {
             this.switchSprite(this.jumpStatic);
             // this.switchSprite(this.jumping);
         }
-        
+
         // If player is below ground, set them on the ground and reset speed and animation
         else if (this.currSprite.y > this.groundLevel) {
             this.speedY = 0;
@@ -48,7 +48,7 @@ export default class Player {
             this.currSprite.hitArea.y = this.groundLevel;
             this.switchSprite(this.running);
         }
-        
+
         // If player is in air, add gravity
         else if (this.currSprite.y < this.groundLevel) {
             this.speedY -= .12;
@@ -64,18 +64,18 @@ export default class Player {
         //     this.switchSprite(this.jumpStatic);
         // }
 
-        this.currSprite.y -= this.speedY;
-        this.currSprite.hitArea.y -= this.speedY;
+        this.currSprite.y -= SCALE * this.speedY;
+        this.currSprite.hitArea.y -= SCALE * this.speedY;
     }
 
     updateDuck() {
-        if(window.inputs.duck){
+        if (window.inputs.duck) {
             // If ducking on (or below) ground, use ducking sprite
-            if (this.currSprite.y >= this.groundLevel) 
+            if (this.currSprite.y >= this.groundLevel)
                 this.switchSprite(this.ducking);
-            
+
             // If ducking in midair, move player down faster
-            else 
+            else
                 this.speedY -= .15;
         }
 
@@ -86,13 +86,15 @@ export default class Player {
     }
 
     reset() {
+        this.currSprite.x = WIDTH * 0.22;
         this.switchSprite(this.running);
+        this.currSprite.x = WIDTH * 0.22;
         this.currSprite.hitArea.y = this.currSprite.y;
     }
 
     switchSprite(sprite) {
         // Only switch sprite if necesary
-        if(this.currSprite !== sprite){
+        if (this.currSprite !== sprite) {
             let y = this.currSprite.y;
             this.app.stage.removeChild(this.currSprite);
             this.currSprite = sprite;
@@ -117,9 +119,17 @@ export default class Player {
                 this.falling.gotoAndPlay(0);
             }
         } else {
-            this.ducking.stop();
-            this.switchSprite(this.ducking);
+            this.winSequence = true;
+            setTimeout(this.sitDown.bind(this), 700);
         }
+    }
+
+    sitDown() {
+        this.winSequence = false;
+        this.ducking.stop();
+        let x = this.currSprite.x;
+        this.switchSprite(this.ducking);
+        this.currSprite.x = x;
     }
 
     endGameFall() {
@@ -133,7 +143,7 @@ export default class Player {
 
     createSprites() {
         //only call this the one time in the construtor!!
-        let height = HEIGHT / (HEIGHT * 1.7);
+        let height = SCALE / 1.7;
 
         let spriteWidth = -(WIDTH - (WIDTH * 0.22)) / 9.3;
         let spriteHeight = -(WIDTH - (WIDTH * 0.22)) / 10;
