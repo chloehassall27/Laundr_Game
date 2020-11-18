@@ -1,7 +1,5 @@
 /*
 CURRENT BUGS:
--in order to ensure the sprites have dimensions to the power of 2, they have a lot of blank png space on each side of them, which means you can click them without actually clicking the button itself
-    -look into hit area but for button sprites?
 -still stupidly fuzzy looking >:T
 */
 
@@ -61,7 +59,10 @@ export default class socials {
     //pixi button-enabled sprites method
     setupPixiBtns() {
         let tweetTexture = PIXI.Texture.from("../sprites/social_icons/tweet_button_small.png");
-        tweetTexture.baseTexture.setSize(64, 128, 5);
+        tweetTexture = new PIXI.Texture(tweetTexture.baseTexture, new PIXI.Rectangle(170, 0, 650, 256));
+        //tweetTexture.baseTexture.setSize(256, 64, 2);
+        tweetTexture.baseTexture.mipmap = true;
+        // tweetTexture = new PIXI.Texture(tweetTexture.baseTexture, new PIXI.Rectangle(42, 0, 162, 64));
         this.tweet = new PIXI.Sprite(tweetTexture);
 
         this.tweet.anchor.set(0.5);
@@ -71,12 +72,14 @@ export default class socials {
         this.tweet.buttonMode = true;
         // this.tweet.antialias = false;
         this.tweet.resolution = 2;
-        this.tweet.scale.set(SCALE * 0.5);
+        this.tweet.scale.set(SCALE * 0.1);
 
         this.tweet.on('pointerdown', this.onClickTweet.bind(this));
 
         let fbTexture = PIXI.Texture.from("../sprites/social_icons/fb_button.png");
-        fbTexture.baseTexture.setSize(64, 128, 5);
+        fbTexture = new PIXI.Texture(fbTexture.baseTexture, new PIXI.Rectangle(170, 0, 650, 256));
+        //fbTexture.baseTexture.setSize(256, 256, 5);
+        fbTexture.baseTexture.mipmap = true;
         this.fbShare = new PIXI.Sprite(fbTexture);
 
         this.fbShare.anchor.set(0.5);
@@ -85,7 +88,7 @@ export default class socials {
         this.fbShare.interactive = true;
         this.fbShare.buttonMode = true;
         this.tweet.resolution = 2;
-        this.fbShare.scale.set(SCALE * 0.5);
+        this.fbShare.scale.set(SCALE * 0.1);
 
 
         this.fbShare.on('pointerdown', this.onClickFBShare.bind(this));

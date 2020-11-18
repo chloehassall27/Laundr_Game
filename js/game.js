@@ -1,6 +1,7 @@
 /*
   current bugs:
    - Jump/duck spam
+   - social media icons look a bit fuzzy
 
   to test win functionality:
    - change win time to a lower value (i usually use 3000 instead of 300000)
