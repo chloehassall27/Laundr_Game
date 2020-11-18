@@ -311,7 +311,7 @@ function checkCollision(a, b) {
   let obsTop = bBox.y;
 
   if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom))
-    return true
+    return true;
   else
     return false;
 }
@@ -383,7 +383,6 @@ function onClickRestart() {
 function onClickMute(){
   touchDisable = true;
   window.mute = !window.mute;
-  player.mute = window.mute;
   if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
   else muteButton.gotoAndStop(1);
 }
@@ -551,7 +550,8 @@ function touchEnd(e) {
   if(currentTouchID === oldTouchID) currentTouchID = -1;
 
   for (var i = 0; i < e.changedTouches.length; i++) {
-    let touch = e.changedTouches[i]
+    let touch = e.changedTouches[i];
+    // console.log(touch);
 
     // Only check with the current touchID
     if(touch.identifier !== oldTouchID) continue;
