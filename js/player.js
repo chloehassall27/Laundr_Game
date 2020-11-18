@@ -132,7 +132,7 @@ export default class Player {
 
     endGameFall() {
         if (this.currSprite.y < this.groundLevel) {
-            this.currSprite.y += 4;
+            this.currSprite.y += SCALE * 4;
         } else {
             this.currSprite.y = this.groundLevel;
             this.fallComplete = true;

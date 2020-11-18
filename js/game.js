@@ -15,24 +15,25 @@
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 
-window.RESOLUTION = 1;
-
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
+  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1,
 });
 document.body.appendChild(app.view);
 PIXI.sound.context.paused = true;
-
-window.container = new PIXI.Container();
-app.stage.addChild(container);
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
 PIXI.settings.ROUND_PIXELS = true;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
-window.SCALE = HEIGHT / 225;
+window.SCALE = HEIGHT / 225; // Scale used for compatibility with old code. Originally, we hard coded values with a screen size of 900x225
+window.RELSCALE = HEIGHT / 225; // Scale relative to original scale.  Other scale is only calculated at start
+
+window.container = new PIXI.Container();
+app.stage.addChild(container);
+container.width = app.screen.width;
+container.height = app.screen.height;
 
 window.topOffset = app.view.offsetTop;
 window.bottomY = topOffset + HEIGHT;
@@ -41,13 +42,13 @@ window.bottomY = topOffset + HEIGHT;
 // Basic game variables
 
 const style = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE * 26, fill: '#4e4e4e'
+  fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e'
 });
 const scoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#4b4b4b'
+  fontFamily: 'Arial', fontSize: RELSCALE * 23, fill: '#4b4b4b'
 })
 const highscoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#7c7c7c',
+  fontFamily: 'Arial', fontSize: RELSCALE * 23, fill: '#7c7c7c',
 })
 
 let spawner;
@@ -184,6 +185,8 @@ function loadOnce(){
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
       container.addChild(endHouse);
+
+      endMessage = new PIXI.Text('G A M E  O V E R', style)
     });
 
   reload();
@@ -331,8 +334,7 @@ function endGame() {
     displayHighScore();
   }
 
-  if (lose) endMessage = new PIXI.Text('G A M E  O V E R', style);
-  else if (win) endMessage = new PIXI.Text('W I N N E R', style);
+  if (win) endMessage.text = 'W I N N E R';
   endMessage.anchor.set(.5, 0);
   endMessage.x = WIDTH / 2;
   endMessage.y = HEIGHT / 4;
@@ -619,9 +621,16 @@ function checkFocus() {
 
 window.addEventListener('resize', resize);
 function resize(){
-  RESOLUTION = window.innerWidth / 900 / SCALE;
-  app.renderer.resolution = RESOLUTION;
-  app.renderer.resize(window.innerWidth/RESOLUTION, window.innerWidth / 4 / RESOLUTION)
+  app.renderer.resize(window.innerWidth, window.innerWidth / 4 );
+  container.width = app.view.width;
+  container.height = app.view.height;
+  window.RELSCALE = (app.view.height / 225) / SCALE ;
+  container.scale.set(RELSCALE);
+
+  scoreText.resolution = RELSCALE;
+  highscoreText.resolution = RELSCALE;
+  endMessage.resolution = RELSCALE;
+
   window.topOffset = app.view.offsetTop;
   window.bottomY = topOffset + app.view.height;
 }
