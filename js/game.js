@@ -9,6 +9,7 @@
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
+import Window from "./windows.js"
 
 window.RESOLUTION = 1;
 
@@ -40,6 +41,7 @@ const highscoreStyle = new PIXI.TextStyle({
 
 let spawner;
 let player;
+let windows;
 // let background;
 let backgroundFront, backgroundBack;
 window.groundLevel = HEIGHT * .9;
@@ -162,6 +164,9 @@ function loadOnce() {
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
       app.stage.addChild(endHouse);
+
+      windows = new Window(app);
+      windows.setUpInstruct();
     });
 
   reload();
@@ -185,6 +190,9 @@ function reload() {
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
+    if(!windows.removedInstruct){
+      windows.removeInstruct();
+    }
     checkFocus();
 
     if (focus && visible) {
