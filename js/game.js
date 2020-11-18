@@ -2,6 +2,7 @@
   current bugs:
    - jiggle bug
    - mute token collect sound
+   - Audio on touch devices will not play until first touch has been let go. Will be fixed by instructions requiring touch
 
    Test:
    - Touch inputs on buttons on rest of page (maybe copy their 404 page and try testing what it will look like on there)
