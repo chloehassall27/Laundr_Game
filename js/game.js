@@ -1,6 +1,5 @@
 /*
   current bugs:
-   - Restart button hitbox remains in same place when resizing, might move everything into a container
    - jiggle bug
    - mute token collect sound
 
@@ -17,7 +16,7 @@ import Player from "./player.js"
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1,
+  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: 1,
 });
 document.body.appendChild(app.view);
 PIXI.sound.context.paused = true;
@@ -34,6 +33,7 @@ window.container = new PIXI.Container();
 app.stage.addChild(container);
 container.width = app.screen.width;
 container.height = app.screen.height;
+container.interactive = true;
 
 window.topOffset = app.view.offsetTop;
 window.bottomY = topOffset + HEIGHT;
@@ -480,86 +480,72 @@ function keysUp(e) {
 
 
 // Touchevent functions
-app.view.addEventListener("touchstart", touchStart, false);
-app.view.addEventListener("touchend", touchEnd, false);
-app.view.addEventListener("touchcancel", touchCancel, false);
-app.view.addEventListener("touchmove", touchMove, false);
+container.on("touchstart", touchStart)
+  .on("touchend", touchEnd)
+  .on("touchendoutside", touchEnd)
+  .on("touchcancel", touchCancel)
+  .on("touchmove", touchMove);
 
 let currentTouchID = -1;
 
 function touchStart(e) {
-  // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
-  for (var i = 0; i < e.targetTouches.length; i++) {
-    let touch = e.targetTouches[i]
+  let touch = e.data;
 
-    // If there's no current touch, then set this touch to be the current one
-    if (currentTouchID === -1) currentTouchID = touch.identifier
-    
-    // We only care about the current touch, so skip if this isn't it
-    if(touch.identifier !== currentTouchID || touchDisable) continue;
+  // If there's no current touch, then set this touch to be the current one
+  if (currentTouchID === -1) currentTouchID = touch.identifier
+  
+  // We only care about the current touch, so skip if this isn't it
+  if(touch.identifier !== currentTouchID || touchDisable) return;
 
-    // Top 2/3 of the canvas will call the jump function
-    if (touch.pageY < (2 * HEIGHT / 3 + topOffset) ) {
-      inputs.jump = true;
+  let pos = e.data.getLocalPosition(this.parent);
 
-      if (!started && firstLoad) 
-        startGame();
+  // Top 2/3 of the canvas will call the jump function
+  if ( pos.y < (2 * HEIGHT / 3) ) {
+    inputs.jump = true;
 
-      // We only care about the current touch, so breaking here will stop the rest of the touches from even being checked
-      break;
-    }
-    // Bottom 1/3 of the canvas will call the duck function
+    if (!started && firstLoad) 
+      startGame();
+  }
+  // Bottom 1/3 of the canvas will call the duck function
 
-    else if (touch.pageY > (HEIGHT / 3 + topOffset) ) {
-      inputs.duck = true;
-      break;
-    }
+  else{
+    inputs.duck = true;
   }
 }
 
 function touchMove(e) {
-  for (var i = 0; i < e.changedTouches.length; i++) {
-    let touch = e.changedTouches[i]
 
-    // We only care about the current touch
-    if(touch.identifier !== currentTouchID) continue;
+  let touch = e.data;
 
-    // Top 2/3 of the canvas will call the jump function and stop the duck function
-    if (touch.pageY < (2 * HEIGHT / 3 + topOffset) ) {
-      inputs.jump = true;
-      inputs.duck = false;
-      break;
-    }
-    // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-    else if (touch.pageY > (HEIGHT / 3 + topOffset) ) {
-      inputs.duck = true;
-      inputs.jump = false;
-      break;
-    }
+  // If there's no current touch, then set this touch to be the current one
+  if (currentTouchID === -1) currentTouchID = touch.identifier
+  
+  // We only care about the current touch
+  if(touch.identifier !== currentTouchID) return;
+
+ 
+  let pos = e.data.getLocalPosition(this.parent);
+  // console.log(this.parent)
+
+  // Top 2/3 of the canvas will call the jump function and stop the duck function
+  if (pos.y < (2 * HEIGHT / 3) ) {
+    inputs.jump = true;
+    inputs.duck = false;
+  }
+  // Bottom 1/3 of the canvas will call the duck function and stop the jump function
+  else{
+    inputs.duck = true;
+    inputs.jump = false;
   }
 }
 
 function touchEnd(e) {
-  let oldTouchID = currentTouchID;
-
-  // Set currentTouchID to most recent touch that's not the one being released that is within the canvas
-  for (var i = 0; i < e.touches.length; i++) {
-    if (e.touches[i].pageY < bottomY && e.touches[i].pageY > topOffset) currentTouchID = e.touches[i].identifier;
-  }
+  let touch = e.data;
   
-  if(currentTouchID === oldTouchID) currentTouchID = -1;
-
-  for (var i = 0; i < e.changedTouches.length; i++) {
-    let touch = e.changedTouches[i];
-    // console.log(touch);
-
-    // Only check with the current touchID
-    if(touch.identifier !== oldTouchID) continue;
-
+  if(touch.identifier == currentTouchID){
+    currentTouchID = -1;
     inputs.jump = false;
     inputs.duck = false;
-
-    break;
   }
 }
 
