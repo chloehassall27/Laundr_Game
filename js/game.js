@@ -1,6 +1,8 @@
 /*
   current bugs:
    - Restart button hitbox remains in same place when resizing, might move everything into a container
+   - jiggle bug
+   - mute token collect sound
 
    Test:
    - Touch inputs on buttons on rest of page (maybe copy their 404 page and try testing what it will look like on there)
@@ -33,13 +35,6 @@ window.SCALE = HEIGHT / 225;
 
 window.topOffset = app.view.offsetTop;
 window.bottomY = topOffset + HEIGHT;
-
-PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
-PIXI.settings.ROUND_PIXELS = true;
-
-window.HEIGHT = app.screen.height;
-window.WIDTH = app.screen.width;
-window.SCALE = HEIGHT / 225;
 //app.ticker.add(gameLoop);
 
 // Basic game variables
