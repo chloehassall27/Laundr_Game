@@ -1,6 +1,8 @@
 /*
   current bugs:
-   - Jump/duck spam
+   - jiggle bug
+   - mute token collect sound
+   - Audio on touch devices will not play until first touch has been let go. Will be fixed by instructions requiring touch
    - social media icons look a bit fuzzy
 
   to test win functionality:
@@ -12,34 +14,41 @@ import Spawner from "./spawner.js"
 import Player from "./player.js"
 import Socials from "./socials.js"
 
-window.RESOLUTION = 1;
-
 // === Basic app setup === //
 let canvas = document.getElementById('pixiCanvas');
-canvas.style.zIndex = "-1";
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION, view: canvas,
+  width: canvas.getBoundingClientRect().width, height: canvas.getBoundingClientRect().width / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1, view: canvas,
 });
-//document.body.appendChild(app.view);
+canvas.style.zIndex = "-1";
+document.body.appendChild(app.view);
+PIXI.sound.context.paused = true;
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
 PIXI.settings.ROUND_PIXELS = true;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
-window.SCALE = HEIGHT / 225;
+window.SCALE = HEIGHT / 225; // Scale used for compatibility with old code. Originally, we hard coded values with a screen size of 900x225
+window.RELSCALE = HEIGHT / 225; // Scale relative to original scale.  Other scale is only calculated at start
+
+window.container = new PIXI.Container();
+app.stage.addChild(container);
+container.width = app.screen.width;
+container.height = app.screen.height;
+container.interactive = true;
+
 //app.ticker.add(gameLoop);
 
 // Basic game variables
 
 const style = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE * 26, fill: '#4e4e4e'
+  fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
 });
 const scoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#4b4b4b'
+  fontFamily: 'Arial', fontSize: RELSCALE * 23, fill: '#4b4b4b'
 })
 const highscoreStyle = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: SCALE * 23, fill: '#7c7c7c',
+  fontFamily: 'Arial', fontSize: RELSCALE * 23, fill: '#7c7c7c',
 })
 
 let spawner;
@@ -52,7 +61,6 @@ window.groundLevel = HEIGHT * .9;
 let win = false;
 let lose = false;
 let gameOver = false;
-let gameStart = false;
 let speedScale = 1.0;
 let focus = true;
 let visible = true;
@@ -62,6 +70,7 @@ let winTimeout;
 let timeOffset;
 let firstLoop = true;
 let endMessage;
+let touchDisable = false;
 
 window.inputs = {
   jump: false,
@@ -76,10 +85,12 @@ let muteButton;
 let score = 0;
 let scoreText = new PIXI.Text(score, scoreStyle);
 scoreText.x = WIDTH / 1.07;
+scoreText.resolution = 1.5;
 
 let highscore = 0;
 let highscoreText = new PIXI.Text(highscore, highscoreStyle);
 highscoreText.x = WIDTH / 1.21;
+highscoreText.resolution = 1.5;
 
 //noises
 let deathS;
@@ -111,9 +122,18 @@ app.loader
 
 loadOnce();
 
-function loadOnce() {
+function loadOnce(){
   app.loader
     .load((loader, resources) => {
+      deathS = PIXI.sound.Sound.from(resources.deathSound);
+      deathS.volume = 0.4;
+      jumpS = PIXI.sound.Sound.from(resources.jumpSound);
+      jumpS.volume = 0.4;
+      tokenS = PIXI.sound.Sound.from(resources.tokenSound);
+      tokenS.volume = 0.4;
+      winS = PIXI.sound.Sound.from(resources.winSound);
+      winS.volume = 0.35;
+    
       //create tiling sprite that can be scrolled infinitely
       //currently set up for parallax effect, if disliked, switch which things are commented out
 
@@ -131,18 +151,19 @@ function loadOnce() {
       backgroundFront.tileScale.set(SCALE * .25);
       backgroundFront.y = HEIGHT - SCALE * 50.25;
       backgroundBack.tileScale.set(SCALE * .25);
-      app.stage.addChild(backgroundBack);
-      app.stage.addChild(backgroundFront);
-
-      createNoises();
-
+      container.addChild(backgroundBack);
+      container.addChild(backgroundFront);
+      
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
       muteButton.on('pointerdown', onClickMute);
+      muteButton.on('pointerup', onReleaseMute);
+      muteButton.on('pointercancel', onReleaseMute);
+      muteButton.on('pointerout', onReleaseMute);
+      muteButton.scale.set(SCALE);
       muteButton.interactive = true;
       muteButton.buttonMode = true;
-      muteButton.scale.set(SCALE)
-      app.stage.addChild(muteButton);
+      container.addChild(muteButton);
 
       //create player object - handles jumping + ducking
       player = new Player(app, jumpS);
@@ -153,11 +174,11 @@ function loadOnce() {
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
       restartButton.scale.set(SCALE * 0.3);
       restartButton.anchor.set(0.5);
-      restartButton.x = WIDTH / 2;
-      restartButton.y = HEIGHT / 1.75;
       restartButton.interactive = true;
       restartButton.buttonMode = true;
       restartButton.on('pointerdown', onClickRestart);
+      restartButton.on('pointerover', function () {restartButton.tint = 0xF0F0F0;});
+      restartButton.on('pointerout', function () {restartButton.tint = 0xFFFFFF;});
 
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
       endHouse = new PIXI.Sprite(endHouseText);
@@ -165,7 +186,10 @@ function loadOnce() {
       endHouse.anchor.set(0.5);
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
-      app.stage.addChild(endHouse);
+      container.addChild(endHouse);
+
+      endMessage = new PIXI.Text('G A M E  O V E R', style);
+      endMessage.resolution = 1.5;
 
       socials = new Socials(app);
     });
@@ -178,9 +202,6 @@ function reload() {
     .load((loader, resources) => {
       //create our spawner - handles obstacles + tokens
       spawner = new Spawner(app);
-      player.speedY = 0;
-      player.currSprite.y = groundLevel;
-      player.currSprite.hitArea.y = groundLevel;
     });
 
   speedInterval = setInterval(increaseSpeedScale, 20000);
@@ -196,8 +217,8 @@ function gameLoop() {
     if (focus && visible) {
       if (firstLoop) {
         timeOffset = performance.now();
+        container.addChild(scoreText);
         firstLoop = false;
-        app.stage.addChild(scoreText);
       }
 
       moveBackground();
@@ -223,7 +244,7 @@ function gameLoop() {
 
         //remove box if it's offscreen
         if (xBox === 0) {
-          app.stage.removeChild(spawner.obstacles[i]);
+          container.removeChild(spawner.obstacles[i]);
           spawner.obstacles.shift();
         }
       }
@@ -236,7 +257,7 @@ function gameLoop() {
           collectToken(i);
 
         if (xBox === 0) {
-          app.stage.removeChild(tokens[i]);
+          container.removeChild(tokens[i]);
           spawner.tokens.shift();
         }
       }
@@ -275,7 +296,7 @@ function displayScore() {
 function displayHighScore() {
   if (highscore > 0) {
     highscoreText.text = 'HI ' + Math.round(highscore);
-    app.stage.addChild(highscoreText);
+    container.addChild(highscoreText);
   }
 }
 
@@ -320,25 +341,28 @@ function endGame() {
     displayHighScore();
   }
 
-  if (lose) endMessage = new PIXI.Text('G A M E  O V E R', style);
-  else if (win) endMessage = new PIXI.Text('W I N N E R', style);
+  if (win) endMessage.text = 'W I N N E R';
   endMessage.anchor.set(.5, 0);
   endMessage.x = WIDTH / 2;
   endMessage.y = HEIGHT / 4;
+
+  restartButton.x = WIDTH / 2;
+  restartButton.y = HEIGHT / 1.75;
+  restartButton.scale.set(SCALE * 0.3);
 
   if (lose) {
     if (!mute) {
       deathS.play();
     }
-    app.stage.addChild(endMessage);
-    app.stage.addChild(restartButton);
+    container.addChild(endMessage);
+    container.addChild(restartButton);
   } else if (win) {
     setTimeout(() => {
       if (!mute) {
         winS.play();
       }
-      app.stage.addChild(endMessage);
-      app.stage.addChild(restartButton);
+      container.addChild(endMessage);
+      container.addChild(restartButton);
     }, 950);
   }
 
@@ -363,10 +387,15 @@ function onClickRestart() {
   startGame();
 }
 
-function onClickMute() {
+function onClickMute(){
+  touchDisable = true;
   window.mute = !window.mute;
   if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
   else muteButton.gotoAndStop(1);
+}
+
+function onReleaseMute(){
+  touchDisable = false;
 }
 
 function collectToken(index) {
@@ -392,6 +421,7 @@ function cleanUp() {
   playerSpeedScale = 1.0;
   player.needsFall = false;
   player.fallComplete = false;
+  player.speedY = 0;
   winTriggered = false;
   firstLoop = true;
   clearInterval(gameInterval);
@@ -399,14 +429,16 @@ function cleanUp() {
   socials.resetGame();
 
   // Remove obstacles
-  for (var i = 0; i < spawner.obstacles.length; i++)
-    app.stage.removeChild(spawner.obstacles[i]);
-
-  app.stage.removeChild(endMessage);
-  app.stage.removeChild(restartButton);
+  for (var i = 0; i < spawner.obstacles.length; i++){
+    container.removeChild(spawner.obstacles[i]);
+  }
+  container.removeChild(endMessage);
+  container.removeChild(restartButton);
 }
 
 function startGame() {
+  PIXI.sound.context.audioContext.resume();
+
   //now the player sprite is allowed to animate
   player.currSprite.play();
   //fire the initial obstacle spawn (which will call all other spawns)
@@ -418,41 +450,27 @@ function startGame() {
   firstLoad = false;
 }
 
-function createNoises() {
-  deathS = PIXI.sound.Sound.from(app.loader.resources.deathSound);
-  deathS.volume = 0.4;
-  jumpS = PIXI.sound.Sound.from(app.loader.resources.jumpSound);
-  jumpS.volume = 0.4;
-  tokenS = PIXI.sound.Sound.from(app.loader.resources.tokenSound);
-  tokenS.volume = 0.4;
-  winS = PIXI.sound.Sound.from(app.loader.resources.winSound);
-  winS.volume = 0.35;
-}
 
 // === Helper functions === //
 // Keypress functions
 window.addEventListener("keydown", keysDown);
 window.addEventListener("keyup", keysUp);
-let keys = {};
-function keysDown(e) {
-  // console.log(e.key);
-  // keys[e.keyCode] = true;
 
+function keysDown(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     window.inputs.jump = true;
-    if (!started && firstLoad) {
-      //make the noises (they can only be created/started after player interraction due to PIXI limitations)
+    if (!started && firstLoad) 
       startGame();
-    }
+    
     if (gameOver) {
       if (lose && (performance.now() - timeout > 600))
         onClickRestart();
       else if (win && (performance.now() - timeout > 2500))
         onClickRestart();
-
     }
 
   }
+
   if (e.key == "ArrowDown") {
     window.inputs.duck = true;
   }
@@ -462,6 +480,7 @@ function keysUp(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     window.inputs.jump = false;
   }
+  
   if (e.key == "ArrowDown") {
     window.inputs.duck = false;
   }
@@ -469,80 +488,78 @@ function keysUp(e) {
 
 
 // Touchevent functions
-app.view.addEventListener("touchstart", touchStart, false);
-app.view.addEventListener("touchend", touchEnd, false);
-app.view.addEventListener("touchcancel", touchCancel, false);
-app.view.addEventListener("touchmove", touchMove, false);
+container.on("touchstart", touchStart)
+  .on("touchend", touchEnd)
+  .on("touchendoutside", touchEnd)
+  .on("touchcancel", touchCancel)
+  .on("touchmove", touchMove);
+
+let currentTouchID = -1;
 
 function touchStart(e) {
-  // Touchscreens can have multiple touch points, so we start at the oldest touch and keep going until we get a touch in the relevant area
-  for (var i = 0; i < e.targetTouches.length; i++) {
-    let touch = e.targetTouches[i]
-    // console.log(touch);
-    // Top 2/3 of the canvas will call the jump function
-    if (touch.pageY < 2 * HEIGHT / 3) {
-      window.inputs.jump = true;
+  let touch = e.data;
 
-      if (!started && firstLoad) {
-        //make the noises (they can only be created/started after player interraction due to PIXI limitations)
-        startGame();
-      }
+  // If there's no current touch, then set this touch to be the current one
+  if (currentTouchID === -1) currentTouchID = touch.identifier
+  
+  // We only care about the current touch, so skip if this isn't it
+  if(touch.identifier !== currentTouchID || touchDisable) return;
 
-      break;
-    }
-    // Bottom 1/3 of the canvas will call the duck function
-    else if (touch.pageY > HEIGHT / 3) {
-      window.inputs.duck = true;
-      break;
-    }
+  let pos = e.data.getLocalPosition(this.parent);
 
+  // Top 2/3 of the canvas will call the jump function
+  if ( pos.y < (2 * container.height / 3) ) {
+    inputs.jump = true;
+
+    if (!started && firstLoad) 
+      startGame();
+  }
+  // Bottom 1/3 of the canvas will call the duck function
+
+  else{
+    inputs.duck = true;
+  }
+}
+
+function touchMove(e) {
+
+  let touch = e.data;
+
+  // If there's no current touch, then set this touch to be the current one
+  if (currentTouchID === -1) currentTouchID = touch.identifier
+  
+  // We only care about the current touch
+  if(touch.identifier !== currentTouchID) return;
+
+ 
+  let pos = e.data.getLocalPosition(this.parent);
+  // console.log(this.parent)
+
+  // Top 2/3 of the canvas will call the jump function and stop the duck function
+  if (pos.y < (2 * container.height / 3) ) {
+    inputs.jump = true;
+    inputs.duck = false;
+  }
+  // Bottom 1/3 of the canvas will call the duck function and stop the jump function
+  else{
+    inputs.duck = true;
+    inputs.jump = false;
   }
 }
 
 function touchEnd(e) {
-  // console.log(e);
-  for (var i = 0; i < e.changedTouches.length; i++) {
-    let touch = e.changedTouches[i]
-    // console.log(touch);
-
-    // Top 2/3 of the canvas will stop the jump function
-    if (touch.pageY < 2 * HEIGHT / 3) {
-      window.inputs.jump = false;
-      break;
-    }
-
-    // Bottom 1/3 of the canvas will stop the duck function
-    else if (touch.pageY > HEIGHT / 3) {
-      window.inputs.duck = false;
-      break;
-    }
+  let touch = e.data;
+  
+  if(touch.identifier == currentTouchID){
+    currentTouchID = -1;
+    inputs.jump = false;
+    inputs.duck = false;
   }
 }
 
 function touchCancel(e) {
-  // console.log("cancel");
-}
-
-// May not work with multitouch!
-function touchMove(e) {
-  // console.log(e);
-  for (var i = 0; i < e.changedTouches.length; i++) {
-    let touch = e.changedTouches[i];
-    // console.log(touch);
-
-    // Top 2/3 of the canvas will call the jump function and stop the duck function
-    if (touch.pageY < 2 * HEIGHT / 3) {
-      window.inputs.jump = true;
-      window.inputs.duck = false;
-      break;
-    }
-    // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-    else if (touch.pageY > HEIGHT / 3) {
-      window.inputs.duck = true;
-      window.inputs.jump = false;
-      break;
-    }
-  }
+  inputs.jump = false;
+  inputs.duck = false;
 }
 
 function increaseSpeedScale() {
@@ -597,10 +614,20 @@ function checkFocus() {
 
 
 window.addEventListener('resize', resize);
-function resize() {
-  RESOLUTION = window.innerWidth / 900 / SCALE;
-  app.renderer.resolution = RESOLUTION;
-  app.renderer.resize(window.innerWidth / RESOLUTION, window.innerWidth / 4 / RESOLUTION)
+function resize(){
+  // window.RELSCALE = (window.innerWidth / 4 / 225) / SCALE ;
+  // app.renderer.resolution = window.devicePixelRatio || RELSCALE * 1.25;
+  // console.log(app.renderer.resolution);
+
+  app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width / 4 );
+
+  window.RELSCALE = (app.screen.height / 225) / SCALE ;
+
+  container.scale.set(RELSCALE);
+  
+  scoreText.resolution = RELSCALE * 1.5;
+  highscoreText.resolution = RELSCALE * 1.5;
+  endMessage.resolution = RELSCALE * 1.5;
 }
 
 // === End helper functions === //
@@ -610,7 +637,6 @@ function moveBackground() {
   //non parallax
   //background.tilePosition.x -= 3.5*speedScale;
   //parallax
-
 
   //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
   //speedScale = 1.3;
