@@ -10,13 +10,13 @@ export default class socials {
     score;
 
     twtDiv;
-    thumbsupDiv;
+    fbDiv;
     socialsDiv;
 
     constructor(app) {
         this.app = app;
-        this.setupPixiBtns();
-        //this.setupHTMLBtns();
+        //this.setupPixiBtns();
+        this.setupHTMLBtns();
 
     }
 
@@ -24,22 +24,22 @@ export default class socials {
         this.score = Math.round(score);
 
         //pixi interactable sprites method
-        this.app.stage.addChild(this.bird);
-        this.app.stage.addChild(this.thumbsupShare);
+        // this.app.stage.addChild(this.bird);
+        // this.app.stage.addChild(this.thumbsupShare);
 
         //html method
-        // this.renderTwt(this.twtDiv);
-        // this.thumbsupDiv.style.opacity = "1";
-        // this.thumbsupDiv.style.pointerEvents = "fill";
+        this.renderTwt(this.twtDiv);
+        this.fbDiv.style.opacity = "1";
+        this.fbDiv.style.pointerEvents = "fill";
     }
 
     resetGame() {
-        this.app.stage.removeChild(this.bird);
-        this.app.stage.removeChild(this.thumbsupShare);
+        // this.app.stage.removeChild(this.bird);
+        // this.app.stage.removeChild(this.thumbsupShare);
 
-        // this.twtDiv.innerHTML = "";
-        // this.thumbsupDiv.style.opacity = "0";
-        // this.thumbsupDiv.style.pointerEvents = "none";
+        this.twtDiv.innerHTML = "";
+        this.fbDiv.style.opacity = "0";
+        this.fbDiv.style.pointerEvents = "none";
     }
 
     onClickbird() {
@@ -98,7 +98,7 @@ export default class socials {
     setupHTMLBtns() {
         this.socialsDiv = document.getElementById('socials');
         this.twtDiv = document.getElementById('twtDiv');
-        this.thumbsupDiv = document.getElementById('thumbsupDiv');
+        this.fbDiv = document.getElementById('fbDiv');
 
         this.socialsDiv.style.position = "absolute";
         this.socialsDiv.style.zIndex = "10";
@@ -107,8 +107,8 @@ export default class socials {
         this.socialsDiv.style.transform = "translate(-50%, -50%)";
         this.socialsDiv.style.textAlign = "center";
 
-        this.thumbsupDiv.style.opacity = "0";
-        this.thumbsupDiv.style.pointerEvents = "none";
+        this.fbDiv.style.opacity = "0";
+        this.fbDiv.style.pointerEvents = "none";
     }
 
     renderTwt(node) {
