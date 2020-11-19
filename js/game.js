@@ -17,7 +17,7 @@ import Player from "./player.js"
 
 // === Basic app setup === //
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: 1,
+  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1,
 });
 document.body.appendChild(app.view);
 PIXI.sound.context.paused = true;
@@ -36,14 +36,12 @@ container.width = app.screen.width;
 container.height = app.screen.height;
 container.interactive = true;
 
-window.topOffset = app.view.offsetTop;
-window.bottomY = topOffset + HEIGHT;
 //app.ticker.add(gameLoop);
 
 // Basic game variables
 
 const style = new PIXI.TextStyle({
-  fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e'
+  fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
 });
 const scoreStyle = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: RELSCALE * 23, fill: '#4b4b4b'
@@ -85,10 +83,12 @@ let muteButton;
 let score = 0;
 let scoreText = new PIXI.Text(score, scoreStyle);
 scoreText.x = WIDTH / 1.07;
+scoreText.resolution = 1.5;
 
 let highscore = 0;
 let highscoreText = new PIXI.Text(highscore, highscoreStyle);
 highscoreText.x = WIDTH / 1.21;
+highscoreText.resolution = 1.5;
 
 //noises
 let deathS;
@@ -187,7 +187,8 @@ function loadOnce(){
       endHouse.y = HEIGHT / 2.4;
       container.addChild(endHouse);
 
-      endMessage = new PIXI.Text('G A M E  O V E R', style)
+      endMessage = new PIXI.Text('G A M E  O V E R', style);
+      endMessage.resolution = 1.5;
     });
 
   reload();
@@ -501,7 +502,7 @@ function touchStart(e) {
   let pos = e.data.getLocalPosition(this.parent);
 
   // Top 2/3 of the canvas will call the jump function
-  if ( pos.y < (2 * HEIGHT / 3) ) {
+  if ( pos.y < (2 * container.height / 3) ) {
     inputs.jump = true;
 
     if (!started && firstLoad) 
@@ -529,7 +530,7 @@ function touchMove(e) {
   // console.log(this.parent)
 
   // Top 2/3 of the canvas will call the jump function and stop the duck function
-  if (pos.y < (2 * HEIGHT / 3) ) {
+  if (pos.y < (2 * container.height / 3) ) {
     inputs.jump = true;
     inputs.duck = false;
   }
@@ -608,18 +609,19 @@ function checkFocus() {
 
 window.addEventListener('resize', resize);
 function resize(){
+  // window.RELSCALE = (window.innerWidth / 4 / 225) / SCALE ;
+  // app.renderer.resolution = window.devicePixelRatio || RELSCALE * 1.25;
+  // console.log(app.renderer.resolution);
+
   app.renderer.resize(window.innerWidth, window.innerWidth / 4 );
-  container.width = app.view.width;
-  container.height = app.view.height;
-  window.RELSCALE = (app.view.height / 225) / SCALE ;
+
+  window.RELSCALE = (app.screen.height / 225) / SCALE ;
+
   container.scale.set(RELSCALE);
-
-  scoreText.resolution = RELSCALE;
-  highscoreText.resolution = RELSCALE;
-  endMessage.resolution = RELSCALE;
-
-  window.topOffset = app.view.offsetTop;
-  window.bottomY = topOffset + app.view.height;
+  
+  scoreText.resolution = RELSCALE * 1.5;
+  highscoreText.resolution = RELSCALE * 1.5;
+  endMessage.resolution = RELSCALE * 1.5;
 }
 
 // === End helper functions === //
