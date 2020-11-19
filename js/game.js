@@ -1,6 +1,7 @@
 /*
   current bugs:
    - Jump/duck spam
+   - social media icons look a bit fuzzy
 
   to test win functionality:
    - change win time to a lower value (i usually use 3000 instead of 300000)
@@ -9,14 +10,17 @@
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
+import Socials from "./socials.js"
 
 window.RESOLUTION = 1;
 
 // === Basic app setup === //
+let canvas = document.getElementById('pixiCanvas');
+canvas.style.zIndex = "-1";
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION,
+  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: RESOLUTION, view: canvas,
 });
-document.body.appendChild(app.view);
+//document.body.appendChild(app.view);
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
 PIXI.settings.ROUND_PIXELS = true;
@@ -40,6 +44,7 @@ const highscoreStyle = new PIXI.TextStyle({
 
 let spawner;
 let player;
+let socials;
 // let background;
 let backgroundFront, backgroundBack;
 window.groundLevel = HEIGHT * .9;
@@ -156,12 +161,13 @@ function loadOnce() {
 
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
       endHouse = new PIXI.Sprite(endHouseText);
-      //endHouse.scaleMode = PIXI.SCALE_MODES.NEAREST;
       endHouse.scale.set(SCALE * 0.07);
       endHouse.anchor.set(0.5);
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
       app.stage.addChild(endHouse);
+
+      socials = new Socials(app);
     });
 
   reload();
@@ -306,7 +312,7 @@ function endGame() {
   started = false;
   timeout = performance.now();
   clearTimeout(winTimeout);
-
+  socials.endGame(score);
 
 
   if (score > highscore) {
@@ -390,6 +396,7 @@ function cleanUp() {
   firstLoop = true;
   clearInterval(gameInterval);
   endHouse.x = WIDTH * 1.5;
+  socials.resetGame();
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++)
