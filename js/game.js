@@ -3,9 +3,7 @@
    - jiggle bug
    - mute token collect sound
    - Audio on touch devices will not play until first touch has been let go. Will be fixed by instructions requiring touch
-
-   Test:
-   - Touch inputs on buttons on rest of page (maybe copy their 404 page and try testing what it will look like on there)
+   - social media icons look a bit fuzzy
 
   to test win functionality:
    - change win time to a lower value (i usually use 3000 instead of 300000)
@@ -14,10 +12,13 @@
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
+import Socials from "./socials.js"
 
 // === Basic app setup === //
+let canvas = document.getElementById('pixiCanvas');
+canvas.style.zIndex = "-1";
 const app = new PIXI.Application({
-  width: window.innerWidth, height: window.innerWidth / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1,
+  width: canvas.getBoundingClientRect().width, height: canvas.getBoundingClientRect().width / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1, view: canvas,
 });
 document.body.appendChild(app.view);
 PIXI.sound.context.paused = true;
@@ -52,6 +53,7 @@ const highscoreStyle = new PIXI.TextStyle({
 
 let spawner;
 let player;
+let socials;
 // let background;
 let backgroundFront, backgroundBack;
 window.groundLevel = HEIGHT * .9;
@@ -180,7 +182,6 @@ function loadOnce(){
 
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
       endHouse = new PIXI.Sprite(endHouseText);
-      //endHouse.scaleMode = PIXI.SCALE_MODES.NEAREST;
       endHouse.scale.set(SCALE * 0.07);
       endHouse.anchor.set(0.5);
       endHouse.x = WIDTH * 1.5;
@@ -189,6 +190,8 @@ function loadOnce(){
 
       endMessage = new PIXI.Text('G A M E  O V E R', style);
       endMessage.resolution = 1.5;
+
+      socials = new Socials(app);
     });
 
   reload();
@@ -330,6 +333,8 @@ function endGame() {
   started = false;
   timeout = performance.now();
   clearTimeout(winTimeout);
+  socials.endGame(score);
+
 
   if (score > highscore) {
     highscore = score;
@@ -421,6 +426,7 @@ function cleanUp() {
   firstLoop = true;
   clearInterval(gameInterval);
   endHouse.x = WIDTH * 1.5;
+  socials.resetGame();
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++){
@@ -613,7 +619,7 @@ function resize(){
   // app.renderer.resolution = window.devicePixelRatio || RELSCALE * 1.25;
   // console.log(app.renderer.resolution);
 
-  app.renderer.resize(window.innerWidth, window.innerWidth / 4 );
+  app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width / 4 );
 
   window.RELSCALE = (app.screen.height / 225) / SCALE ;
 
