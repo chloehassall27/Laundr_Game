@@ -16,10 +16,10 @@ import Socials from "./socials.js"
 
 // === Basic app setup === //
 let canvas = document.getElementById('pixiCanvas');
-canvas.style.zIndex = "-1";
 const app = new PIXI.Application({
   width: canvas.getBoundingClientRect().width, height: canvas.getBoundingClientRect().width / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1, view: canvas,
 });
+canvas.style.zIndex = "-1";
 document.body.appendChild(app.view);
 PIXI.sound.context.paused = true;
 
