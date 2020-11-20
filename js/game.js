@@ -190,14 +190,25 @@ function loadOnce(){
       endHouse.anchor.set(0.5);
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
+<<<<<<< HEAD
+=======
+      app.stage.addChild(endHouse);
+
+      windows = new Window(app);
+      windows.setUpInstruct();
+    
+>>>>>>> 5c2db9400055fc3069905171c29473fbdbb6a8c3
       container.addChild(endHouse);
 
       endMessage = new PIXI.Text('G A M E  O V E R', style);
       endMessage.resolution = 1.5;
 
       socials = new Socials(app);
+<<<<<<< HEAD
       windows = new Window(app);
       windows.setUpInstruct();
+=======
+>>>>>>> 5c2db9400055fc3069905171c29473fbdbb6a8c3
     });
 
   reload();
