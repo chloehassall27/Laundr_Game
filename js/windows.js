@@ -40,15 +40,15 @@ export default class Windows{
     this.bottomMessageInstruct.x = WIDTH/2;
     this.bottomMessageInstruct.y = this.popUpBackground.y + (this.popUpBackground.y * 0.25);
 
-    this.app.stage.addChild(this.popUpBackground);
-    this.app.stage.addChild(this.topMessageInstruct);
-    this.app.stage.addChild(this.bottomMessageInstruct);
+    this.container.addChild(this.popUpBackground);
+    this.container.addChild(this.topMessageInstruct);
+    this.container.addChild(this.bottomMessageInstruct);
   }
 
   removeInstruct(){
-    this.app.stage.removeChild(this.popUpBackground);
-    this.app.stage.removeChild(this.topMessageInstruct);
-    this.app.stage.removeChild(this.bottomMessageInstruct);
+    this.container.removeChild(this.popUpBackground);
+    this.container.removeChild(this.topMessageInstruct);
+    this.container.removeChild(this.bottomMessageInstruct);
 
     this.removedInstruct = true;
   }
