@@ -1,12 +1,12 @@
 export default class Windows{
-  app;
-  popUpBackground;
+  //app;
+  //popUpBackground;
 
-  style;
-  topMessageInstruct;
-  bottomMessageInstruct;
+  //style;
+  //topMessageInstruct;
+  //bottomMessageInstruct;
 
-  removedInstruct;
+  //removedInstruct;
   
 
   constructor(app){
@@ -24,7 +24,7 @@ export default class Windows{
   setUpSprites(){
     this.popUpBackground = new PIXI.Sprite.from("../sprites/popupbackground.png");
     this.popUpBackground.anchor.set(0.5);
-    this.popUpBackground.scale.set(0.75);
+    this.popUpBackground.scale.set(SCALE * 0.5);
     this.popUpBackground.x = WIDTH/2;
     this.popUpBackground.y = HEIGHT/2;
   }
