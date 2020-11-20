@@ -27,7 +27,7 @@ export default class Player {
         this.fallComplete = false;
 
         this.jumpS = jumpS;
-
+        
         //set up all the sprites
         this.createSprites();
     }
@@ -96,12 +96,12 @@ export default class Player {
         // Only switch sprite if necesary
         if (this.currSprite !== sprite) {
             let y = this.currSprite.y;
-            this.app.stage.removeChild(this.currSprite);
+            container.removeChild(this.currSprite);
             this.currSprite = sprite;
             this.currSprite.hitArea = sprite.hitArea;
             this.currSprite.y = y;
             this.currSprite.hitArea.y = y;
-            this.app.stage.addChild(this.currSprite);
+            container.addChild(this.currSprite);
         }
     }
 
@@ -134,7 +134,7 @@ export default class Player {
 
     endGameFall() {
         if (this.currSprite.y < this.groundLevel) {
-            this.currSprite.y += 4;
+            this.currSprite.y += SCALE * 4;
         } else {
             this.currSprite.y = this.groundLevel;
             this.fallComplete = true;
@@ -194,7 +194,7 @@ export default class Player {
 
         this.currSprite = this.ducking;
         this.currSprite.hitArea = this.ducking.hitArea;
-        this.app.stage.addChild(this.currSprite);
+        container.addChild(this.currSprite);
         this.loaded = true;
 
     }
