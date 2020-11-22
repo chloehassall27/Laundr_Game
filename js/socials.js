@@ -29,7 +29,7 @@ export default class socials {
 
         //html method
         // this.renderTwt(this.twtDiv); //must be rendered every time to set text to include recent score
-        this.socialsDiv.style.top = "80%";
+        this.socialsDiv.style.top = '80%';
         this.socialsDiv.style.left = "50%";
         this.socialsDiv.style.transform = "translate(-50%, -50%)";
     }
@@ -104,10 +104,12 @@ export default class socials {
 
         this.socialsDiv.style.position = "absolute";
         this.socialsDiv.style.zIndex = "10";
-        this.socialsDiv.style.overflow = "hidden";
         this.socialsDiv.style.textAlign = "center";
 
         this.socialsDiv.style.left = "-999%";
+
+        this.renderTwt();
+        this.endGame();
     }
 
     renderTwt() {
