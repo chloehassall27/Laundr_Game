@@ -1,35 +1,39 @@
 export default class Spawner {
-    interval = 1100;
-    intDecAmt = 0.85;
-    intRangeMax = 2500;
-    intRangeMin = 1100;
-    smallestInt = 200;
-    rangeMin;
-    tokenTime;
-    app;
-    walkingLevel;
-    jumpLevel;
-    test;
+    
+    // rangeMin;
+    // tokenTime;
+    // app;
+    // walkingLevel;
+    // jumpLevel;
+    // test;
 
-    obstScale;
-    tokenScale;
-    ironRandScale;
-    ironRandAdd;
+    // obstScale;
+    // tokenScale;
+    // ironRandScale;
+    // ironRandAdd;
 
-    tokenTimeoutHold;
+    // tokenTimeoutHold;
 
-    startTime;
-    firstSpawn = true;
-
-    obstacles = [];
-    tokens = [];
-
-    gameOver = false;
-    focus = true;
+    // startTime;
+    
 
 
     constructor(app) {
         this.app = app;
+
+        this.interval = 1100;
+        this.intDecAmt = 0.85;
+        this.intRangeMax = 2500;
+        this.intRangeMin = 1100;
+        this.smallestInt = 200;
+
+        this.firstSpawn = true;
+
+        this.obstacles = [];
+        this.tokens = [];
+
+        this.gameOver = false;
+        this.focus = true;
 
         this.walkingLevel = HEIGHT - (HEIGHT * 0.25);
         this.jumpLevel = HEIGHT - (HEIGHT * 0.6);
@@ -69,8 +73,8 @@ export default class Spawner {
         //console.log(obstacle.getBounds());
 
         obstacle.animationSpeed = .125;
-        obstacle.play()
-        this.app.stage.addChild(obstacle);
+        obstacle.play();
+        container.addChild(obstacle);
         this.obstacles.push(obstacle);
 
     }
@@ -89,7 +93,7 @@ export default class Spawner {
 
         token.animationSpeed = 0.135;
         token.play();
-        this.app.stage.addChild(token);
+        container.addChild(token);
 
         this.tokens.push(token);
     }
@@ -163,9 +167,9 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(100, window.groundLevel / 2 - HEIGHT * 0.05, "ironSprite");
-            this.buildObstacles(0, window.groundLevel / 2 + HEIGHT * 0.1, "ironSprite");
-            this.buildObstacles(85, window.groundLevel / 2 + HEIGHT * 0.2, "ironSprite");
+            this.buildObstacles(100 * SCALE, window.groundLevel / 2 - HEIGHT * 0.05, "ironSprite");
+            this.buildObstacles(0 * SCALE, window.groundLevel / 2 + HEIGHT * 0.1, "ironSprite");
+            this.buildObstacles(85 * SCALE, window.groundLevel / 2 + HEIGHT * 0.2, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
             let yPos = Math.floor(Math.random() * this.ironRandScale) + this.ironRandAdd;
@@ -196,7 +200,7 @@ export default class Spawner {
         const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
         const switchDifficulty = 60000;
 
-        //%3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
+        // %3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
         if (rand % 3 == 0) {
             if (currTime > switchDifficulty) return "double";
             return "laundrySprite";
@@ -222,7 +226,7 @@ export default class Spawner {
     }
 
     collectToken(index) {
-        this.app.stage.removeChild(this.tokens[index]);
+        container.removeChild(this.tokens[index]);
         this.tokens.splice(index, 1);
     }
 

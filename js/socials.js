@@ -4,14 +4,14 @@ CURRENT BUGS:
 */
 
 export default class socials {
-    app;
-    bird;
-    thumbsupShare;
-    score;
+    // app;
+    // bird;
+    // thumbsupShare;
+    // score;
 
-    twtDiv;
-    fbDiv;
-    socialsDiv;
+    // twtDiv;
+    // fbDiv;
+    // socialsDiv;
 
     constructor(app) {
         this.app = app;
