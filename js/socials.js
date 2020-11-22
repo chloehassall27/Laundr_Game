@@ -20,26 +20,28 @@ export default class socials {
 
     }
 
-    endGame(score) {
-        this.score = Math.round(score);
+    endGame() {
+        //this.score = Math.round(score);
 
         //pixi interactable sprites method
         // this.app.stage.addChild(this.bird);
         // this.app.stage.addChild(this.thumbsupShare);
 
         //html method
-        this.renderTwt(this.twtDiv);
-        this.fbDiv.style.opacity = "1";
-        this.fbDiv.style.pointerEvents = "fill";
+        // this.renderTwt(this.twtDiv); //must be rendered every time to set text to include recent score
+        this.socialsDiv.style.top = "80%";
+        this.socialsDiv.style.left = "50%";
+        this.socialsDiv.style.transform = "translate(-50%, -50%)";
     }
 
     resetGame() {
+        //pixi interactable sprites method
         // this.app.stage.removeChild(this.bird);
         // this.app.stage.removeChild(this.thumbsupShare);
 
+        //html method
+        this.socialsDiv.style.left = "-100%";
         this.twtDiv.innerHTML = "";
-        this.fbDiv.style.opacity = "0";
-        this.fbDiv.style.pointerEvents = "none";
     }
 
     onClickbird() {
@@ -102,19 +104,22 @@ export default class socials {
 
         this.socialsDiv.style.position = "absolute";
         this.socialsDiv.style.zIndex = "10";
-        this.socialsDiv.style.top = "80%";
-        this.socialsDiv.style.left = "50%";
-        this.socialsDiv.style.transform = "translate(-50%, -50%)";
+        this.socialsDiv.style.overflow = "hidden";
         this.socialsDiv.style.textAlign = "center";
 
-        this.fbDiv.style.opacity = "0";
-        this.fbDiv.style.pointerEvents = "none";
+        this.socialsDiv.style.left = "-999%";
     }
 
-    renderTwt(node) {
+    renderTwt() {
+        this.score = SCORE;
+        this.twtDiv.innerHTML = "";
         let text = `I just got a score of ` + this.score + ` on @LaundrOfficial's hidden #laundr404game!\n\nThink you can do better? Take it for a spin here:\n`;
-        twttr.widgets.createShareButton('https://www.laundr.io/404', node, {
+        twttr.widgets.createShareButton('https://www.laundr.io/404', this.twtDiv, {
             text: text
         });
+    }
+
+    resetTwtDiv() {
+        this.twtDiv.innerHTML = "";
     }
 }

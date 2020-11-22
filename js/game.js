@@ -28,6 +28,7 @@ PIXI.settings.ROUND_PIXELS = true;
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
 window.SCALE = HEIGHT / 225;
+window.SCORE = 0;
 //app.ticker.add(gameLoop);
 
 // Basic game variables
@@ -95,6 +96,7 @@ let gameInterval;
 let timeout = 0;
 let winTimeoutTime = 0;
 let slowTimout;
+let twtTimeout;
 // === End basic app setup === //
 
 // === Sprite setup === //
@@ -218,6 +220,7 @@ function gameLoop() {
         //check collision
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
           lose = true;
+          socials.renderTwt();
           endGame();
         }
 
@@ -247,6 +250,7 @@ function gameLoop() {
         winTriggered = true;
         spawner.gameOver = true;
         winTimeoutTime = performance.now();
+        twtTimeout = setTimeout(socials.renderTwt, 2980);
         winTimeout = setTimeout(endGame, 3000);
         slowTimout = setInterval(slowMovement, 700);
       }
@@ -264,7 +268,9 @@ function gameLoop() {
 // Display the current score
 function displayScore() {
   score += .01;
-  scoreText.text = Math.round(score);
+  let roundedScore = Math.round(score);
+  scoreText.text = roundedScore;
+  window.SCORE = roundedScore;
 
   // app.stage.addChild(scoreText);
 
@@ -312,8 +318,7 @@ function endGame() {
   started = false;
   timeout = performance.now();
   clearTimeout(winTimeout);
-  socials.endGame(score);
-
+  clearTimeout(twtTimeout);
 
   if (score > highscore) {
     highscore = score;
@@ -330,8 +335,12 @@ function endGame() {
     if (!mute) {
       deathS.play();
     }
-    app.stage.addChild(endMessage);
-    app.stage.addChild(restartButton);
+    //this is on a timeout so that the twitter button has enough time to render
+    setTimeout(() => {
+      app.stage.addChild(endMessage);
+      app.stage.addChild(restartButton);
+      socials.endGame();
+    }, 50);
   } else if (win) {
     setTimeout(() => {
       if (!mute) {
@@ -339,6 +348,7 @@ function endGame() {
       }
       app.stage.addChild(endMessage);
       app.stage.addChild(restartButton);
+      socials.endGame();
     }, 950);
   }
 
