@@ -108,8 +108,8 @@ export default class socials {
 
         this.socialsDiv.style.left = "-999%";
 
-        this.renderTwt();
-        this.endGame();
+        //this.renderTwt();
+        //this.endGame();
     }
 
     renderTwt() {

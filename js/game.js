@@ -364,7 +364,7 @@ function endGame() {
       container.addChild(endMessage);
       container.addChild(restartButton);
       socials.endGame();
-    }, 50);
+    }, 60);
   } else if (win) {
     setTimeout(() => {
       if (!mute) {
