@@ -12,8 +12,11 @@
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
+import Window from "./windows.js"
 import Socials from "./socials.js"
 import Windows from "./windows.js"
+
+window.RESOLUTION = 1;
 
 // === Basic app setup === //
 let canvas = document.getElementById('pixiCanvas');
@@ -54,6 +57,7 @@ const highscoreStyle = new PIXI.TextStyle({
 
 let spawner;
 let player;
+let windows;
 let socials;
 let windows;
 // let background;
@@ -189,6 +193,9 @@ function loadOnce(){
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
       container.addChild(endHouse);
+
+      windows = new Window(app);
+      windows.setUpInstruct(); 
 
       endMessage = new PIXI.Text('G A M E  O V E R', style);
       endMessage.resolution = 1.5;
