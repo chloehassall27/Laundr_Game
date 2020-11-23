@@ -1,7 +1,4 @@
-/*
-CURRENT BUGS:
--still stupidly fuzzy looking >:T
-*/
+
 
 export default class socials {
     adBlock = false;
@@ -10,8 +7,8 @@ export default class socials {
         this.app = app;
         //this.setupPixiBtns();
 
-        //this.setupHTMLBtns();
-        //setTimeout(this.checkForBlock2.bind(this), 200);
+        this.setupHTMLBtns();
+        setTimeout(this.checkForBlock2.bind(this), 200);
 
     }
 
