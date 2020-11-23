@@ -96,18 +96,23 @@ export default class socials {
 
     //html method
     setupHTMLBtns() {
+        console.log("top of html setup");
         this.socialsDiv = document.getElementById('socials');
         this.twtDiv = document.getElementById('twtDiv');
         this.fbDiv = document.getElementById('fbDiv');
+        console.log("fetched variables");
 
         this.socialsDiv.style.position = "absolute";
         this.socialsDiv.style.zIndex = "10";
         this.socialsDiv.style.textAlign = "center";
+        console.log("style");
 
         this.socialsDiv.style.left = "-999%";
 
         this.renderTwt();
         //this.endGame();
+        console.log("top of html setup");
+
     }
 
     renderTwt() {
