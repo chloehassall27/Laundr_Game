@@ -10,7 +10,7 @@ export default class socials {
         this.app = app;
         //this.setupPixiBtns();
 
-        this.setupHTMLBtns();
+        //this.setupHTMLBtns();
         //setTimeout(this.checkForBlock2.bind(this), 200);
 
     }
