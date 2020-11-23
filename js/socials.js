@@ -39,6 +39,7 @@ export default class socials {
 
         //html method
         this.socialsDiv.style.left = "-100%";
+        this.backupSocialsDiv.style.left = "-100%";
         this.twtDiv.innerHTML = "";
     }
 
@@ -118,6 +119,9 @@ export default class socials {
             twttr.widgets.createShareButton('https://www.laundr.io/404', this.twtDiv, {
                 text: text
             });
+            setTimeout(() => {
+                this.twtDiv.firstElementChild.style.width = "100%";
+            }, 200);
         } else {
             this.twtBackupDiv.onclick = function () {
                 let link = "https://twitter.com/share?text=I%20just%20got%20a%20score%20of%20" + SCORE + "%20on%20%40LaundrOfficial%27s%20hidden%20%23laundr404game%21%0A%0AThink%20you%20can%20do%20better%3F%20Take%20it%20for%20a%20spin%20here%3A";
@@ -158,6 +162,7 @@ export default class socials {
         this.twtBackupDiv.style.minWidth = "40%"
         this.twtBackupDiv.style.color = "blue";
         this.twtBackupDiv.style.textDecoration = "underline"
+        this.twtBackupDiv.style.fontSize = "2vw";
         this.backupSocialsDiv.appendChild(this.twtBackupDiv);
         this.twtBackupDiv.style.cursor = 'pointer';
         this.twtBackupDiv.onclick = function () {
@@ -174,6 +179,7 @@ export default class socials {
         this.fbBackupDiv.style.minWidth = "40%"
         this.fbBackupDiv.style.color = "blue";
         this.fbBackupDiv.style.textDecoration = "underline"
+        this.fbBackupDiv.style.fontSize = "2vw";
         this.backupSocialsDiv.appendChild(this.fbBackupDiv);
         this.fbBackupDiv.style.cursor = 'pointer';
         this.fbBackupDiv.onclick = function () {
