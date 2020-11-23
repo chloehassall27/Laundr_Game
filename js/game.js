@@ -190,12 +190,10 @@ function loadOnce(){
       endHouse.anchor.set(0.5);
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
-      app.stage.addChild(endHouse);
+      container.addChild(endHouse);
 
       windows = new Window(app);
-      windows.setUpInstruct();
-    
-      container.addChild(endHouse);
+      windows.setUpInstruct(); 
 
       endMessage = new PIXI.Text('G A M E  O V E R', style);
       endMessage.resolution = 1.5;
