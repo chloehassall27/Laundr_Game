@@ -169,7 +169,7 @@ function loadOnce() {
 
       //create player object - handles jumping + ducking
       player = new Player(app, jumpS);
-      player.currSprite.stop();
+      player.currSprite.stop(app);
 
 
       //restart functionality stuff
