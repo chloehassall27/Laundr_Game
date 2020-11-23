@@ -162,11 +162,11 @@ export default class socials {
         this.twtBackupDiv.style.fontSize = "2vw";
         this.backupSocialsDiv.appendChild(this.twtBackupDiv);
         this.twtBackupDiv.style.cursor = 'pointer';
-        this.twtBackupDiv.onclick = function () {
-            let link = "https://twitter.com/share?text=I%20just%20got%20a%20score%20of%20" + SCORE + "%20on%20%40LaundrOfficial%27s%20hidden%20%23laundr404game%21%0A%0AThink%20you%20can%20do%20better%3F%20Take%20it%20for%20a%20spin%20here%3A";
+        // this.twtBackupDiv.onclick = function () {
+        //     let link = "https://twitter.com/share?text=I%20just%20got%20a%20score%20of%20" + SCORE + "%20on%20%40LaundrOfficial%27s%20hidden%20%23laundr404game%21%0A%0AThink%20you%20can%20do%20better%3F%20Take%20it%20for%20a%20spin%20here%3A";
 
-            window.open(link);
-        };
+        //     window.open(link);
+        // };
 
         this.fbBackupDiv = document.createElement('div');
         this.fbBackupDiv.innerHTML = "Share";
@@ -179,11 +179,11 @@ export default class socials {
         this.fbBackupDiv.style.fontSize = "2vw";
         this.backupSocialsDiv.appendChild(this.fbBackupDiv);
         this.fbBackupDiv.style.cursor = 'pointer';
-        this.fbBackupDiv.onclick = function () {
-            let link = "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.laundr.io%2F404&amp;src=sdkpreparse";
+        // this.fbBackupDiv.onclick = function () {
+        //     let link = "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.laundr.io%2F404&amp;src=sdkpreparse";
 
-            window.open(link);
-        };
+        //     window.open(link);
+        // };
 
         this.backupSocialsDiv.style.left = "-999%";
     }
