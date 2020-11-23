@@ -119,9 +119,6 @@ export default class socials {
             twttr.widgets.createShareButton('https://www.laundr.io/404', this.twtDiv, {
                 text: text
             });
-            setTimeout(() => {
-                this.twtDiv.firstElementChild.style.width = "100%";
-            }, 200);
         } else {
             this.twtBackupDiv.onclick = function () {
                 let link = "https://twitter.com/share?text=I%20just%20got%20a%20score%20of%20" + SCORE + "%20on%20%40LaundrOfficial%27s%20hidden%20%23laundr404game%21%0A%0AThink%20you%20can%20do%20better%3F%20Take%20it%20for%20a%20spin%20here%3A";
