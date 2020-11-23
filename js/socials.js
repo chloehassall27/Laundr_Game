@@ -4,31 +4,18 @@ CURRENT BUGS:
 */
 
 export default class socials {
-    // app;
-    // bird;
-    // thumbsupShare;
-    // score;
-
-    // twtDiv;
-    // fbDiv;
-    // socialsDiv;
     adBlock = false;
 
     constructor(app) {
         this.app = app;
         //this.setupPixiBtns();
+
         this.setupHTMLBtns();
-        // this.checkForAdBlock(function (isBlocked) {
-        //     if (isBlocked) this.backup();
-        //     else console.log("not blocked");
-        // });
         setTimeout(this.checkForBlock2.bind(this), 200);
 
     }
 
     endGame() {
-        //this.score = Math.round(score);
-
         //pixi interactable sprites method
         // this.app.stage.addChild(this.bird);
         // this.app.stage.addChild(this.thumbsupShare);
@@ -144,17 +131,6 @@ export default class socials {
         if (!this.adBlock) this.twtDiv.innerHTML = "";
     }
 
-    checkForAdBlock(callback) {
-        console.log("checking..");
-        let URL = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-        fetch(URL, {
-            method: 'HEAD',
-            mode: 'no-cors'
-        })
-            .then(response => callback(false))
-            .catch(error => callback(true));
-    }
-
     checkForBlock2() {
         if (this.twtDiv.innerHTML === "") {
             this.backup();
@@ -162,7 +138,6 @@ export default class socials {
     }
 
     backup() {
-        console.log("in backup");
         this.adBlock = true;
 
         this.laundrDiv = document.getElementById('laundr-game');
