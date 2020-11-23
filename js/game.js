@@ -188,7 +188,30 @@ function loadOnce(){
       endHouse.y = HEIGHT / 2.4;
       container.addChild(endHouse);
 
-      endMessage = new PIXI.Text('G A M E  O V E R', style);
+      // //array of losing puns
+      // let losePuns = [
+      //   'You really folded under pressure!', 
+      //   'That was a wash!', 
+      //   'That was quite a tumble!',
+      //   'Wanna dry again?',
+      //   'You stink!',
+      //   'You are a detergent deterrent!',
+      //   'You need to iron out your skills',
+      //   'Everything just unfolded!',
+      //   'What a mess!',
+      //   'Knocked your socks off!',
+      //   'Keep your shirt on!',
+      //   'You just got lint rolled!',
+      //   'You got starched!',
+      //   'That’s called the spin cycle!',
+      //   'Your colors are bleeding!',
+      //   'Start the cycle again!',
+      //   'That’s a stain on the record!',
+      // ];
+
+      //game over message
+      let L = Math.floor(Math.random() * 17);
+      endMessage = new PIXI.Text('G A M E  O V E R' /*losePuns[L]*/, style);
       endMessage.resolution = 1.5;
 
       socials = new Socials(app);
@@ -263,7 +286,7 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
+      if ((performance.now() - timeOffset) > 3000 && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
@@ -341,7 +364,48 @@ function endGame() {
     displayHighScore();
   }
 
-  if (win) endMessage.text = 'W I N N E R';
+  //array of winning puns
+  let winPuns = [
+    'That was a clean run!',
+    'Delivery complete!',
+    'Washed, dried, and delivered!',
+    'A soapy success story!',
+    'You ran right out of your socks!',
+    'Faster than a flying iron!',
+    'The linen is winnin’!',
+    'Sock it to ‘em!',
+    'Silky smooth!',
+    'You are the Laundr Bomb!',
+    'Spotless run!',
+  ];
+
+  //array of losing puns
+  let losePuns = [
+    'You really folded under pressure!', 
+    'That was a wash!', 
+    'That was quite a tumble!',
+    'Wanna dry again?',
+    'You stink!',
+    'You are a detergent deterrent!',
+    'You need to iron out your skills!',
+    'Everything just unfolded!',
+    'What a mess!',
+    'Knocked your socks off!',
+    'Keep your shirt on!',
+    'You just got lint rolled!',
+    'You got starched!',
+    'That’s called the spin cycle!',
+    'Your colors are bleeding!',
+    'Start the cycle again!',
+    'That’s a stain on the record!',
+  ];
+
+  //generate random index in winPuns arrray
+  let W = Math.floor(Math.random() * 11);
+  //generate random index in losePuns array
+  let L = Math.floor(Math.random() * 17);
+
+  if (win) endMessage.text = /*'W I N N E R'*/ winPuns[W];
   endMessage.anchor.set(.5, 0);
   endMessage.x = WIDTH / 2;
   endMessage.y = HEIGHT / 4;
@@ -351,6 +415,7 @@ function endGame() {
   restartButton.scale.set(SCALE * 0.3);
 
   if (lose) {
+    endMessage.text = losePuns[L];
     if (!mute) {
       deathS.play();
     }
