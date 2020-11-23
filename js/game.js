@@ -640,6 +640,8 @@ function resize(){
   scoreText.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
   endMessage.resolution = RELSCALE * 1.5;
+  windows.topMessageInstruct.resolution = RELSCALE * 1.5;
+  windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
 }
 
 // === End helper functions === //

@@ -30,12 +30,22 @@ export default class Windows{
   }
 
   setUpInstruct(container){
-    this.topMessageInstruct = new PIXI.Text('Press space/up arrow key to jump', this.style);
+    let topText;
+    let bottomText;
+    if(!PIXI.utils.isMobile.any){
+      topText = 'Press space/up arrow key to jump';
+      bottomText = 'Press down arrow key to duck';
+    }
+    else{
+      topText = 'Tap sky to jump';
+      bottomText = 'Tap street to duck'
+    }
+    this.topMessageInstruct = new PIXI.Text(topText, this.style);
     this.topMessageInstruct.anchor.set(0.5);
     this.topMessageInstruct.x = WIDTH/2;
     this.topMessageInstruct.y = this.popUpBackground.y - (this.popUpBackground.y * 0.25);
 
-    this.bottomMessageInstruct = new PIXI.Text('Press down arrow key to duck', this.style);
+    this.bottomMessageInstruct = new PIXI.Text(bottomText, this.style);
     this.bottomMessageInstruct.anchor.set(0.5);
     this.bottomMessageInstruct.x = WIDTH/2;
     this.bottomMessageInstruct.y = this.popUpBackground.y + (this.popUpBackground.y * 0.25);
