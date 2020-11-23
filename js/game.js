@@ -59,7 +59,6 @@ let spawner;
 let player;
 let windows;
 let socials;
-let windows;
 // let background;
 let backgroundFront, backgroundBack;
 window.groundLevel = HEIGHT * .9;
@@ -193,9 +192,6 @@ function loadOnce(){
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
       container.addChild(endHouse);
-
-      windows = new Window(app);
-      windows.setUpInstruct(); 
 
       endMessage = new PIXI.Text('G A M E  O V E R', style);
       endMessage.resolution = 1.5;
