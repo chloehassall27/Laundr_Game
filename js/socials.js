@@ -39,7 +39,7 @@ export default class socials {
 
         //html method
         this.socialsDiv.style.left = "-100%";
-        this.backupSocialsDiv.style.left = "-100%";
+        if (this.adBlock) this.backupSocialsDiv.style.left = "-100%";
         this.twtDiv.innerHTML = "";
     }
 
