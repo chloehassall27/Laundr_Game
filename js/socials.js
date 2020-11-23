@@ -1,17 +1,13 @@
 
 
 export default class socials {
-    adBlock = false;
-    app;
 
     constructor(app) {
         this.app = app;
         //this.setupPixiBtns();
 
         this.setupHTMLBtns();
-        console.log("setup html");
-        //setTimeout(this.checkForBlock2.bind(this), 200);
-        console.log("timeout set");
+        setTimeout(this.checkForBlock2.bind(this), 200);
 
     }
 
@@ -97,27 +93,22 @@ export default class socials {
 
     //html method
     setupHTMLBtns() {
-        // console.log("top of html setup");
-        // this.socialsDiv = document.getElementById('socials');
-        // this.twtDiv = document.getElementById('twtDiv');
-        // this.fbDiv = document.getElementById('fbDiv');
-        // console.log("fetched variables");
+        this.socialsDiv = document.getElementById('socials');
+        this.twtDiv = document.getElementById('twtDiv');
+        this.fbDiv = document.getElementById('fbDiv');
 
-        // this.socialsDiv.style.position = "absolute";
-        // this.socialsDiv.style.zIndex = "10";
-        // this.socialsDiv.style.textAlign = "center";
-        // console.log("style");
+        this.socialsDiv.style.position = "absolute";
+        this.socialsDiv.style.zIndex = "10";
+        this.socialsDiv.style.textAlign = "center";
 
-        // this.socialsDiv.style.left = "-999%";
+        this.socialsDiv.style.left = "-999%";
 
-        // this.renderTwt();
-        // //this.endGame();
-        // console.log("top of html setup");
+        this.renderTwt();
+        //this.endGame();
 
     }
 
     renderTwt() {
-        console.log("top of rendertwt");
         if (!this.adBlock) {
             this.score = SCORE;
             this.twtDiv.innerHTML = "";
@@ -132,7 +123,6 @@ export default class socials {
                 window.open(link);
             };
         }
-        console.log("bottom of rendertwt");
 
     }
 
@@ -141,15 +131,12 @@ export default class socials {
     }
 
     checkForBlock2() {
-        console.log("top of check");
         if (this.twtDiv.innerHTML === "") {
             this.backup();
         }
-        console.log("bottom of check");
     }
 
     backup() {
-        console.log("top of backup");
         this.adBlock = true;
 
         this.laundrDiv = document.getElementById('laundr-game');
@@ -197,7 +184,6 @@ export default class socials {
         };
 
         this.backupSocialsDiv.style.left = "-999%";
-        console.log("bottom of backup");
 
     }
 }
