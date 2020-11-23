@@ -13,6 +13,7 @@
 import Spawner from "./spawner.js"
 import Player from "./player.js"
 import Socials from "./socials.js"
+console.log("do these even work??");
 
 // === Basic app setup === //
 let canvas = document.getElementById('pixiCanvas');
