@@ -156,9 +156,9 @@ export default class socials {
         this.twtBackupDiv.classList.add("backupbird");
         this.twtBackupDiv.style.display = "inline-block";
         this.twtBackupDiv.style.verticalAlign = "top";
-        this.twtBackupDiv.style.minWidth = "40%"
+        this.twtBackupDiv.style.minWidth = "40%";
         this.twtBackupDiv.style.color = "blue";
-        this.twtBackupDiv.style.textDecoration = "underline"
+        this.twtBackupDiv.style.textDecoration = "underline";
         this.twtBackupDiv.style.fontSize = "2vw";
         this.backupSocialsDiv.appendChild(this.twtBackupDiv);
         this.twtBackupDiv.style.cursor = 'pointer';
@@ -173,9 +173,9 @@ export default class socials {
         this.fbBackupDiv.classList.add("backupbird");
         this.fbBackupDiv.style.display = "inline-block";
         this.fbBackupDiv.style.verticalAlign = "top";
-        this.fbBackupDiv.style.minWidth = "40%"
+        this.fbBackupDiv.style.minWidth = "40%";
         this.fbBackupDiv.style.color = "blue";
-        this.fbBackupDiv.style.textDecoration = "underline"
+        this.fbBackupDiv.style.textDecoration = "underline";
         this.fbBackupDiv.style.fontSize = "2vw";
         this.backupSocialsDiv.appendChild(this.fbBackupDiv);
         this.fbBackupDiv.style.cursor = 'pointer';
