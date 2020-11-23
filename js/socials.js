@@ -2,6 +2,7 @@
 
 export default class socials {
     adBlock = false;
+    app;
 
     constructor(app) {
         this.app = app;
@@ -9,7 +10,7 @@ export default class socials {
 
         this.setupHTMLBtns();
         console.log("setup html");
-        setTimeout(this.checkForBlock2.bind(this), 200);
+        //setTimeout(this.checkForBlock2.bind(this), 200);
         console.log("timeout set");
 
     }
@@ -96,22 +97,22 @@ export default class socials {
 
     //html method
     setupHTMLBtns() {
-        console.log("top of html setup");
-        this.socialsDiv = document.getElementById('socials');
-        this.twtDiv = document.getElementById('twtDiv');
-        this.fbDiv = document.getElementById('fbDiv');
-        console.log("fetched variables");
+        // console.log("top of html setup");
+        // this.socialsDiv = document.getElementById('socials');
+        // this.twtDiv = document.getElementById('twtDiv');
+        // this.fbDiv = document.getElementById('fbDiv');
+        // console.log("fetched variables");
 
-        this.socialsDiv.style.position = "absolute";
-        this.socialsDiv.style.zIndex = "10";
-        this.socialsDiv.style.textAlign = "center";
-        console.log("style");
+        // this.socialsDiv.style.position = "absolute";
+        // this.socialsDiv.style.zIndex = "10";
+        // this.socialsDiv.style.textAlign = "center";
+        // console.log("style");
 
-        this.socialsDiv.style.left = "-999%";
+        // this.socialsDiv.style.left = "-999%";
 
-        this.renderTwt();
-        //this.endGame();
-        console.log("top of html setup");
+        // this.renderTwt();
+        // //this.endGame();
+        // console.log("top of html setup");
 
     }
 
