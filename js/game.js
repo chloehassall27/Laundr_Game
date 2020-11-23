@@ -127,6 +127,7 @@ loadOnce();
 function loadOnce() {
   app.loader
     .load((loader, resources) => {
+      console.log("in loader");
       deathS = PIXI.sound.Sound.from(resources.deathSound);
       deathS.volume = 0.4;
       jumpS = PIXI.sound.Sound.from(resources.jumpSound);
@@ -193,6 +194,7 @@ function loadOnce() {
       endMessage = new PIXI.Text('G A M E  O V E R', style);
       endMessage.resolution = 1.5;
 
+      console.log("make instance");
       socials = new Socials(app);
     });
 
