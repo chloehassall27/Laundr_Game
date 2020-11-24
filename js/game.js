@@ -436,7 +436,7 @@ function cleanUp() {
   firstLoop = true;
   clearInterval(gameInterval);
   endHouse.x = WIDTH * 1.5;
-  socials.resetGame();
+  socials.restartGame();
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++) {
@@ -639,10 +639,7 @@ function resize() {
   highscoreText.resolution = RELSCALE * 1.5;
   endMessage.resolution = RELSCALE * 1.5;
 
-  if (canvas.width < 675 && !socials.smallScreen && gameOver) {
-    console.log(canvas.width);
-    socials.switchSizes();
-  }
+  if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
   else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
 }
 

@@ -20,10 +20,8 @@ export default class socials {
     }
 
     switchSizes() {
-        console.log("called");
         this.smallScreen = !this.smallScreen;
-        this.resetGame()
-        this.renderTwt();
+        this.resetGame();
         this.bringOnScreen(false);
     }
 
@@ -33,6 +31,10 @@ export default class socials {
         if (this.adBlock) this.backupSocialsDiv.style.left = "-100%";
         this.smallScreenDiv.style.left = "-100%";
         this.sSMenu.style.left = "-100%";
+    }
+
+    restartGame() {
+        this.resetGame();
         this.twtDiv.innerHTML = "";
     }
 
