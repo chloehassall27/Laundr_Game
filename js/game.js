@@ -378,9 +378,9 @@ function endGame() {
   ];
 
   //generate random index in winPuns arrray
-  let W = Math.floor(Math.random() * 11);
+  let W = Math.floor(Math.random() * winPuns.length);
   //generate random index in losePuns array
-  let L = Math.floor(Math.random() * 17);
+  let L = Math.floor(Math.random() * losePuns.length);
 
   if (win) endMessage.text = winPuns[W];
   endMessage.anchor.set(.5, 0);
