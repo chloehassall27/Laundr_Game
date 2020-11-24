@@ -639,11 +639,11 @@ function resize() {
   highscoreText.resolution = RELSCALE * 1.5;
   endMessage.resolution = RELSCALE * 1.5;
 
-  if (canvas.width < 540 && !socials.smallScreen && gameOver) {
+  if (canvas.width < 675 && !socials.smallScreen && gameOver) {
     console.log(canvas.width);
     socials.switchSizes();
   }
-  else if (canvas.width >= 540 && socials.smallScreen && gameOver) socials.switchSizes();
+  else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
 }
 
 // === End helper functions === //
