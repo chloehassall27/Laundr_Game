@@ -141,6 +141,22 @@ export default class socials {
         this.sSMenu.style.top = '50%';
         this.sSMenu.style.left = "-999%";
 
+        this.xButton = document.createElement('div');
+        this.xButton.classList.add('xButton');
+        this.xButton.innerHTML = "×";
+        this.xButton.style.fontSize = "4vw";
+        this.xButton.style.fontWeight = "900";
+        this.xButton.style.fontFamily = "Impact";
+        this.xButton.style.position = "absolute";
+        this.xButton.style.cursor = 'pointer';
+        this.sSMenu.appendChild(this.xButton);
+
+        this.xButton.style.top = "10%";
+        this.xButton.style.left = "95%";
+        this.xButton.style.transform = "translate(-50%, -50%)";
+
+        this.xButton.onclick = this.smallScreenReset.bind(this);
+
     }
 
     smallScreenPopup() {
@@ -156,6 +172,7 @@ export default class socials {
     smallScreenReset() {
         this.sSMenu.style.left = "-999%";
         this.resetGame();
+        this.smallBringOnScreen();
     }
 
     resetTwtDiv() {
