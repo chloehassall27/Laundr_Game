@@ -200,7 +200,7 @@ function loadOnce(){
 
       //add windows;
       windows = new Windows(app);
-      windows.setUpInstruct(container);
+      windows.setUpInstruct();
     });
 
   reload();
@@ -222,7 +222,7 @@ function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
     if(!windows.removedInstruct){
-      windows.removeInstruct(container);
+      windows.removeInstruct();
     }
     checkFocus();
 

@@ -29,7 +29,7 @@ export default class Windows{
     this.popUpBackground.y = HEIGHT/2;
   }
 
-  setUpInstruct(container){
+  setUpInstruct(){
     let topText;
     let bottomText;
     if(!PIXI.utils.isMobile.any){
@@ -55,7 +55,7 @@ export default class Windows{
     container.addChild(this.bottomMessageInstruct);
   }
 
-  removeInstruct(container){
+  removeInstruct(){
     container.removeChild(this.popUpBackground);
     container.removeChild(this.topMessageInstruct);
     container.removeChild(this.bottomMessageInstruct);
