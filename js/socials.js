@@ -4,38 +4,35 @@ export default class socials {
 
     constructor(app) {
         this.app = app;
-        //this.setupPixiBtns();
+        this.socialsDiv = document.getElementById('socials');
+        this.twtDiv = document.getElementById('twtDiv');
+        this.fbDiv = document.getElementById('fbDiv');
 
+        if (WIDTH < 540) this.smallScreen = true;
+        this.smallScreenSetup();
         this.setupHTMLBtns();
         setTimeout(this.checkForBlock2.bind(this), 200);
-
     }
 
     endGame() {
-        //pixi interactable sprites method
-        // this.app.stage.addChild(this.bird);
-        // this.app.stage.addChild(this.thumbsupShare);
-
         //html method
-        if (!this.adBlock) {
-            this.socialsDiv.style.top = '80%';
-            this.socialsDiv.style.left = "50%";
-            this.socialsDiv.style.transform = "translate(-50%, -50%)";
-        } else {
-            this.backupSocialsDiv.style.top = '80%';
-            this.backupSocialsDiv.style.left = "50%";
-            this.backupSocialsDiv.style.transform = "translate(-50%, -50%)";
-        }
+        this.bringOnScreen(false);
+    }
+
+    switchSizes() {
+        console.log("called");
+        this.smallScreen = !this.smallScreen;
+        this.resetGame()
+        this.renderTwt();
+        this.bringOnScreen(false);
     }
 
     resetGame() {
-        //pixi interactable sprites method
-        // this.app.stage.removeChild(this.bird);
-        // this.app.stage.removeChild(this.thumbsupShare);
-
         //html method
         this.socialsDiv.style.left = "-100%";
         if (this.adBlock) this.backupSocialsDiv.style.left = "-100%";
+        this.smallScreenDiv.style.left = "-100%";
+        this.sSMenu.style.left = "-100%";
         this.twtDiv.innerHTML = "";
     }
 
@@ -53,50 +50,8 @@ export default class socials {
         window.open(link);
     }
 
-    //pixi button-enabled sprites method
-    setupPixiBtns() {
-        let birdTexture = PIXI.Texture.from("../sprites/social_icons/bird_small.png");
-        birdTexture = new PIXI.Texture(birdTexture.baseTexture, new PIXI.Rectangle(170, 0, 650, 256));
-        //birdTexture.baseTexture.setSize(256, 64, 2);
-        birdTexture.baseTexture.mipmap = true;
-        // birdTexture = new PIXI.Texture(birdTexture.baseTexture, new PIXI.Rectangle(42, 0, 162, 64));
-        this.bird = new PIXI.Sprite(birdTexture);
-
-        this.bird.anchor.set(0.5);
-        this.bird.x = WIDTH / 2.2;
-        this.bird.y = HEIGHT / 1.25;
-        this.bird.interactive = true;
-        this.bird.buttonMode = true;
-        // this.bird.antialias = false;
-        this.bird.resolution = 2;
-        this.bird.scale.set(SCALE * 0.1);
-
-        this.bird.on('pointerdown', this.onClickbird.bind(this));
-
-        let thumbsupTexture = PIXI.Texture.from("../sprites/social_icons/thumbsup.png");
-        thumbsupTexture = new PIXI.Texture(thumbsupTexture.baseTexture, new PIXI.Rectangle(170, 0, 650, 256));
-        //thumbsupTexture.baseTexture.setSize(256, 256, 5);
-        thumbsupTexture.baseTexture.mipmap = true;
-        this.thumbsupShare = new PIXI.Sprite(thumbsupTexture);
-
-        this.thumbsupShare.anchor.set(0.5);
-        this.thumbsupShare.x = WIDTH / 1.85;
-        this.thumbsupShare.y = HEIGHT / 1.25;
-        this.thumbsupShare.interactive = true;
-        this.thumbsupShare.buttonMode = true;
-        this.bird.resolution = 2;
-        this.thumbsupShare.scale.set(SCALE * 0.1);
-
-
-        this.thumbsupShare.on('pointerdown', this.onClickthumbsupShare.bind(this));
-    }
-
     //html method
     setupHTMLBtns() {
-        this.socialsDiv = document.getElementById('socials');
-        this.twtDiv = document.getElementById('twtDiv');
-        this.fbDiv = document.getElementById('fbDiv');
-
         this.socialsDiv.style.position = "absolute";
         this.socialsDiv.style.zIndex = "10";
         this.socialsDiv.style.textAlign = "center";
@@ -106,6 +61,31 @@ export default class socials {
         this.renderTwt();
         //this.endGame();
 
+    }
+    bringOnScreen(center) {
+        let yVal;
+        if (center) yVal = "50%";
+        else yVal = "80%";
+
+        if (center || !this.smallScreen) {
+            if (!this.adBlock) {
+                this.socialsDiv.style.top = yVal;
+                this.socialsDiv.style.left = "50%";
+                this.socialsDiv.style.transform = "translate(-50%, -50%)";
+            } else {
+                this.backupSocialsDiv.style.top = yVal;
+                this.backupSocialsDiv.style.left = "50%";
+                this.backupSocialsDiv.style.transform = "translate(-50%, -50%)";
+            }
+        } else if (this.smallScreen) {
+            this.smallBringOnScreen();
+        }
+    }
+
+    smallBringOnScreen() {
+        this.smallScreenDiv.style.top = '80%';
+        this.smallScreenDiv.style.left = "50%";
+        this.smallScreenDiv.style.transform = "translate(-50%, -50%)";
     }
 
     renderTwt() {
@@ -124,6 +104,56 @@ export default class socials {
             };
         }
 
+    }
+
+    smallScreenSetup() {
+        this.laundrDiv = document.getElementById('laundr-game');
+        this.smallScreenDiv = document.createElement('div');
+        this.smallScreenDiv.classList.add("smallScreenDiv");
+        this.smallScreenDiv.style.width = "17%";
+        this.smallScreenDiv.style.position = "absolute";
+        this.smallScreenDiv.style.textAlign = "center";
+        this.smallScreenDiv.innerHTML = "Share your Score!";
+        this.smallScreenDiv.style.padding = "0.5vw";
+        this.smallScreenDiv.style.cursor = 'pointer';
+        this.smallScreenDiv.style.fontSize = "2vw";
+        this.smallScreenDiv.style.margin = "0px";
+        this.smallScreenDiv.style.backgroundColor = "#01C9E1";
+        this.smallScreenDiv.style.color = "white";
+        this.laundrDiv.appendChild(this.smallScreenDiv);
+
+        this.smallScreenDiv.style.left = "-999%";
+
+        this.smallScreenDiv.onclick = this.smallScreenPopup.bind(this);
+
+        this.sSMenu = document.createElement('div');
+        this.sSMenu.classList.add("sSMenu");
+        this.sSMenu.style.width = "20%";
+        this.sSMenu.style.position = "absolute";
+        this.sSMenu.style.padding = "10vw";
+        this.sSMenu.style.margin = "0px";
+        this.sSMenu.style.backgroundColor = "white";
+        this.sSMenu.style.zIndex = "3";
+        this.laundrDiv.appendChild(this.sSMenu);
+
+        this.sSMenu.style.top = '50%';
+        this.sSMenu.style.left = "-999%";
+
+    }
+
+    smallScreenPopup() {
+        this.laundrDiv = document.getElementById('laundr-game');
+
+        this.sSMenu.style.top = '50%';
+        this.sSMenu.style.left = "50%";
+        this.sSMenu.style.transform = "translate(-50%, -50%)";
+
+        this.bringOnScreen(true);
+    }
+
+    smallScreenReset() {
+        this.sSMenu.style.left = "-999%";
+        this.resetGame();
     }
 
     resetTwtDiv() {

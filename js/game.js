@@ -638,6 +638,12 @@ function resize() {
   scoreText.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
   endMessage.resolution = RELSCALE * 1.5;
+
+  if (canvas.width < 540 && !socials.smallScreen && gameOver) {
+    console.log(canvas.width);
+    socials.switchSizes();
+  }
+  else if (canvas.width >= 540 && socials.smallScreen && gameOver) socials.switchSizes();
 }
 
 // === End helper functions === //
