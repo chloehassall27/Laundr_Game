@@ -24,7 +24,7 @@ const app = new PIXI.Application({
   width: canvas.getBoundingClientRect().width, height: canvas.getBoundingClientRect().width / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1, view: canvas,
 });
 canvas.style.zIndex = "-1";
-document.body.appendChild(app.view);
+//document.body.appendChild(app.view);
 PIXI.sound.context.paused = true;
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
@@ -34,6 +34,7 @@ window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
 window.SCALE = HEIGHT / 225; // Scale used for compatibility with old code. Originally, we hard coded values with a screen size of 900x225
 window.RELSCALE = HEIGHT / 225; // Scale relative to original scale.  Other scale is only calculated at start
+window.SCORE = 0;
 
 window.container = new PIXI.Container();
 app.stage.addChild(container);
@@ -111,6 +112,7 @@ let gameInterval;
 let timeout = 0;
 let winTimeoutTime = 0;
 let slowTimout;
+let twtTimeout;
 // === End basic app setup === //
 
 // === Sprite setup === //
@@ -127,7 +129,7 @@ app.loader
 
 loadOnce();
 
-function loadOnce(){
+function loadOnce() {
   app.loader
     .load((loader, resources) => {
       deathS = PIXI.sound.Sound.from(resources.deathSound);
@@ -138,7 +140,7 @@ function loadOnce(){
       tokenS.volume = 0.4;
       winS = PIXI.sound.Sound.from(resources.winSound);
       winS.volume = 0.35;
-    
+
       //create tiling sprite that can be scrolled infinitely
       //currently set up for parallax effect, if disliked, switch which things are commented out
 
@@ -158,7 +160,7 @@ function loadOnce(){
       backgroundBack.tileScale.set(SCALE * .25);
       container.addChild(backgroundBack);
       container.addChild(backgroundFront);
-      
+
       // Mute/unmute button
       muteButton = new PIXI.AnimatedSprite(resources.muteSheet.spritesheet.animations["mute_unmute"]);
       muteButton.on('pointerdown', onClickMute);
@@ -182,8 +184,8 @@ function loadOnce(){
       restartButton.interactive = true;
       restartButton.buttonMode = true;
       restartButton.on('pointerdown', onClickRestart);
-      restartButton.on('pointerover', function () {restartButton.tint = 0xF0F0F0;});
-      restartButton.on('pointerout', function () {restartButton.tint = 0xFFFFFF;});
+      restartButton.on('pointerover', function () { restartButton.tint = 0xF0F0F0; });
+      restartButton.on('pointerout', function () { restartButton.tint = 0xFFFFFF; });
 
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
       endHouse = new PIXI.Sprite(endHouseText);
@@ -251,6 +253,7 @@ function gameLoop() {
         //check collision
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
           lose = true;
+          socials.renderTwt();
           endGame();
         }
 
@@ -280,6 +283,7 @@ function gameLoop() {
         winTriggered = true;
         spawner.gameOver = true;
         winTimeoutTime = performance.now();
+        twtTimeout = setTimeout(socials.renderTwt, 2980);
         winTimeout = setTimeout(endGame, 3000);
         slowTimout = setInterval(slowMovement, 700);
       }
@@ -297,7 +301,9 @@ function gameLoop() {
 // Display the current score
 function displayScore() {
   score += .01;
-  scoreText.text = Math.round(score);
+  let roundedScore = Math.round(score);
+  scoreText.text = roundedScore;
+  window.SCORE = roundedScore;
 
   // app.stage.addChild(scoreText);
 
@@ -345,8 +351,7 @@ function endGame() {
   started = false;
   timeout = performance.now();
   clearTimeout(winTimeout);
-  socials.endGame(score);
-
+  clearTimeout(twtTimeout);
 
   if (score > highscore) {
     highscore = score;
@@ -366,8 +371,12 @@ function endGame() {
     if (!mute) {
       deathS.play();
     }
-    container.addChild(endMessage);
-    container.addChild(restartButton);
+    //this is on a timeout so that the twitter button has enough time to render
+    setTimeout(() => {
+      container.addChild(endMessage);
+      container.addChild(restartButton);
+      socials.endGame();
+    }, 60);
   } else if (win) {
     setTimeout(() => {
       if (!mute) {
@@ -375,6 +384,7 @@ function endGame() {
       }
       container.addChild(endMessage);
       container.addChild(restartButton);
+      socials.endGame();
     }, 950);
   }
 
@@ -399,14 +409,14 @@ function onClickRestart() {
   startGame();
 }
 
-function onClickMute(){
+function onClickMute() {
   touchDisable = true;
   window.mute = !window.mute;
   if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
   else muteButton.gotoAndStop(1);
 }
 
-function onReleaseMute(){
+function onReleaseMute() {
   touchDisable = false;
 }
 
@@ -438,10 +448,10 @@ function cleanUp() {
   firstLoop = true;
   clearInterval(gameInterval);
   endHouse.x = WIDTH * 1.5;
-  socials.resetGame();
+  socials.restartGame();
 
   // Remove obstacles
-  for (var i = 0; i < spawner.obstacles.length; i++){
+  for (var i = 0; i < spawner.obstacles.length; i++) {
     container.removeChild(spawner.obstacles[i]);
   }
   container.removeChild(endMessage);
@@ -471,9 +481,9 @@ window.addEventListener("keyup", keysUp);
 function keysDown(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     window.inputs.jump = true;
-    if (!started && firstLoad) 
+    if (!started && firstLoad)
       startGame();
-    
+
     if (gameOver) {
       if (lose && (performance.now() - timeout > 600))
         onClickRestart();
@@ -492,7 +502,7 @@ function keysUp(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     window.inputs.jump = false;
   }
-  
+
   if (e.key == "ArrowDown") {
     window.inputs.duck = false;
   }
@@ -513,22 +523,22 @@ function touchStart(e) {
 
   // If there's no current touch, then set this touch to be the current one
   if (currentTouchID === -1) currentTouchID = touch.identifier
-  
+
   // We only care about the current touch, so skip if this isn't it
-  if(touch.identifier !== currentTouchID || touchDisable) return;
+  if (touch.identifier !== currentTouchID || touchDisable) return;
 
   let pos = e.data.getLocalPosition(this.parent);
 
   // Top 2/3 of the canvas will call the jump function
-  if ( pos.y < (2 * container.height / 3) ) {
+  if (pos.y < (2 * container.height / 3)) {
     inputs.jump = true;
 
-    if (!started && firstLoad) 
+    if (!started && firstLoad)
       startGame();
   }
   // Bottom 1/3 of the canvas will call the duck function
 
-  else{
+  else {
     inputs.duck = true;
   }
 }
@@ -539,21 +549,21 @@ function touchMove(e) {
 
   // If there's no current touch, then set this touch to be the current one
   if (currentTouchID === -1) currentTouchID = touch.identifier
-  
-  // We only care about the current touch
-  if(touch.identifier !== currentTouchID) return;
 
- 
+  // We only care about the current touch
+  if (touch.identifier !== currentTouchID) return;
+
+
   let pos = e.data.getLocalPosition(this.parent);
   // console.log(this.parent)
 
   // Top 2/3 of the canvas will call the jump function and stop the duck function
-  if (pos.y < (2 * container.height / 3) ) {
+  if (pos.y < (2 * container.height / 3)) {
     inputs.jump = true;
     inputs.duck = false;
   }
   // Bottom 1/3 of the canvas will call the duck function and stop the jump function
-  else{
+  else {
     inputs.duck = true;
     inputs.jump = false;
   }
@@ -561,8 +571,8 @@ function touchMove(e) {
 
 function touchEnd(e) {
   let touch = e.data;
-  
-  if(touch.identifier == currentTouchID){
+
+  if (touch.identifier == currentTouchID) {
     currentTouchID = -1;
     inputs.jump = false;
     inputs.duck = false;
@@ -626,20 +636,23 @@ function checkFocus() {
 
 
 window.addEventListener('resize', resize);
-function resize(){
+function resize() {
   // window.RELSCALE = (window.innerWidth / 4 / 225) / SCALE ;
   // app.renderer.resolution = window.devicePixelRatio || RELSCALE * 1.25;
   // console.log(app.renderer.resolution);
 
-  app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width / 4 );
+  app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width / 4);
 
-  window.RELSCALE = (app.screen.height / 225) / SCALE ;
+  window.RELSCALE = (app.screen.height / 225) / SCALE;
 
   container.scale.set(RELSCALE);
-  
+
   scoreText.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
   endMessage.resolution = RELSCALE * 1.5;
+
+  if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
+  else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
   windows.topMessageInstruct.resolution = RELSCALE * 1.5;
   windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
 }
