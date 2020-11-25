@@ -12,7 +12,11 @@
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
+import Window from "./windows.js"
 import Socials from "./socials.js"
+import Windows from "./windows.js"
+
+window.RESOLUTION = 1;
 
 // === Basic app setup === //
 let canvas = document.getElementById('pixiCanvas');
@@ -53,6 +57,7 @@ const highscoreStyle = new PIXI.TextStyle({
 
 let spawner;
 let player;
+let windows;
 let socials;
 // let background;
 let backgroundFront, backgroundBack;
@@ -192,6 +197,10 @@ function loadOnce(){
       endMessage.resolution = 1.5;
 
       socials = new Socials(app);
+
+      //add windows;
+      windows = new Windows(app);
+      windows.setUpInstruct();
     });
 
   reload();
@@ -212,6 +221,9 @@ function reload() {
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
+    if(!windows.removedInstruct){
+      windows.removeInstruct();
+    }
     checkFocus();
 
     if (focus && visible) {
@@ -628,6 +640,8 @@ function resize(){
   scoreText.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
   endMessage.resolution = RELSCALE * 1.5;
+  windows.topMessageInstruct.resolution = RELSCALE * 1.5;
+  windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
 }
 
 // === End helper functions === //
