@@ -1,0 +1,9 @@
+1. ensure project directory has no spaces in it, canvest will not auto-add double quotes
+    ex. use schoolWork not school work, canvest won't auto use "school work" and will only look for school
+2. open project in vscode [administrator] so that powershell has admin permissions
+3. open a powershell terminal
+4. npm i @canvest/canvest-cli --save-dev
+5. all tests should be in the canvest folder, following the name.canvest.js format
+6. running npm test now should open a browser tab with the results of the test :)
+
+for tests that need PIXI, make sure pixi is actually installed! npm install pixi.js

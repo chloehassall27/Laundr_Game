@@ -4,16 +4,19 @@
   "description": "Run with npm start after npm install. Serves @ localhost:80 by default",
   "main": "server.js",
   "dependencies": {
+    "dotenv": "8.2.0",
     "minimist": "^1.2.5",
     "nodemon": "2.0.4",
-    "dotenv": "8.2.0",
-    "pixi-sound": "3.0.5"
+    "pixi-sound": "3.0.5",
+    "pixi.js": "^5.3.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@canvest/canvest-cli": "^1.2.1"
+  },
   "scripts": {
     "start": "nodemon server.js",
     "env": "echo PORT=80 > .env",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "canvest",
     "heroku-postbuild": "npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "repository": {
