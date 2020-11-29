@@ -26,6 +26,8 @@ export default class Spawner {
         this.intRangeMax = 2500;
         this.intRangeMin = 1100;
         this.smallestInt = 200;
+        this.switchDifficulty = 60000;
+        this.ironTime = 20000;
 
         this.firstSpawn = true;
 
@@ -163,7 +165,7 @@ export default class Spawner {
 
             //call the next spawn obstacle, with a delay of interval
             if (!this.gameOver)
-                setTimeout(this.spawn.bind(this), this.interval);
+                this.spawnTimeout = setTimeout(this.spawn.bind(this), this.interval);
         }
     }
 
@@ -202,16 +204,15 @@ export default class Spawner {
     chooseSprite() {
         let currTime = performance.now() - this.startTime;
         const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
-        const switchDifficulty = 60000;
 
         // %3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
         if (rand % 3 == 0) {
-            if (currTime > switchDifficulty) return "double";
+            if (currTime > this.switchDifficulty) return "double";
             return "laundrySprite";
         } else if (rand % 5 == 0) {
-            if (currTime > switchDifficulty) return "laundrySprite";
+            if (currTime > this.switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (currTime >= 20000 && rand % 8 == 0) {
+        } else if (currTime >= this.ironTime && rand % 8 == 0) {
             return "ironSprite";
         }
         else {
