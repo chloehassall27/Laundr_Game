@@ -16,7 +16,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "env": "echo PORT=80 > .env",
-    "test": "canvest",
+    "test": "canvest --timeout 5000",
     "heroku-postbuild": "npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "repository": {

@@ -1,4 +1,4 @@
-describe('Test', function () {
+describe('Test Canvest Setup', function () {
     it('should pass', function () {
         var a = 1;
         var b = 2;
