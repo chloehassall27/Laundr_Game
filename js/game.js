@@ -12,9 +12,8 @@
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
-import Window from "./windows.js"
-import Socials from "./socials.js"
 import Windows from "./windows.js"
+import Socials from "./socials.js"
 
 window.RESOLUTION = 1;
 
@@ -75,7 +74,6 @@ let winTriggered = false;
 let winTimeout;
 let timeOffset;
 let firstLoop = true;
-let endMessage;
 let touchDisable = false;
 
 window.inputs = {
@@ -194,9 +192,6 @@ function loadOnce() {
       endHouse.x = WIDTH * 1.5;
       endHouse.y = HEIGHT / 2.4;
       container.addChild(endHouse);
-
-      endMessage = new PIXI.Text('G A M E  O V E R', style);
-      endMessage.resolution = 1.5;
 
       socials = new Socials(app);
 
@@ -358,13 +353,8 @@ function endGame() {
     displayHighScore();
   }
 
-  if (win) endMessage.text = 'W I N N E R';
-  endMessage.anchor.set(.5, 0);
-  endMessage.x = WIDTH / 2;
-  endMessage.y = HEIGHT / 4;
-
   restartButton.x = WIDTH / 2;
-  restartButton.y = HEIGHT / 1.75;
+  restartButton.y = HEIGHT / 1.65;
   restartButton.scale.set(SCALE * 0.3);
 
   if (lose) {
@@ -373,7 +363,7 @@ function endGame() {
     }
     //this is on a timeout so that the twitter button has enough time to render
     setTimeout(() => {
-      container.addChild(endMessage);
+      windows.setUpLose(score);
       container.addChild(restartButton);
       socials.endGame();
     }, 60);
@@ -382,7 +372,6 @@ function endGame() {
       if (!mute) {
         winS.play();
       }
-      container.addChild(endMessage);
       container.addChild(restartButton);
       socials.endGame();
     }, 950);
@@ -448,13 +437,13 @@ function cleanUp() {
   firstLoop = true;
   clearInterval(gameInterval);
   endHouse.x = WIDTH * 1.5;
+  windows.removeLose();
   socials.restartGame();
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++) {
     container.removeChild(spawner.obstacles[i]);
   }
-  container.removeChild(endMessage);
   container.removeChild(restartButton);
 }
 
@@ -649,12 +638,12 @@ function resize() {
 
   scoreText.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
-  endMessage.resolution = RELSCALE * 1.5;
 
   if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
   else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
   windows.topMessageInstruct.resolution = RELSCALE * 1.5;
   windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
+  if(gameOver) windows.scoreMessage.resolution = RELSCALE * 1.5;
 }
 
 // === End helper functions === //
