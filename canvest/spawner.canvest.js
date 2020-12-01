@@ -406,7 +406,7 @@ describe('spawner spawn tests', async () => {
 
         spawner.spawn();
 
-        expect(spawner.obstacles.length).to.equal(1);
+        expect(spawner.obstacles.length).to.be.above(0);
         expect(spawner.tokens.length).to.equal(0);
     });
 
