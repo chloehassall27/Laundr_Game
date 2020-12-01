@@ -1,22 +1,4 @@
 export default class Spawner {
-    
-    // rangeMin;
-    // tokenTime;
-    // app;
-    // walkingLevel;
-    // jumpLevel;
-    // test;
-
-    // obstScale;
-    // tokenScale;
-    // ironRandScale;
-    // ironRandAdd;
-
-    // tokenTimeoutHold;
-
-    // startTime;
-    
-
 
     constructor(app) {
         this.app = app;
@@ -26,6 +8,8 @@ export default class Spawner {
         this.intRangeMax = 2500;
         this.intRangeMin = 1100;
         this.smallestInt = 200;
+        this.switchDifficulty = 60000;
+        this.ironTime = 20000;
 
         this.firstSpawn = true;
 
@@ -50,33 +34,37 @@ export default class Spawner {
     }
 
     buildObstacles(xOffset, posy, spriteName) {
-        var obstacle = new PIXI.AnimatedSprite(this.app.loader.resources.obSheet.spritesheet.animations[spriteName]);
+        let obstacle;
+        try {
+            obstacle = new PIXI.AnimatedSprite(this.app.loader.resources.obSheet.spritesheet.animations[spriteName]);
+        } catch (error) { console.log("unable to create sprite with name " + spriteName); }
 
-        obstacle.anchor.set(0.5);
-        obstacle.scale.set(this.obstScale);
-        //the laundry sprite doesn't line up well with the washer one, so offset it a bit
-        if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
+        if (typeof obstacle !== 'undefined' && obstacle !== undefined) {
+            obstacle.anchor.set(0.5);
+            obstacle.scale.set(this.obstScale);
+            //the laundry sprite doesn't line up well with the washer one, so offset it a bit
+            if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
 
-        obstacle.x = WIDTH * 1.1;
-        obstacle.x += xOffset;
-        obstacle.y = posy;
-        //console.log(obstacle.getBounds());
+            obstacle.x = WIDTH * 1.1;
+            obstacle.x += xOffset;
+            obstacle.y = posy;
+            //console.log(obstacle.getBounds());
 
-        //Calculate hit boxes based on which sprite is spawned
-        if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40), obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
-        else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - obstacle.width * 0.40, obstacle.y - (obstacle.height * 0.01), obstacle.width * 0.68, obstacle.height * 0.53);
-        else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.2);
-        else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
-        //console.log(obstacle.hitArea.y);
+            //Calculate hit boxes based on which sprite is spawned
+            if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40), obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
+            else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - obstacle.width * 0.40, obstacle.y - (obstacle.height * 0.01), obstacle.width * 0.68, obstacle.height * 0.53);
+            else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.2);
+            else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
+            //console.log(obstacle.hitArea.y);
 
-        obstacle.calculateBounds();
-        //console.log(obstacle.getBounds());
+            obstacle.calculateBounds();
+            //console.log(obstacle.getBounds());
 
-        obstacle.animationSpeed = .125;
-        obstacle.play();
-        container.addChild(obstacle);
-        this.obstacles.push(obstacle);
-
+            obstacle.animationSpeed = .125;
+            obstacle.play();
+            container.addChild(obstacle);
+            this.obstacles.push(obstacle);
+        }
     }
 
     buildToken() {
@@ -159,7 +147,7 @@ export default class Spawner {
 
             //call the next spawn obstacle, with a delay of interval
             if (!this.gameOver)
-                setTimeout(this.spawn.bind(this), this.interval);
+                this.spawnTimeout = setTimeout(this.spawn.bind(this), this.interval);
         }
     }
 
@@ -198,16 +186,15 @@ export default class Spawner {
     chooseSprite() {
         let currTime = performance.now() - this.startTime;
         const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
-        const switchDifficulty = 60000;
 
         // %3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
         if (rand % 3 == 0) {
-            if (currTime > switchDifficulty) return "double";
+            if (currTime > this.switchDifficulty) return "double";
             return "laundrySprite";
         } else if (rand % 5 == 0) {
-            if (currTime > switchDifficulty) return "laundrySprite";
+            if (currTime > this.switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (currTime >= 20000 && rand % 8 == 0) {
+        } else if (currTime >= this.ironTime && rand % 8 == 0) {
             return "ironSprite";
         }
         else {
