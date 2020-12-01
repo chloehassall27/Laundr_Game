@@ -33,7 +33,7 @@ export default class Windows{
   setUpSprites(){
     this.popUpBackground = new PIXI.Sprite.from("../sprites/popupbackground.png");
     this.popUpBackground.anchor.set(0.5);
-    this.popUpBackground.scale.set(SCALE * 0.5);
+    this.popUpBackground.scale.set(SCALE * 0.6);
     this.popUpBackground.x = WIDTH/2;
     this.popUpBackground.y = HEIGHT/2;
 
@@ -41,7 +41,7 @@ export default class Windows{
     this.scoreBackgroundLose.anchor.set(0.5);
     this.scoreBackgroundLose.scale.set(SCALE * 0.4);
     this.scoreBackgroundLose.x = WIDTH/2;
-    this.scoreBackgroundLose.y = 2*this.popUpBackground.y/3.5;
+    this.scoreBackgroundLose.y = this.popUpBackground.y / 2.1;
   }
 
   setUpInstruct(){
@@ -98,7 +98,7 @@ export default class Windows{
     this.punAtLose = new PIXI.Text(this.losePuns[rand], punStyle);
     this.punAtLose.anchor.set(0.5);
     this.punAtLose.x = WIDTH/2;
-    this.punAtLose.y = this.scoreBackgroundLose.y * 1.7;
+    this.punAtLose.y = this.scoreBackgroundLose.y * 1.9;
 
     container.addChild(this.popUpBackground);
     container.addChild(this.scoreBackgroundLose);
