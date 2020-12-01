@@ -30,6 +30,7 @@ describe('spawner buildObstacles tests', async () => {
         app.loader
             .load((loader, resources) => {
                 spawner = new Spawner(app);
+
             });
 
         setTimeout(() => {
