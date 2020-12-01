@@ -67,7 +67,7 @@ export default class socials {
     bringOnScreen(center) {
         let yVal;
         if (center) yVal = "50%";
-        else yVal = "80%";
+        else yVal = "77%";
 
         if (center || !this.smallScreen) {
             if (!this.adBlock) {
@@ -85,7 +85,7 @@ export default class socials {
     }
 
     smallBringOnScreen() {
-        this.smallScreenDiv.style.top = '80%';
+        this.smallScreenDiv.style.top = '77%';
         this.smallScreenDiv.style.left = "50%";
         this.smallScreenDiv.style.transform = "translate(-50%, -50%)";
     }
