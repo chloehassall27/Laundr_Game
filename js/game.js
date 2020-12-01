@@ -43,6 +43,7 @@ container.height = app.screen.height;
 container.interactive = true;
 
 app.ticker.add(gameLoop);
+app.ticker.minFPS = 30;
 // app.ticker.maxFPS = 30;
 
 // Basic game variables
