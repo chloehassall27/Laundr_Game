@@ -41,22 +41,14 @@ export default class Player {
             // this.switchSprite(this.jumping);
         }
 
-        // If player is below ground, set them on the ground and reset speed and animation
-        else if (this.currSprite.y > this.groundLevel) {
-            this.speedY = 0;
-            this.currSprite.y = this.groundLevel;
-            this.currSprite.hitArea.y = this.groundLevel;
-            this.switchSprite(this.running);
-        }
-
         // If player is in air, add gravity
         else if (this.currSprite.y < this.groundLevel) {
-            this.speedY -= .12;
+            this.speedY -= .12 * FPSSCALE;
         }
 
         // If player is rising and holding jump, keep them up longer
         if (this.speedY > 0 && window.inputs.jump) {
-            this.speedY += .06;
+            this.speedY += .06 * FPSSCALE;
         }
 
         // Once the jump animation is completed, switch to static animation
@@ -64,8 +56,15 @@ export default class Player {
         //     this.switchSprite(this.jumpStatic);
         // }
 
-        this.currSprite.y -= SCALE * this.speedY;
-        this.currSprite.hitArea.y -= SCALE * this.speedY;
+        this.currSprite.y -= SCALE * this.speedY * FPSSCALE;
+        this.currSprite.hitArea.y = this.currSprite.y;
+
+        if (this.currSprite.y > this.groundLevel) {
+            this.speedY = 0;
+            this.currSprite.y = this.groundLevel;
+            this.currSprite.hitArea.y = this.groundLevel;
+            this.switchSprite(this.running);
+        }
     }
 
     updateDuck() {
