@@ -123,13 +123,14 @@ export default class Windows {
 
     let rand = Math.floor(Math.random() * Math.floor(this.losePuns.length));
 
-    let punSize;
-    if (this.popUpBackground.width == 0) punSize = 19;
-    else punSize = 500 * (1 / (this.losePuns[rand].length % this.popUpBackground.width));
-    if (punSize > 19) punSize = 19;
+    let punSize = 30;
+    if (this.popUpBackground.width == 0) punSize = 30;
+    else punSize = 600 * (1 / (this.losePuns[rand].length % this.popUpBackground.width));
+    if (punSize < 24) punSize = 24;
+    else if (punSize > 30) punSize = 30;
 
     let punStyle = new PIXI.TextStyle({
-      fontFamily: 'Arial', fontSize: RELSCALE * punSize, fill: '#4b4b4b'
+      fontFamily: 'Arial', fontSize: punSize, fill: '#4b4b4b'
     });
 
     this.punAtLose = new PIXI.Text(this.losePuns[rand], punStyle);
