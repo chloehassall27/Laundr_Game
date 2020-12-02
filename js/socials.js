@@ -67,7 +67,7 @@ export default class socials {
     bringOnScreen(center) {
         let yVal;
         if (center) yVal = "50%";
-        else yVal = "77%";
+        else yVal = "78%";
 
         if (center || !this.smallScreen) {
             if (!this.adBlock) {
@@ -85,7 +85,7 @@ export default class socials {
     }
 
     smallBringOnScreen() {
-        this.smallScreenDiv.style.top = '77%';
+        this.smallScreenDiv.style.top = '78%';
         this.smallScreenDiv.style.left = "50%";
         this.smallScreenDiv.style.transform = "translate(-50%, -50%)";
     }
@@ -130,11 +130,11 @@ export default class socials {
 
         this.sSMenu = document.createElement('div');
         this.sSMenu.classList.add("sSMenu");
-        this.sSMenu.style.width = "20%";
+        this.sSMenu.style.width = "5%";
         this.sSMenu.style.position = "absolute";
         this.sSMenu.style.padding = "10vw";
         this.sSMenu.style.margin = "0px";
-        this.sSMenu.style.backgroundColor = "white";
+        this.sSMenu.style.backgroundColor = "#F9F9F9";
         this.sSMenu.style.zIndex = "3";
         this.laundrDiv.appendChild(this.sSMenu);
 
@@ -162,7 +162,7 @@ export default class socials {
     smallScreenPopup() {
         this.laundrDiv = document.getElementById('laundr-game');
 
-        this.sSMenu.style.top = '50%';
+        this.sSMenu.style.top = '48%';
         this.sSMenu.style.left = "50%";
         this.sSMenu.style.transform = "translate(-50%, -50%)";
 
@@ -194,12 +194,13 @@ export default class socials {
         this.backupSocialsDiv.classList.add("backupsocials");
         this.backupSocialsDiv.style.width = "25%";
         this.backupSocialsDiv.style.position = "absolute";
+        this.backupSocialsDiv.style.zIndex = "5";
         this.backupSocialsDiv.style.textAlign = "center";
         this.laundrDiv.appendChild(this.backupSocialsDiv);
 
 
         this.twtBackupDiv = document.createElement('div');
-        this.twtBackupDiv.innerHTML = "Tweet";
+        this.twtBackupDiv.innerHTML = "Twitter";
         this.twtBackupDiv.classList.add("backupbird");
         this.twtBackupDiv.style.display = "inline-block";
         this.twtBackupDiv.style.verticalAlign = "top";
@@ -216,7 +217,7 @@ export default class socials {
         };
 
         this.fbBackupDiv = document.createElement('div');
-        this.fbBackupDiv.innerHTML = "Share";
+        this.fbBackupDiv.innerHTML = "Facebook";
         this.fbBackupDiv.classList.add("backupbird");
         this.fbBackupDiv.style.display = "inline-block";
         this.fbBackupDiv.style.verticalAlign = "top";
