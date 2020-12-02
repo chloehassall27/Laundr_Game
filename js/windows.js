@@ -77,7 +77,7 @@ export default class Windows {
     container.removeChild(this.topMessageInstruct);
     container.removeChild(this.bottomMessageInstruct);
 
-    this.xButton.style.left = "-999%";
+    this.invisDiv.style.left = "-999%";
 
     this.removedInstruct = true;
   }
