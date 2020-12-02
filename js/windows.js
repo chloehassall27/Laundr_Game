@@ -41,7 +41,7 @@ export default class Windows{
     this.scoreBackgroundLose.anchor.set(0.5);
     this.scoreBackgroundLose.scale.set(SCALE * 0.4);
     this.scoreBackgroundLose.x = WIDTH/2;
-    this.scoreBackgroundLose.y = this.popUpBackground.y / 2.1;
+    this.scoreBackgroundLose.y = this.popUpBackground.y / 2;
   }
 
   setUpInstruct(){

@@ -444,6 +444,12 @@ function cleanUp() {
   for (var i = 0; i < spawner.obstacles.length; i++) {
     container.removeChild(spawner.obstacles[i]);
   }
+
+  // Remove tokens
+  for (var i = 0; i < spawner.tokens.length; i++) {
+    container.removeChild(spawner.tokens[i]);
+  }
+
   container.removeChild(restartButton);
 }
 
