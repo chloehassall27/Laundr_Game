@@ -135,7 +135,7 @@ export default class Windows {
     this.punAtLose = new PIXI.Text(this.losePuns[rand], punStyle);
     this.punAtLose.anchor.set(0.5);
     this.punAtLose.x = WIDTH / 2;
-    this.punAtLose.y = this.scoreBackgroundLose.y * 1.6;
+    this.punAtLose.y = this.scoreBackgroundLose.y * 1.7;
 
     container.addChild(this.popUpBackground);
     container.addChild(this.scoreBackgroundLose);
