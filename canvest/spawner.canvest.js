@@ -415,7 +415,7 @@ describe('spawner spawn tests', async () => {
         spawner.tokens = [];
         spawner.tokenTime = true;
         spawner.gameOver = false;
-        spawner.startTime = 0;
+        spawner.startTime = 10000;
 
         spawner.spawn();
 
@@ -635,7 +635,7 @@ describe('spawner chooseSprite tests', async () => {
         expect(ironSpawned).to.equal(true);
 
         spawner.obstacles = []
-        spawner.ironTime = 10000;
+        spawner.ironTime = 100000;
         ironSpawned = false;
         for (let i = 0; i < 100; i++) {
             let returnVal = spawner.chooseSprite();
