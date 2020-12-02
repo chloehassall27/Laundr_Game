@@ -127,12 +127,12 @@ export default class Windows {
   setUpLose(score) {
     this.scoreMessage.text = Math.round(score);
 
-    let rand = Math.floor(Math.random() * Math.floor(this.losePuns.length));
-    let punSize;
+    this.rand = Math.floor(Math.random() * Math.floor(this.losePuns.length));
+    this.punSize;
     if (this.popUpBackground.width == 0) punSize = 19;
     else punSize = WIDTH * (1 / (this.losePuns[rand].length % this.popUpBackground.width));
 
-    let punStyle = new PIXI.TextStyle({
+    this.punStyle = new PIXI.TextStyle({
       fontFamily: 'Arial', fontSize: RELSCALE * punSize, fill: '#4b4b4b'
     });
     if(punStyle.fontSize > 24) punStyle.fontSize = 24;
