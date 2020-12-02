@@ -249,6 +249,7 @@ function gameLoop() {
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
           lose = true;
           socials.renderTwt();
+          windows.setUpLose(score);
           endGame();
         }
 
@@ -363,7 +364,6 @@ function endGame() {
     }
     //this is on a timeout so that the twitter button has enough time to render
     setTimeout(() => {
-      windows.setUpLose(score);
       container.addChild(restartButton);
       socials.endGame();
     }, 60);

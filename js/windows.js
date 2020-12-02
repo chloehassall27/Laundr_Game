@@ -13,6 +13,10 @@ export default class Windows {
     this.setUpPuns();
     this.setUpSprites();
 
+    this.scoreMessage = new PIXI.Text(0, this.scoreStyle);
+    this.scoreMessage.anchor.set(0.5);
+    this.scoreMessage.x = WIDTH / 2;
+    this.scoreMessage.y = this.scoreBackgroundLose.y;
   }
 
   setUpPuns() {
@@ -27,7 +31,12 @@ export default class Windows {
       .then(data => {
         this.losePuns = data.split('\n');
       })
-
+    setTimeout(() => {
+      this.punAtLose = new PIXI.Text(this.losePuns[0], this.scoreStyle);
+      this.punAtLose.anchor.set(0.5);
+      this.punAtLose.x = WIDTH / 2;
+      this.punAtLose.y = this.scoreBackgroundLose.y * 1.7;
+    }, 300)
   }
 
   setUpSprites() {
@@ -116,29 +125,23 @@ export default class Windows {
   }
 
   setUpLose(score) {
-    this.scoreMessage = new PIXI.Text(Math.round(score), this.scoreStyle);
-    this.scoreMessage.anchor.set(0.5);
-    this.scoreMessage.x = WIDTH / 2;
-    this.scoreMessage.y = this.scoreBackgroundLose.y;
+    this.scoreMessage.text = Math.round(score);
 
     let rand = Math.floor(Math.random() * Math.floor(this.losePuns.length));
+    let punSize;
+    if (this.popUpBackground.width == 0) punSize = 19;
+    else punSize = WIDTH * (1 / (this.losePuns[rand].length % this.popUpBackground.width));
 
     let punStyle = new PIXI.TextStyle({
-      fontFamily: 'Arial', fontSize: RELSCALE, fill: '#4b4b4b'
+      fontFamily: 'Arial', fontSize: RELSCALE * punSize, fill: '#4b4b4b'
     });
+    if(punStyle.fontSize > 24) punStyle.fontSize = 24;
 
-    let punSize = 30;
-    if (this.popUpBackground.width == 0) punSize = 30;
-    else punSize = 600 * (1 / (this.losePuns[rand].length % this.popUpBackground.width));
-    if (punSize > 30) punSize = 30;
-
-    if(RELSCALE * punSize < 50 && RELSCALE * punSize > 10) punStyle.fontSize *= punSize;
-    else punStyle.fontSize = punSize;
-
-    this.punAtLose = new PIXI.Text(this.losePuns[rand], punStyle);
-    this.punAtLose.anchor.set(0.5);
-    this.punAtLose.x = WIDTH / 2;
-    this.punAtLose.y = this.scoreBackgroundLose.y * 1.7;
+    this.punAtLose.text = this.losePuns[rand];
+    this.punAtLose.style = punStyle;
+    while(this.punAtLose.width > this.popUpBackground.width * 0.85){
+      this.punAtLose.style.fontSize--;
+    }
 
     container.addChild(this.popUpBackground);
     container.addChild(this.scoreBackgroundLose);
