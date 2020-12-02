@@ -41,6 +41,7 @@ app.stage.addChild(container);
 container.width = app.screen.width;
 container.height = app.screen.height;
 container.interactive = true;
+container.sortableChildren = true;
 
 //app.ticker.add(gameLoop);
 
@@ -223,7 +224,7 @@ function reload() {
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
-    if(!windows.removedInstruct){
+    if (!windows.removedInstruct) {
       windows.removeInstruct();
     }
     checkFocus();

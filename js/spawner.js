@@ -42,6 +42,7 @@ export default class Spawner {
         if (typeof obstacle !== 'undefined' && obstacle !== undefined) {
             obstacle.anchor.set(0.5);
             obstacle.scale.set(this.obstScale);
+            obstacle.zIndex = 5;
             //the laundry sprite doesn't line up well with the washer one, so offset it a bit
             if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
 
