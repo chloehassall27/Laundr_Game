@@ -71,7 +71,6 @@ let gameOver = false;
 let speedScale = 1.0;
 let focus = true;
 let visible = true;
-window.mute = false;
 let winTriggered = false;
 let winTimeout;
 let timeOffset;
@@ -362,9 +361,7 @@ function endGame() {
   restartButton.scale.set(SCALE * 0.3);
 
   if (lose) {
-    if (!mute) {
-      deathS.play();
-    }
+    deathS.play();
     //this is on a timeout so that the twitter button has enough time to render
     setTimeout(() => {
       container.addChild(restartButton);
@@ -372,9 +369,7 @@ function endGame() {
     }, 60);
   } else if (win) {
     setTimeout(() => {
-      if (!mute) {
-        winS.play();
-      }
+      winS.play();
       container.addChild(restartButton);
       socials.endGame();
     }, 950);
@@ -403,9 +398,23 @@ function onClickRestart() {
 
 function onClickMute() {
   touchDisable = true;
-  window.mute = !window.mute;
-  if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
-  else muteButton.gotoAndStop(1);
+
+  // Unmute
+  if (muteButton.currentFrame == 1){
+    muteButton.gotoAndStop(0);
+    deathS.muted = false;
+    winS.muted = false;
+    tokenS.muted = false;
+    jumpS.muted = false;
+  }
+  // Mute
+  else {
+    muteButton.gotoAndStop(1);
+    deathS.muted = true;
+    winS.muted = true;
+    tokenS.muted = true;
+    jumpS.muted = true;
+  }
 }
 
 function onReleaseMute() {

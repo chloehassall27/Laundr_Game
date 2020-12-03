@@ -35,7 +35,7 @@ export default class Player {
     updateJump() {
         // If the player is on the ground, not ducking, and trying to jump, start the jump sequence with an initial jump speed
         if (this.currSprite.y == this.groundLevel && !window.inputs.duck && window.inputs.jump) {
-            if (!window.mute) this.jumpS.play();
+            this.jumpS.play();
             this.speedY = 3.5;
             this.switchSprite(this.jumpStatic);
             // this.switchSprite(this.jumping);
