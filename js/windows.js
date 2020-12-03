@@ -31,12 +31,10 @@ export default class Windows {
       .then(data => {
         this.losePuns = data.split('\n');
       })
-    setTimeout(() => {
-      this.punAtLose = new PIXI.Text(this.losePuns[0], this.scoreStyle);
+      this.punAtLose = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
       this.punAtLose.anchor.set(0.5);
       this.punAtLose.x = WIDTH / 2;
-      this.punAtLose.y = this.scoreBackgroundLose.y * 1.7;
-    }, 300)
+      this.punAtLose.y = HEIGHT / 2.5;
   }
 
   setUpSprites() {
