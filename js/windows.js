@@ -135,12 +135,11 @@ export default class Windows {
     this.punStyle = new PIXI.TextStyle({
       fontFamily: 'Arial', fontSize: RELSCALE * this.punSize, fill: '#4b4b4b'
     });
-    if(this.punStyle.fontSize > 24) this.punStyle.fontSize = 24;
 
     this.punAtLose.text = this.losePuns[this.rand];
     this.punAtLose.style = this.punStyle;
     while(this.punAtLose.width > this.popUpBackground.width * 0.85){
-      this.punAtLose.style.fontSize--;
+      this.punAtLose.style.fontSize -= 2;
     }
 
     container.addChild(this.popUpBackground);
