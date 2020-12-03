@@ -88,7 +88,7 @@ export default class Player {
         this.currSprite.x = WIDTH * 0.22;
         this.switchSprite(this.running);
         this.currSprite.x = WIDTH * 0.22;
-        this.currSprite.hitArea.y = this.currSprite.y;
+        this.currSprite.hitArea.y = WIDTH * 0.22;
     }
 
     switchSprite(sprite) {

@@ -250,7 +250,7 @@ function gameLoop() {
       for (var i = 0; i < spawner.obstacles.length; i++) {
         const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
         spawner.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
-        spawner.obstacles[i].hitArea.x = spawner.obstacles[i].x;
+        spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
         //check collision
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
@@ -268,7 +268,7 @@ function gameLoop() {
       for (var i = 0; i < spawner.tokens.length; i++) {
         const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
         spawner.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
-        spawner.tokens[i].hitArea.x = spawner.tokens[i].x;
+        spawner.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
         if (checkCollision(player.currSprite, spawner.tokens[i]))
           collectToken(i);
