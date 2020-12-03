@@ -243,35 +243,37 @@ function gameLoop() {
 
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
-        const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
         spawner.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
         spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
         //check collision
-        if (checkCollision(player.currSprite, spawner.obstacles[i])) {
-          lose = true;
-          socials.renderTwt();
-          windows.setUpLose(score);
-          endGame();
-        }
+        // if (checkCollision(player.currSprite, spawner.obstacles[i])) {
+        //   lose = true;
+        //   socials.renderTwt();
+        //   windows.setUpLose(score);
+        //   endGame();
+        // }
 
         //remove box if it's offscreen
-        if (xBox === 0) {
+        if (spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width <= 0) {
           container.removeChild(spawner.obstacles[i]);
           spawner.obstacles.shift();
+          i--;
         }
       }
       for (var i = 0; i < spawner.tokens.length; i++) {
-        const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
         spawner.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
         spawner.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
-        if (checkCollision(player.currSprite, spawner.tokens[i]))
+        if (checkCollision(player.currSprite, spawner.tokens[i])){
           collectToken(i);
+          i--;
+        }
 
-        if (xBox === 0) {
-          container.removeChild(tokens[i]);
+        else if (spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width <= 0) {
+          container.removeChild(spawner.tokens[i]);
           spawner.tokens.shift();
+          i--;
         }
       }
 
