@@ -130,17 +130,14 @@ export default class Windows {
     this.rand = Math.floor(Math.random() * Math.floor(this.losePuns.length));
     this.punSize;
     if (this.popUpBackground.width == 0) this.punSize = 19;
-    else this.punSize = WIDTH * (1 / (this.losePuns[this.rand].length % this.popUpBackground.width));
+    else this.punSize = (1 / (this.losePuns[this.rand].length % this.popUpBackground.width));
 
     this.punStyle = new PIXI.TextStyle({
-      fontFamily: 'Arial', fontSize: RELSCALE * this.punSize, fill: '#4b4b4b'
+      fontFamily: 'Arial', fontSize: (this.popUpBackground.width * this.punSize) * 1.5, fill: '#4b4b4b'
     });
 
     this.punAtLose.text = this.losePuns[this.rand];
     this.punAtLose.style = this.punStyle;
-    while(this.punAtLose.width > this.popUpBackground.width * 0.85){
-      this.punAtLose.style.fontSize -= 2;
-    }
 
     container.addChild(this.popUpBackground);
     container.addChild(this.scoreBackgroundLose);
