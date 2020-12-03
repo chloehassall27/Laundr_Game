@@ -36,7 +36,7 @@ export default class Windows {
       this.punAtLose.anchor.set(0.5);
       this.punAtLose.x = WIDTH / 2;
       this.punAtLose.y = this.scoreBackgroundLose.y * 1.7;
-    }, 300)
+    }, 600)
   }
 
   setUpSprites() {
