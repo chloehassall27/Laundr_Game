@@ -6,36 +6,54 @@ export default class Windows {
     });
     this.scoreStyle = new PIXI.TextStyle({
       fontFamily: 'Arial', fontSize: RELSCALE * 23, fill: '#4b4b4b'
-    })
+    });
+    this.couponInfoStyle = new PIXI.TextStyle({
+      fontFamily: 'Arial', fontSize: RELSCALE * 10, fill: '#4b4b4b'
+    });
 
     this.removedInstruct = false;
 
     this.setUpPuns();
+    this.setUpCode();
     this.setUpSprites();
 
     this.scoreMessage = new PIXI.Text(0, this.scoreStyle);
     this.scoreMessage.anchor.set(0.5);
     this.scoreMessage.x = WIDTH / 2;
-    this.scoreMessage.y = this.scoreBackgroundLose.y;
+  }
+
+  setUpCode(){
+    fetch('inputData/couponCode.txt')
+      .then(response => response.text())
+      .then(data => { 
+        this.couponCode = data;
+        console.log(this.couponCode);
+    })
+    setTimeout(() => {
+      this.code = new PIXI.Text(this.couponCode, this.scoreStyle);
+      this.code.anchor.set(0.5);
+      this.code.x = WIDTH / 2;
+      this.code.y = this.popUpBackground.y + (this.popUpBackground.y * 0.15);
+    }, 300)
   }
 
   setUpPuns() {
-    fetch('puns/win_puns.txt')
+    fetch('inputData/win_puns.txt')
       .then(response => response.text())
       .then(data => {
         this.winPuns = data.split('\n');
       })
 
-    fetch('puns/lose_puns.txt')
+    fetch('inputData/lose_puns.txt')
       .then(response => response.text())
       .then(data => {
         this.losePuns = data.split('\n');
       })
     setTimeout(() => {
-      this.punAtLose = new PIXI.Text(this.losePuns[0], this.scoreStyle);
-      this.punAtLose.anchor.set(0.5);
-      this.punAtLose.x = WIDTH / 2;
-      this.punAtLose.y = this.scoreBackgroundLose.y * 1.7;
+      this.pun = new PIXI.Text(this.losePuns[0], this.scoreStyle);
+      this.pun.anchor.set(0.5);
+      this.pun.x = WIDTH / 2;
+      this.pun.y = this.scoreBackgroundLose.y * 1.7;
     }, 300)
   }
 
@@ -51,6 +69,11 @@ export default class Windows {
     this.scoreBackgroundLose.scale.set(SCALE * 0.4);
     this.scoreBackgroundLose.x = WIDTH / 2;
     this.scoreBackgroundLose.y = this.popUpBackground.y / 2.1;
+
+    this.scoreBackgroundWin = new PIXI.Sprite.from("../sprites/scoreBackgroundWin.png");
+    this.scoreBackgroundWin.anchor.set(0.5);
+    this.scoreBackgroundWin.x = WIDTH / 2;
+    this.scoreBackgroundWin.y = this.popUpBackground.y;
   }
 
   setUpInstruct() {
@@ -126,6 +149,7 @@ export default class Windows {
 
   setUpLose(score) {
     this.scoreMessage.text = Math.round(score);
+    this.scoreMessage.y = this.scoreBackgroundLose.y;
 
     this.rand = Math.floor(Math.random() * Math.floor(this.losePuns.length));
     this.punSize;
@@ -136,19 +160,67 @@ export default class Windows {
       fontFamily: 'Arial', fontSize: (this.popUpBackground.width * this.punSize) * 1.5, fill: '#4b4b4b'
     });
 
-    this.punAtLose.text = this.losePuns[this.rand];
-    this.punAtLose.style = this.punStyle;
+    this.pun.text = this.losePuns[this.rand];
+    this.pun.style = this.punStyle;
 
     container.addChild(this.popUpBackground);
     container.addChild(this.scoreBackgroundLose);
     container.addChild(this.scoreMessage);
-    container.addChild(this.punAtLose);
+    container.addChild(this.pun);
   }
 
   removeLose() {
     container.removeChild(this.popUpBackground);
     container.removeChild(this.scoreBackgroundLose);
     container.removeChild(this.scoreMessage);
-    container.removeChild(this.punAtLose);
+    container.removeChild(this.pun);
+  }
+
+  setUpWin(score) {
+    let topText = 'Use coupon code';
+    let bottomText = 'for 15% off your next order!';
+
+    this.scoreMessage.text = Math.round(score);
+    this.scoreMessage.y = this.scoreBackgroundWin.y / 2.35;
+
+    this.rand = Math.floor(Math.random() * Math.floor(this.winPuns.length));
+    this.punSize;
+    if (this.popUpBackground.width == 0) this.punSize = 19;
+    else this.punSize = (1 / (this.winPuns[this.rand].length % this.popUpBackground.width));
+
+    this.punStyle = new PIXI.TextStyle({
+      fontFamily: 'Arial', fontSize: (this.popUpBackground.width * this.punSize) * 1.5, fill: '#4b4b4b'
+    });
+
+    this.pun.text = this.winPuns[this.rand];
+    this.pun.style = this.punStyle;
+
+    this.topMessageCoupon = new PIXI.Text(topText, this.couponInfoStyle);
+    this.topMessageCoupon.anchor.set(0.5);
+    this.topMessageCoupon.x = WIDTH / 2;
+    this.topMessageCoupon.y = this.popUpBackground.y;
+
+    this.bottomMessageCoupon = new PIXI.Text(bottomText, this.couponInfoStyle);
+    this.bottomMessageCoupon.anchor.set(0.5);
+    this.bottomMessageCoupon.x = WIDTH / 2;
+    this.bottomMessageCoupon.y = this.popUpBackground.y + (this.popUpBackground.y * 0.3);
+
+    container.addChild(this.popUpBackground);
+    container.addChild(this.scoreBackgroundWin);
+    container.addChild(this.scoreMessage);
+    container.addChild(this.pun);
+    container.addChild(this.topMessageCoupon);
+    container.addChild(this.code);
+    container.addChild(this.bottomMessageCoupon);
+  }
+
+  removeWin() {
+    container.removeChild(this.popUpBackground);
+    container.removeChild(this.scoreBackgroundWin);
+    container.removeChild(this.scoreMessage);
+    container.removeChild(this.pun);
+    container.removeChild(this.topMessageCoupon);
+    container.removeChild(this.code);
+    container.removeChild(this.bottomMessageCoupon);
   }
 }
