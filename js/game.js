@@ -71,7 +71,6 @@ let gameOver = false;
 let speedScale = 1.0;
 let focus = true;
 let visible = true;
-window.mute = false;
 let winTriggered = false;
 let winTimeout;
 let timeOffset;
@@ -244,7 +243,6 @@ function gameLoop() {
 
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
-        const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
         spawner.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
         spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
@@ -257,22 +255,25 @@ function gameLoop() {
         }
 
         //remove box if it's offscreen
-        if (xBox === 0) {
+        if (spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width <= 0) {
           container.removeChild(spawner.obstacles[i]);
           spawner.obstacles.shift();
+          i--;
         }
       }
       for (var i = 0; i < spawner.tokens.length; i++) {
-        const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
         spawner.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
         spawner.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
-        if (checkCollision(player.currSprite, spawner.tokens[i]))
+        if (checkCollision(player.currSprite, spawner.tokens[i])){
           collectToken(i);
+          i--;
+        }
 
-        if (xBox === 0) {
-          container.removeChild(tokens[i]);
+        else if (spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width <= 0) {
+          container.removeChild(spawner.tokens[i]);
           spawner.tokens.shift();
+          i--;
         }
       }
 
@@ -362,9 +363,7 @@ function endGame() {
   restartButton.scale.set(SCALE * 0.3);
 
   if (lose) {
-    if (!mute) {
-      deathS.play();
-    }
+    deathS.play();
     //this is on a timeout so that the twitter button has enough time to render
     setTimeout(() => {
       container.addChild(restartButton);
@@ -372,9 +371,7 @@ function endGame() {
     }, 60);
   } else if (win) {
     setTimeout(() => {
-      if (!mute) {
-        winS.play();
-      }
+      winS.play();
       container.addChild(restartButton);
       socials.endGame();
     }, 950);
@@ -403,9 +400,23 @@ function onClickRestart() {
 
 function onClickMute() {
   touchDisable = true;
-  window.mute = !window.mute;
-  if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
-  else muteButton.gotoAndStop(1);
+
+  // Unmute
+  if (muteButton.currentFrame == 1){
+    muteButton.gotoAndStop(0);
+    deathS.muted = false;
+    winS.muted = false;
+    tokenS.muted = false;
+    jumpS.muted = false;
+  }
+  // Mute
+  else {
+    muteButton.gotoAndStop(1);
+    deathS.muted = true;
+    winS.muted = true;
+    tokenS.muted = true;
+    jumpS.muted = true;
+  }
 }
 
 function onReleaseMute() {
@@ -481,6 +492,8 @@ function keysDown(e) {
     window.inputs.jump = true;
     if (!started && firstLoad)
       startGame();
+
+    //speedScale = 1.3; // To test win
 
     if (gameOver) {
       if (lose && (performance.now() - timeout > 600))
@@ -666,11 +679,11 @@ function moveBackground() {
   //background.tilePosition.x -= 3.5*speedScale;
   //parallax
 
-  //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
-  //speedScale = 1.3;
   backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale * FPSSCALE;
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale * FPSSCALE;
-  if (winTriggered && performance.now() >= (winTimeoutTime + 1600)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
+  if (winTriggered && performance.now() >= (winTimeoutTime + 100)) {
+    endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
+  }
 }
 
 function endGameFall() {
