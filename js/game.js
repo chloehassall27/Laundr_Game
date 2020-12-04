@@ -247,12 +247,12 @@ function gameLoop() {
         spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
         //check collision
-        // if (checkCollision(player.currSprite, spawner.obstacles[i])) {
-        //   lose = true;
-        //   socials.renderTwt();
-        //   windows.setUpLose(score);
-        //   endGame();
-        // }
+        if (checkCollision(player.currSprite, spawner.obstacles[i])) {
+          lose = true;
+          socials.renderTwt();
+          windows.setUpLose(score);
+          endGame();
+        }
 
         //remove box if it's offscreen
         if (spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width <= 0) {
@@ -493,6 +493,8 @@ function keysDown(e) {
     if (!started && firstLoad)
       startGame();
 
+    //speedScale = 1.3; // To test win
+
     if (gameOver) {
       if (lose && (performance.now() - timeout > 600))
         onClickRestart();
@@ -677,11 +679,11 @@ function moveBackground() {
   //background.tilePosition.x -= 3.5*speedScale;
   //parallax
 
-  //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
-  //speedScale = 1.3;
   backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale * FPSSCALE;
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale * FPSSCALE;
-  if (winTriggered && performance.now() >= (winTimeoutTime + 1600)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
+  if (winTriggered && performance.now() >= (winTimeoutTime + 100)) {
+    endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
+  }
 }
 
 function endGameFall() {
