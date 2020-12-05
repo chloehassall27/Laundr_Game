@@ -159,6 +159,7 @@ export default class Player {
         //console.log(this.running.hitArea.width);
         this.running.animationSpeed = .15;
         this.running.play();
+        this.running.zIndex = 3;
 
 
         this.jumping = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["jumping_WithSock"]);
@@ -169,6 +170,7 @@ export default class Player {
         this.jumping.hitArea = new PIXI.Rectangle(this.jumping.x, this.jumping.y, spriteWidth, spriteHeight);
         this.jumping.animationSpeed = .15;
         this.jumping.play();
+        this.jumping.zIndex = 3;
 
         this.jumpStatic = new PIXI.Sprite(this.app.loader.resources.charaSheet.spritesheet.textures["jumping_WithSock_1.png"]);
         this.jumpStatic.scale.set(height);
@@ -176,6 +178,7 @@ export default class Player {
         this.jumpStatic.x = WIDTH * 0.22;
         this.jumpStatic.y = HEIGHT - (HEIGHT * .1);
         this.jumpStatic.hitArea = new PIXI.Rectangle(this.jumpStatic.x - widthOffset, this.jumpStatic.y + heightOffset, spriteWidth, spriteHeight);
+        this.jumpStatic.zIndex = 3;
 
         this.ducking = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["duck_WithSock"]);
         this.ducking.scale.set(height);
@@ -185,6 +188,7 @@ export default class Player {
         this.ducking.hitArea = new PIXI.Rectangle(this.ducking.x, this.ducking.y, spriteWidth, spriteHeight * 0.68);
         this.ducking.animationSpeed = .15;
         this.ducking.play();
+        this.ducking.zIndex = 3;
 
         this.falling = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["falling_WithSock"]);
         this.falling.scale.set(height);
@@ -194,6 +198,7 @@ export default class Player {
         this.falling.hitArea = new PIXI.Rectangle(this.falling.x, this.falling.y, spriteWidth, spriteHeight);
         this.falling.animationSpeed = .25;
         this.falling.loop = false;
+        this.falling.zIndex = 3;
 
         this.currSprite = this.ducking;
         this.currSprite.hitArea = this.ducking.hitArea;

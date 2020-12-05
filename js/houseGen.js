@@ -1,30 +1,28 @@
-export default class Spawner {
-    intRangeMax = 4000;
-    intRangeMin = 1000;
-    tokenTime;
-    app;
-
-    houses = [];
-
-    gameOver = false;
-    focus = true;
-
-
+export default class Spawner { 
     constructor(app) {
         this.app = app;
         this.spawn();
 
-        //Spawn one house on screen 
-        var house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[this.chooseSprite()]);
+        this.houses = [];
 
-        house.anchor.set(0, 1);
-        house.x = Math.random() * 4 *WIDTH/5;
-        house.y = 4 * HEIGHT / 5;
-        house.scale.set(1.7);
-        house.zIndex = 0;
+        this.intRangeMax = 4000;
+        this.intRangeMin = 1000;
+
+        this.gameOver = false;
+        this.focus = true;
+
+        //Spawn one house on screen 
+        var firstHouse = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[this.chooseSprite()]);
+
+        firstHouse.anchor.set(0, 1);
+        firstHouse.x = Math.random() * 4 *WIDTH/5;
+        firstHouse.y = 4 * HEIGHT / 5;
+        firstHouse.scale.set(1.7 * SCALE);
+        // console.log(1.7 * SCALE)
+        firstHouse.zIndex = 0;
         
-        container.addChild(house);
-        this.houses.push(house);
+        container.addChild(firstHouse);
+        this.houses.push(firstHouse);
     }
 
     buildHouse(spriteName) {
@@ -33,7 +31,7 @@ export default class Spawner {
         house.anchor.set(0, 1);
         house.x = WIDTH;
         house.y = 4 * HEIGHT / 5;
-        house.scale.set(1.7);
+        house.scale.set(1.7 * SCALE);
         house.zIndex = 0;
         
         container.addChild(house);

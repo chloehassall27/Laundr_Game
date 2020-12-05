@@ -58,7 +58,7 @@ const highscoreStyle = new PIXI.TextStyle({
 })
 
 let spawner;
-let houseGen;
+window.houseGen;
 let player;
 let windows;
 let socials;
@@ -156,7 +156,7 @@ function loadOnce() {
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
-      backgroundFront.zIndex = 3;
+      backgroundFront.zIndex = 2;
       backgroundFront.tileScale.set(SCALE * .25);
       backgroundFront.y = HEIGHT - SCALE * 50.25;
       backgroundBack.tileScale.set(SCALE * .25);
@@ -211,7 +211,7 @@ function reload() {
     .load((loader, resources) => {
       //create our spawner - handles obstacles + tokens
       spawner = new Spawner(app, player);
-      houseGen = new HouseGen(app);
+      window.houseGen = new HouseGen(app);
     });
 
   speedInterval = setInterval(increaseSpeedScale, 20000);

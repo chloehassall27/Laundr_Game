@@ -1,5 +1,5 @@
 export default class Spawner {
-    constructor(app) {
+    constructor(app, player) {
         this.app = app;
 
         this.interval = 1100;
@@ -14,9 +14,7 @@ export default class Spawner {
 
         this.obstacles = [];
         this.tokens = [];
-
-    constructor(app, player) {
-        this.app = app;
+    
         this.player = player;
         this.gameOver = false;
         this.focus = true;
@@ -52,6 +50,7 @@ export default class Spawner {
             obstacle.x = WIDTH * 1.1;
             obstacle.x += xOffset;
             obstacle.y = posy;
+            obstacle.zIndex = 3
             //console.log(obstacle.getBounds());
 
             //Calculate hit boxes based on which sprite is spawned
@@ -74,8 +73,8 @@ export default class Spawner {
     moveSprites() {
         for (var i = 0; i < this.obstacles.length; i++) {
             const xBox = this.obstacles[i].getBounds().x + this.obstacles[i].getBounds().width;
-            this.obstacles[i].x -= 3.5 * speedScale;
-            this.obstacles[i].hitArea.x -= 3.5 * speedScale;
+            this.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
+            this.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;;
     
             //check collision
             if (checkCollision(this.player.currSprite, this.obstacles[i])) {
@@ -85,7 +84,7 @@ export default class Spawner {
     
             //remove box if it's offscreen
             if (xBox <= 0) {
-              app.stage.removeChild(this.obstacles[i]);
+              container.removeChild(this.obstacles[i]);
               this.obstacles.shift();
               i--;
             }
@@ -93,14 +92,14 @@ export default class Spawner {
       
           for (var i = 0; i < this.tokens.length; i++) {
             const xBox = this.tokens[i].getBounds().x + this.tokens[i].getBounds().width;
-            this.tokens[i].x -= 3.5 * speedScale;
-            this.tokens[i].hitArea.x -= 3.5 * speedScale;
+            this.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
+            this.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
     
             if (checkCollision(this.player.currSprite, this.tokens[i]))
               collectToken(i);
     
             if (xBox <= 0) {
-              app.stage.removeChild(this.tokens[i]);
+              container.removeChild(this.tokens[i]);
               this.tokens.shift();
               i--;
             }
@@ -108,11 +107,11 @@ export default class Spawner {
       
           for (var i = 0; i < houseGen.houses.length; i++) {
             const xBox = houseGen.houses[i].getBounds().x + houseGen.houses[i].getBounds().width;
-            houseGen.houses[i].x -= 1.35 * speedScale * FPSSCALE;
+            houseGen.houses[i].x -= SCALE * 1.35 * speedScale * FPSSCALE;
 
             if (xBox <= 0) {
               container.removeChild(houseGen.houses[i]);
-              houseGen.houses.shift();
+              houseGen.houses.splice(i, 1);
               i--;
             }
           }

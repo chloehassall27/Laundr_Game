@@ -43,12 +43,14 @@ export default class Windows {
     this.popUpBackground.scale.set(SCALE * 0.6);
     this.popUpBackground.x = WIDTH / 2;
     this.popUpBackground.y = HEIGHT / 2;
+    this.popUpBackground.zIndex = 10;
 
     this.scoreBackgroundLose = new PIXI.Sprite.from("../sprites/scoreBackgroundLose.png");
     this.scoreBackgroundLose.anchor.set(0.5);
     this.scoreBackgroundLose.scale.set(SCALE * 0.4);
     this.scoreBackgroundLose.x = WIDTH / 2;
     this.scoreBackgroundLose.y = this.popUpBackground.y / 2.1;
+    this.scoreBackgroundLose.zIndex = 10;
   }
 
   setUpInstruct() {
@@ -66,11 +68,13 @@ export default class Windows {
     this.topMessageInstruct.anchor.set(0.5);
     this.topMessageInstruct.x = WIDTH / 2;
     this.topMessageInstruct.y = this.popUpBackground.y - (this.popUpBackground.y * 0.25);
+    this.topMessageInstruct.zIndex = 11;
 
     this.bottomMessageInstruct = new PIXI.Text(bottomText, this.style);
     this.bottomMessageInstruct.anchor.set(0.5);
     this.bottomMessageInstruct.x = WIDTH / 2;
     this.bottomMessageInstruct.y = this.popUpBackground.y + (this.popUpBackground.y * 0.25);
+    this.bottomMessageInstruct.zIndex = 11;
 
     this.setupXButton();
 
