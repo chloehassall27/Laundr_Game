@@ -147,7 +147,7 @@ If the player collides with an obstacle, they will die instantly. Restart the ga
 To play the game on mobile, tap the space above the road to jump, and tap the space below the road to duck. Press and hold to simulate holding down a key.
 
 ## Credits
-This game was inspired by the [Google Chrome dino game](https://chromedino.com/). 
+This game was inspired by the [Google Chrome dino game](https://chromedino.com/). References used while building this project include [kittykatattack's Learning Pixi](https://github.com/kittykatattack/learningPixi) tutorial, as well as [Dower Chin's Pixi.js Video Series](https://www.youtube.com/user/dowerchin).
 
 The people who worked on this project include:
 
