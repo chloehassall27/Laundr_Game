@@ -33,17 +33,17 @@ Game code was created using Javascript. Active deployments are created with [her
 * Sound Effects on jumping, collecting a token, losing, and winning	
 
 ## Installation
-To install all necessary files required for further development, run 
+To install all necessary files required for further development, run: 
 ```
 npm i
 ```
-Optionally, run 
+Optionally, run: 
 ```
 npm run-script env
 ``` 
-to change the port the npm runs on
+to change the port the npm runs on.
 
-To start, run 
+To start, run: 
 ```
 npm start
 ```
@@ -105,17 +105,17 @@ Unit tests were created using [Canvest](https://github.com/TyrealGray/Canvest) t
 
 Ensure that the directory used has no spaces in it. For example, use C:/unitTests, not C:/unit Tests, as canvest will not automatically convert this directory to C:/”unit Tests” for you and will be unable to find your project.
 
-Run 
+Run: 
 ```
 npm i @canvest/canvest-cli --save-dev
 ```
 
-as well as 
+as well as: 
 ```
 npm install pixi.js
 ```
 
-After all files have installed, run 
+After all files have installed, run: 
 ```
 npm test
 ```
@@ -150,12 +150,14 @@ The people who worked on this project include:
 * House spawning
 * Mute
 * Heroku deployment
+
 **Oliver Thomas** - [thomasoliver2021](https://github.com/thomasoliver2021)
 * Product Owner
 * Obstacle spawning
 * End-screen and instruction windows
 * Collision
 * Audio
+
 **Olivia Jacques-Baker** - [piptstc](https://github.com/piptstc)
 * Obstacle spawning
 * Social media integration
@@ -163,6 +165,7 @@ The people who worked on this project include:
 * Collision
 * Unit testing
 * Win functionality and sequence
+
 **Simran Patel** - [simranpatel-coder](https://github.com/simranpatel-coder)
 * Jumping
 * Coupon code 
@@ -170,6 +173,7 @@ The people who worked on this project include:
 * Background sprites
 * Score and highscore
 * Restart functionality
+
 **Michael Zinn** - [mzinn18](https://github.com/mzinn18)
 * Token sprite
 * Button sprite
