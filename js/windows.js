@@ -257,7 +257,7 @@ export default class Windows {
     container.removeChild(this.scoreBackgroundWin);
     container.removeChild(this.scoreMessage);
     container.removeChild(this.pun);
-    this.laundrDiv.removeChild(this.creditsButton);
+    if(!this.creditsShowing) this.laundrDiv.removeChild(this.creditsButton);
     container.removeChild(this.topMessageCoupon);
     container.removeChild(this.code);
     container.removeChild(this.bottomMessageCoupon);
@@ -268,11 +268,11 @@ export default class Windows {
     this.creditsShowing = true;
     this.socials.resetGame();
 
-    this.credits = "Olivia Jacques-Baker:   CEO of Clean Code" + '\n' +
-                   "Oliver Thomas:      Old man in a laundromat" + '\n' +
-                   "Kyle Hassall:                      FILLER" + '\n' +
-                   "Simran Patel:                      FILLER" + '\n' +
-                   "Michael Zinn:                      FILLER";
+    this.credits = "Kyle Hassall:                 Supervisor of Suds" + '\n' +
+                   "Oliver Thomas:    Old man in a laundromat" + '\n' +
+                   "Olivia Jacques-Baker: CEO of Clean Code" + '\n' +
+                   "Simran Patel:                    FILLER" + '\n' +
+                   "Michael Zinn:                     Stain Generator";
 
 
     this.creditsMessage = new PIXI.Text(this.credits, this.creditsStyle);
