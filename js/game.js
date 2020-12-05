@@ -252,8 +252,8 @@ function gameLoop() {
 
         //check collision
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
-          /*lose = true;
-          socials.renderTwt();
+          /*socials.renderTwt();
+          lose = true;
           endGame();*/
         }
 
@@ -376,7 +376,7 @@ function endGame() {
     setTimeout(() => {
       windows.setUpLose();
       container.addChild(restartButton);
-      socials.endGame();
+      //socials.endGame();
       
     }, 60);
   } else if (win) {
@@ -384,9 +384,9 @@ function endGame() {
       if (!mute) {
         winS.play();
       }
-      windows.setUpWin(score);
+      windows.setUpWin();
       //container.addChild(restartButton);
-      socials.endGame();
+      //socials.endGame();
     }, 950);
   }
 

@@ -177,6 +177,11 @@ export default class Windows {
   }
 
   setUpLose() {
+    this.socials.endGame();
+
+    if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
+    else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
+
     this.scoreMessage.text = Math.round(this.score);
     this.scoreMessage.y = this.scoreBackgroundLose.y;
 
@@ -203,9 +208,12 @@ export default class Windows {
     container.removeChild(this.scoreBackgroundLose);
     container.removeChild(this.scoreMessage);
     container.removeChild(this.pun);
+    this.socials.resetGame();
   }
 
   setUpWin() {
+    this.socials.endGame();
+
     if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
     else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
 
@@ -261,6 +269,7 @@ export default class Windows {
     container.removeChild(this.topMessageCoupon);
     container.removeChild(this.code);
     container.removeChild(this.bottomMessageCoupon);
+    this.socials.resetGame();
   }
 
   showCredits(){
