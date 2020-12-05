@@ -1,87 +1,74 @@
 export default class Spawner {
-    interval = 1100;
-    intDecAmt = 0.85;
-    intRangeMax = 2500;
-    intRangeMin = 1100;
-    smallestInt = 200;
-    rangeMin;
-    tokenTime;
-    app;
-    HEIGHT;
-    WIDTH;
-    walkingLevel;
-    jumpLevel;
-    test;
-    player;
-
-    obstScale;
-    tokenScale;
-    ironRandScale;
-    ironRandAdd;
-
-    tokenTimeoutHold;
-
-    startTime;
-    firstSpawn = true;
-
-    playerBaseY;
-
-    obstacles = [];
-    tokens = [];
-
-    gameOver = false;
-    focus = true;
-
-
-    constructor(HEIGHT, WIDTH, app, playerBaseY, player) {
+    constructor(app) {
         this.app = app;
-        this.HEIGHT = HEIGHT;
-        this.WIDTH = WIDTH;
-        this.playerBaseY = playerBaseY;
+
+        this.interval = 1100;
+        this.intDecAmt = 0.85;
+        this.intRangeMax = 2500;
+        this.intRangeMin = 1100;
+        this.smallestInt = 200;
+        this.switchDifficulty = 60000;
+        this.ironTime = 20000;
+
+        this.firstSpawn = true;
+
+        this.obstacles = [];
+        this.tokens = [];
+
+    constructor(app, player) {
+        this.app = app;
         this.player = player;
+        this.gameOver = false;
+        this.focus = true;
 
         this.walkingLevel = HEIGHT - (HEIGHT * 0.25);
         this.jumpLevel = HEIGHT - (HEIGHT * 0.6);
         this.tokenTime = false;
         this.rangeMin = false;
 
-        this.obstScale = this.HEIGHT / (this.HEIGHT * 2.41);
-        this.tokenScale = this.HEIGHT / (this.HEIGHT * 2.6);
-        this.ironRandScale = (this.playerBaseY / 2 + this.HEIGHT * 0.135) - (this.playerBaseY / 2 + this.HEIGHT * 0.4) + 1;
-        this.ironRandAdd = this.playerBaseY / 2 + this.HEIGHT * 0.32;
+        this.obstScale = SCALE * 1 / 2.41;
+        this.tokenScale = SCALE * 1 / 2.6;
+        this.ironRandScale = (window.groundLevel / 2 + HEIGHT * 0.135) - (window.groundLevel / 2 + HEIGHT * 0.4) + 1;
+        this.ironRandAdd = window.groundLevel / 2 + HEIGHT * 0.32;
 
         let rand = Math.floor(Math.random() * (10 - 5)) + 4;
         setTimeout(this.setTokenTimer.bind(this), this.interval * rand);
     }
 
     buildObstacles(xOffset, posy, spriteName) {
-        var obstacle = new PIXI.AnimatedSprite(this.app.loader.resources.obSheet.spritesheet.animations[spriteName]);
+        let obstacle;
+        try {
+            obstacle = new PIXI.AnimatedSprite(this.app.loader.resources.obSheet.spritesheet.animations[spriteName]);
+        } catch (error) { console.log("unable to create sprite with name " + spriteName); }
 
-        obstacle.anchor.set(0.5);
-        obstacle.scale.set(this.obstScale);
-        //the laundry sprite doesn't line up well with the washer one, so offset it a bit
-        if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
+        if (typeof obstacle !== 'undefined' && obstacle !== undefined) {
+            obstacle.anchor.set(0.5);
+            obstacle.scale.set(this.obstScale);
+            //ensure irons are always rendered on top of the player
+            if (spriteName == "ironSprite") obstacle.zIndex = 5;
+            //the laundry sprite doesn't line up well with the washer one, so offset it a bit
+            if (spriteName == "laundrySprite") obstacle.anchor.set(0.5, 0.438);
 
-        obstacle.x = this.app.renderer.width;
-        obstacle.x += xOffset;
-        obstacle.y = posy;
-        //console.log(obstacle.getBounds());
+            obstacle.x = WIDTH * 1.1;
+            obstacle.x += xOffset;
+            obstacle.y = posy;
+            //console.log(obstacle.getBounds());
 
-        //Calculate hit boxes based on which sprite is spawned
-        if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40), obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
-        else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - obstacle.width * 0.40, obstacle.y - (obstacle.height * 0.01), obstacle.width * 0.68, obstacle.height * 0.53);
-        else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.2);
-        else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
-        //console.log(obstacle.hitArea.y);
+            //Calculate hit boxes based on which sprite is spawned
+            if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40), obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
+            else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - obstacle.width * 0.40, obstacle.y - (obstacle.height * 0.01), obstacle.width * 0.68, obstacle.height * 0.53);
+            else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.2);
+            else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
+            //console.log(obstacle.hitArea.y);
 
-        obstacle.calculateBounds();
-        //console.log(obstacle.getBounds());
+            obstacle.calculateBounds();
+            //console.log(obstacle.getBounds());
 
-        obstacle.animationSpeed = .125;
-        obstacle.play()
-        this.app.stage.addChild(obstacle);
-        this.obstacles.push(obstacle);
-
+            obstacle.animationSpeed = .125;
+            obstacle.play();
+            container.addChild(obstacle);
+            this.obstacles.push(obstacle);
+        }
     }
 
     moveSprites() {
@@ -97,12 +84,13 @@ export default class Spawner {
             }
     
             //remove box if it's offscreen
-            if (xBox === 0) {
+            if (xBox <= 0) {
               app.stage.removeChild(this.obstacles[i]);
               this.obstacles.shift();
               i--;
             }
           }
+      
           for (var i = 0; i < this.tokens.length; i++) {
             const xBox = this.tokens[i].getBounds().x + this.tokens[i].getBounds().width;
             this.tokens[i].x -= 3.5 * speedScale;
@@ -111,9 +99,20 @@ export default class Spawner {
             if (checkCollision(this.player.currSprite, this.tokens[i]))
               collectToken(i);
     
-            if (xBox === 0) {
+            if (xBox <= 0) {
               app.stage.removeChild(this.tokens[i]);
               this.tokens.shift();
+              i--;
+            }
+          }
+      
+          for (var i = 0; i < houseGen.houses.length; i++) {
+            const xBox = houseGen.houses[i].getBounds().x + houseGen.houses[i].getBounds().width;
+            houseGen.houses[i].x -= 1.35 * speedScale * FPSSCALE;
+
+            if (xBox <= 0) {
+              container.removeChild(houseGen.houses[i]);
+              houseGen.houses.shift();
               i--;
             }
           }
@@ -127,13 +126,13 @@ export default class Spawner {
         const rand = Math.floor(Math.random() * 6);
         if (rand % 3 == 0) token.y = this.jumpLevel;
         else token.y = this.walkingLevel;
-        token.x = this.app.renderer.width;
+        token.x = WIDTH * 1.1;
 
         token.hitArea = new PIXI.Rectangle(token.x - (token.width * 0.25), token.y - (token.height * 0.28), token.width * 0.52, token.height * 0.55);
 
         token.animationSpeed = 0.135;
         token.play();
-        this.app.stage.addChild(token);
+        container.addChild(token);
 
         this.tokens.push(token);
     }
@@ -199,7 +198,7 @@ export default class Spawner {
 
             //call the next spawn obstacle, with a delay of interval
             if (!this.gameOver)
-                setTimeout(this.spawn.bind(this), this.interval);
+                this.spawnTimeout = setTimeout(this.spawn.bind(this), this.interval);
         }
     }
 
@@ -207,9 +206,9 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(100, this.playerBaseY / 2 - this.HEIGHT * 0.05, "ironSprite");
-            this.buildObstacles(0, this.playerBaseY / 2 + this.HEIGHT * 0.1, "ironSprite");
-            this.buildObstacles(85, this.playerBaseY / 2 + this.HEIGHT * 0.2, "ironSprite");
+            this.buildObstacles(100 * SCALE, window.groundLevel / 2 - HEIGHT * 0.05, "ironSprite");
+            this.buildObstacles(0 * SCALE, window.groundLevel / 2 + HEIGHT * 0.1, "ironSprite");
+            this.buildObstacles(85 * SCALE, window.groundLevel / 2 + HEIGHT * 0.2, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
             let yPos = Math.floor(Math.random() * this.ironRandScale) + this.ironRandAdd;
@@ -232,22 +231,21 @@ export default class Spawner {
             nameRight = "washerSprite";
         }
         this.buildObstacles(0, this.walkingLevel, nameLeft);
-        this.buildObstacles((this.WIDTH * 0.065), this.walkingLevel, nameRight);
+        this.buildObstacles((WIDTH * 0.065), this.walkingLevel, nameRight);
     }
 
     chooseSprite() {
         let currTime = performance.now() - this.startTime;
         const rand = Math.floor(Math.random() * 25); //set equal to 8 to spawn irons only
-        const switchDifficulty = 60000;
 
-        //%3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
+        // %3 is more frequent, so after set time (here, 1 minute) switch so that the harder thing (combined sprites) spawns more frequently
         if (rand % 3 == 0) {
-            if (currTime > switchDifficulty) return "double";
+            if (currTime > this.switchDifficulty) return "double";
             return "laundrySprite";
         } else if (rand % 5 == 0) {
-            if (currTime > switchDifficulty) return "laundrySprite";
+            if (currTime > this.switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (currTime >= 20000 && rand % 8 == 0) {
+        } else if (currTime >= this.ironTime && rand % 8 == 0) {
             return "ironSprite";
         }
         else {
@@ -266,7 +264,7 @@ export default class Spawner {
     }
 
     collectToken(index) {
-        this.app.stage.removeChild(this.tokens[index]);
+        container.removeChild(this.tokens[index]);
         this.tokens.splice(index, 1);
     }
 
