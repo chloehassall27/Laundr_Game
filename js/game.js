@@ -88,7 +88,7 @@ let playerSpeedScale = 1;
 let endHouse;
 let restartButton;
 let muteButton;
-let score = 0;
+window.score = 0;
 let scoreText = new PIXI.Text(score, scoreStyle);
 scoreText.x = WIDTH / 1.07;
 scoreText.resolution = 1.5;
@@ -101,7 +101,6 @@ highscoreText.resolution = 1.5;
 //noises
 let deathS;
 let jumpS;
-let tokenS;
 let winS;
 
 let started = false;
@@ -137,8 +136,8 @@ function loadOnce() {
       deathS.volume = 0.4;
       jumpS = PIXI.sound.Sound.from(resources.jumpSound);
       jumpS.volume = 0.4;
-      tokenS = PIXI.sound.Sound.from(resources.tokenSound);
-      tokenS.volume = 0.4;
+      window.tokenS = PIXI.sound.Sound.from(resources.tokenSound);
+      window.tokenS.volume = 0.4;
       winS = PIXI.sound.Sound.from(resources.winSound);
       winS.volume = 0.35;
 
@@ -383,13 +382,6 @@ function onClickMute() {
 
 function onReleaseMute() {
   touchDisable = false;
-}
-
-function collectToken(index) {
-  //whatever score stuff has to happen here, noises, etc
-  spawner.collectToken(index);
-  tokenS.play();
-  score += 25;
 }
 
 function cleanUp() {

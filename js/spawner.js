@@ -90,20 +90,20 @@ export default class Spawner {
             }
           }
       
-          for (var i = 0; i < this.tokens.length; i++) {
+        for (var i = 0; i < this.tokens.length; i++) {
             const xBox = this.tokens[i].getBounds().x + this.tokens[i].getBounds().width;
             this.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
             this.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
-    
+
             if (checkCollision(this.player.currSprite, this.tokens[i]))
-              this.collectToken(i);
-    
+                this.collectToken(i);
+
             if (xBox <= 0) {
-              container.removeChild(this.tokens[i]);
-              this.tokens.shift();
-              i--;
+                container.removeChild(this.tokens[i]);
+                this.tokens.shift();
+                i--;
             }
-          }
+        }
     }
 
     buildToken() {
@@ -115,6 +115,7 @@ export default class Spawner {
         if (rand % 3 == 0) token.y = this.jumpLevel;
         else token.y = this.walkingLevel;
         token.x = WIDTH * 1.1;
+        token.zIndex = 3;
 
         token.hitArea = new PIXI.Rectangle(token.x - (token.width * 0.25), token.y - (token.height * 0.28), token.width * 0.52, token.height * 0.55);
 
@@ -252,6 +253,8 @@ export default class Spawner {
     }
 
     collectToken(index) {
+        tokenS.play();
+        score += 25;
         container.removeChild(this.tokens[index]);
         this.tokens.splice(index, 1);
     }
