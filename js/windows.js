@@ -1,6 +1,10 @@
+import Socials from "./socials.js"
+
 export default class Windows {
   constructor(app) {
     this.app = app;
+    this.socials = new Socials(app);
+
     this.style = new PIXI.TextStyle({
       fontFamily: 'Arial', fontSize: SCALE * 15, fill: '#4e4e4e'
     });
@@ -10,8 +14,12 @@ export default class Windows {
     this.couponInfoStyle = new PIXI.TextStyle({
       fontFamily: 'Arial', fontSize: RELSCALE * 10, fill: '#4b4b4b'
     });
+    this.creditsStyle = new PIXI.TextStyle({
+      fontFamily: 'Arial', fontSize: RELSCALE * 14, fill: '#4e4e4e'
+    });
 
     this.removedInstruct = false;
+    this.creditsShowing = false;
 
     this.setUpPuns();
     this.setUpCode();
@@ -27,14 +35,11 @@ export default class Windows {
       .then(response => response.text())
       .then(data => { 
         this.couponCode = data;
-        console.log(this.couponCode);
     })
-    setTimeout(() => {
-      this.code = new PIXI.Text(this.couponCode, this.scoreStyle);
-      this.code.anchor.set(0.5);
-      this.code.x = WIDTH / 2;
-      this.code.y = this.popUpBackground.y + (this.popUpBackground.y * 0.15);
-    }, 300)
+    this.code = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
+    this.code.anchor.set(0.5);
+    this.code.x = WIDTH / 2;
+    this.code.y = HEIGHT / 1.75;
   }
 
   setUpPuns() {
@@ -49,12 +54,10 @@ export default class Windows {
       .then(data => {
         this.losePuns = data.split('\n');
       })
-    setTimeout(() => {
-      this.pun = new PIXI.Text(this.losePuns[0], this.scoreStyle);
+      this.pun = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
       this.pun.anchor.set(0.5);
       this.pun.x = WIDTH / 2;
-      this.pun.y = this.scoreBackgroundLose.y * 1.7;
-    }, 300)
+      this.pun.y = HEIGHT / 2.5;
   }
 
   setUpSprites() {
@@ -72,8 +75,22 @@ export default class Windows {
 
     this.scoreBackgroundWin = new PIXI.Sprite.from("../sprites/scoreBackgroundWin.png");
     this.scoreBackgroundWin.anchor.set(0.5);
+    this.scoreBackgroundWin.scale.set(SCALE * 0.75);
     this.scoreBackgroundWin.x = WIDTH / 2;
-    this.scoreBackgroundWin.y = this.popUpBackground.y;
+    this.scoreBackgroundWin.y = this.popUpBackground.y * 1.05;
+
+    this.creditsButton = document.createElement('IMG');
+    this.creditsButton.classList.add("creditsButton");
+    this.creditsButton.setAttribute("src", "../sprites/infobutton.png");
+    this.creditsButton.style.width = "4%";
+    this.creditsButton.style.position = "absolute";
+    this.creditsButton.style.cursor = 'pointer';
+    this.creditsButton.style.zIndex = "10";
+
+    this.creditsButton.onclick = this.showCredits.bind(this);
+
+    this.creditsButton.style.left = "61%";
+    this.creditsButton.style.top = "71%";
   }
 
   setUpInstruct() {
@@ -97,7 +114,7 @@ export default class Windows {
     this.bottomMessageInstruct.x = WIDTH / 2;
     this.bottomMessageInstruct.y = this.popUpBackground.y + (this.popUpBackground.y * 0.25);
 
-    this.setupXButton();
+    this.setupXButton(95, 10, "instruct");
 
     container.addChild(this.popUpBackground);
     container.addChild(this.topMessageInstruct);
@@ -114,7 +131,7 @@ export default class Windows {
     this.removedInstruct = true;
   }
 
-  setupXButton() {
+  setupXButton(x, y, toRemove) {
     this.laundrDiv = document.getElementById('laundr-game');
 
     this.invisDiv = document.createElement('div');
@@ -140,15 +157,27 @@ export default class Windows {
     this.xButton.style.cursor = 'pointer';
     this.invisDiv.appendChild(this.xButton);
 
-    this.xButton.style.top = "10%";
-    this.xButton.style.left = "95%";
+    let xLoc = x.toString() + "%";
+    let yLoc = y.toString() + "%"
+
+    this.xButton.style.top = yLoc;
+    this.xButton.style.left = xLoc;
     this.xButton.style.transform = "translate(-50%, -50%)";
 
-    this.xButton.onclick = this.removeInstruct.bind(this);
+    if(toRemove == "instruct"){this.xButton.onclick = this.removeInstruct.bind(this);}
+    else if(toRemove == "credits"){this.xButton.onclick = this.setUpWin.bind(this);}
   }
 
-  setUpLose(score) {
-    this.scoreMessage.text = Math.round(score);
+  getScore(score){
+    this.score = score;
+  }
+
+  getCanvasSize(canvasSize){
+    this.canvasSize = canvasSize;
+  }
+
+  setUpLose() {
+    this.scoreMessage.text = Math.round(this.score);
     this.scoreMessage.y = this.scoreBackgroundLose.y;
 
     this.rand = Math.floor(Math.random() * Math.floor(this.losePuns.length));
@@ -176,11 +205,19 @@ export default class Windows {
     container.removeChild(this.pun);
   }
 
-  setUpWin(score) {
+  setUpWin() {
+    if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
+    else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
+
+    this.socials.endGame();
+    this.invisDiv.style.left = "-999%";
+    this.creditsShowing = false;
+
     let topText = 'Use coupon code';
+    this.code.text = this.couponCode;
     let bottomText = 'for 15% off your next order!';
 
-    this.scoreMessage.text = Math.round(score);
+    this.scoreMessage.text = Math.round(this.score);
     this.scoreMessage.y = this.scoreBackgroundWin.y / 2.35;
 
     this.rand = Math.floor(Math.random() * Math.floor(this.winPuns.length));
@@ -209,6 +246,7 @@ export default class Windows {
     container.addChild(this.scoreBackgroundWin);
     container.addChild(this.scoreMessage);
     container.addChild(this.pun);
+    this.laundrDiv.appendChild(this.creditsButton);
     container.addChild(this.topMessageCoupon);
     container.addChild(this.code);
     container.addChild(this.bottomMessageCoupon);
@@ -219,8 +257,46 @@ export default class Windows {
     container.removeChild(this.scoreBackgroundWin);
     container.removeChild(this.scoreMessage);
     container.removeChild(this.pun);
+    this.laundrDiv.removeChild(this.creditsButton);
     container.removeChild(this.topMessageCoupon);
     container.removeChild(this.code);
     container.removeChild(this.bottomMessageCoupon);
   }
+
+  showCredits(){
+    this.removeWin();
+    this.creditsShowing = true;
+    this.socials.resetGame();
+
+    this.credits = "Olivia Jacques-Baker:   CEO of Clean Code" + '\n' +
+                   "Oliver Thomas:      Old man in a laundromat" + '\n' +
+                   "Kyle Hassall:                      FILLER" + '\n' +
+                   "Simran Patel:                      FILLER" + '\n' +
+                   "Michael Zinn:                      FILLER";
+
+
+    this.creditsMessage = new PIXI.Text(this.credits, this.creditsStyle);
+    this.creditsMessage.anchor.set(0.5);
+    this.creditsMessage.y = HEIGHT / 2.1;
+    this.creditsMessage.x = WIDTH / 2;
+
+    container.addChild(this.popUpBackground);
+    container.addChild(this.creditsMessage);
+    this.setupXButton(95, 10, "credits");
+  }
+
+  removeCredits(){
+    this.creditsShowing = false;
+
+    container.removeChild(this.creditsBackground);
+    container.removeChild(this.creditsMessage);
+
+    this.invisDiv.style.left = "-999%";
+  }
+
+  socialsResizing(gameOver){
+    if (this.canvasSize < 675 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
+    else if (this.canvasSize >= 675 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
+  }
+
 }
