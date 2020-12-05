@@ -271,7 +271,7 @@ export default class Windows {
     this.credits = "Kyle Hassall:                 Supervisor of Suds" + '\n' +
                    "Oliver Thomas:    Old man in a laundromat" + '\n' +
                    "Olivia Jacques-Baker: CEO of Clean Code" + '\n' +
-                   "Simran Patel:                    FILLER" + '\n' +
+                   "Simran Patel:             Director of Detergent" + '\n' +
                    "Michael Zinn:                     Stain Generator";
 
 

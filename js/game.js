@@ -277,7 +277,7 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
+      if ((performance.now() - timeOffset) > 50 && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
@@ -433,6 +433,7 @@ function cleanUp() {
   if (win) {
     player.reset();
     windows.removeWin();
+    windows.removeCredits();
     clearInterval(slowTimout);
   }
   if(lose) windows.removeLose();
