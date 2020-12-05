@@ -125,7 +125,7 @@ loadOnce();
 
 
 
-
+//currently broken, yes, i know, it's probably in the way things are being added to the html where i'm trying to make it have access to the scripts and stuff.
 
 //the tests
 
@@ -155,14 +155,9 @@ describe('game gameLoop tests', async () => {
             prevDuck: false
         };
 
-        let holder = document.createElement('div');
-        let newScript = document.createElement("script");
-        newScript.src = "/node_modules/pixi-sound/dist/pixi-sound.js";
-        holder.appendChild(newScript);
-        document.body.appendChild(holder);
 
-        let holder2 = document.createElement('div');
-        holder2.innerHTML = `
+        let holder = document.createElement('div');
+        holder.innerHTML = `
         <body>
           <div class="laundr-game" id="laundr-game" style="position: relative;">
         <canvas class="pixiCanvas" id="pixiCanvas" , style="width:100%;"></canvas>
@@ -178,12 +173,14 @@ describe('game gameLoop tests', async () => {
         </div>
 
       </div>`;
-        document.body.appendChild(holder2);
+        document.body.appendChild(holder);
 
         let newScript = document.createElement("script");
         newScript.src = "https://platform.twitter.com/widgets.js";
-        holder2.appendChild(newScript);
-
+        holder.appendChild(newScript);
+        let newScript1 = document.createElement("script");
+        newScript1.src = "/node_modules/pixi-sound/dist/pixi-sound.js";
+        holder.appendChild(newScript1);
 
 
         setTimeout(() => {
