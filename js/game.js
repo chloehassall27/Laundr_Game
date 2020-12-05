@@ -24,7 +24,7 @@ const app = new PIXI.Application({
 canvas.style.zIndex = "-1";
 PIXI.sound.context.paused = true;
 
-PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 PIXI.settings.ROUND_PIXELS = true;
 
 window.HEIGHT = app.screen.height;
