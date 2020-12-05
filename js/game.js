@@ -227,7 +227,7 @@ function gameLoop() {
     if (!windows.removedInstruct) {
       windows.removeInstruct();
     }
-    // checkFocus();
+    checkFocus();
 
     if (focus && visible) {
       if (firstLoop) {
@@ -245,7 +245,7 @@ function gameLoop() {
         player.updateDuck();
       }
 
-      // spawner.moveSprites();
+      spawner.moveSprites();
       houseGen.moveSprites();
 
       //check if it's time to win!
