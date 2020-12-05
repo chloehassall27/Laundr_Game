@@ -245,6 +245,7 @@ function gameLoop() {
       }
 
       spawner.moveSprites();
+      houseGen.moveSprites();
 
       //check if it's time to win!
       if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
@@ -282,8 +283,9 @@ function displayScore() {
 //display the highest score
 function displayHighScore() {
   if (highscore > 0) {
+    if(!container.children.includes(highscoreText))
+      container.addChild(highscoreText);
     highscoreText.text = 'HI ' + Math.round(highscore);
-    container.addChild(highscoreText);
   }
 }
 
@@ -597,6 +599,7 @@ function checkFocus() {
 
   } else if (!document.hasFocus()) {
     spawner.loseFocus();
+    houseGen.loseFocus();
     focus = false;
 
     window.inputs.duck = false;

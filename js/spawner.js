@@ -96,22 +96,11 @@ export default class Spawner {
             this.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
     
             if (checkCollision(this.player.currSprite, this.tokens[i]))
-              collectToken(i);
+              this.collectToken(i);
     
             if (xBox <= 0) {
               container.removeChild(this.tokens[i]);
               this.tokens.shift();
-              i--;
-            }
-          }
-      
-          for (var i = 0; i < houseGen.houses.length; i++) {
-            const xBox = houseGen.houses[i].getBounds().x + houseGen.houses[i].getBounds().width;
-            houseGen.houses[i].x -= SCALE * 1.35 * speedScale * FPSSCALE;
-
-            if (xBox <= 0) {
-              container.removeChild(houseGen.houses[i]);
-              houseGen.houses.splice(i, 1);
               i--;
             }
           }

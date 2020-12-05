@@ -12,17 +12,8 @@ export default class Spawner {
         this.focus = true;
 
         //Spawn one house on screen 
-        var firstHouse = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[this.chooseSprite()]);
-
-        firstHouse.anchor.set(0, 1);
-        firstHouse.x = Math.random() * 4 *WIDTH/5;
-        firstHouse.y = 4 * HEIGHT / 5;
-        firstHouse.scale.set(1.7 * SCALE);
-        // console.log(1.7 * SCALE)
-        firstHouse.zIndex = 0;
-        
-        container.addChild(firstHouse);
-        this.houses.push(firstHouse);
+        this.buildHouse(this.chooseSprite());
+        this.houses[0].x = Math.random() * 4 *WIDTH/5;
     }
 
     buildHouse(spriteName) {
@@ -39,6 +30,19 @@ export default class Spawner {
 
     }
 
+    moveSprites() {
+        for (var i = 0; i < this.houses.length; i++) {
+            const xBox = this.houses[i].getBounds().x + this.houses[i].getBounds().width;
+            this.houses[i].x -= SCALE * 1.28 * speedScale * FPSSCALE;
+
+            if (xBox <= 0) {
+              container.removeChild(this.houses[i]);
+              this.houses.splice(i, 1);
+              i--;
+            }
+          }
+    }
+
     randomizeInterval() {
         return (Math.floor(Math.random() * (this.intRangeMax - this.intRangeMin + 1)) + this.intRangeMin);
     }
@@ -50,7 +54,7 @@ export default class Spawner {
             }
 
             //call the next spawn obstacle, with a delay of interval
-            setTimeout(this.spawn.bind(this), this.randomizeInterval());
+            this.timeout = setTimeout(this.spawn.bind(this), this.randomizeInterval());
         }
     }
 
@@ -69,10 +73,16 @@ export default class Spawner {
     }
 
     loseFocus() {
-        this.focus = false;
+        if (this.focus) {
+            this.focus = false;
+            clearTimeout(this.timeout);
+        }
     }
 
     gainFocus() {
-        this.focus = true;
+        if (!this.focus) {
+            this.focus = true;
+            this.timeout = setTimeout(this.spawn.bind(this), this.randomizeInterval());
+        }
     }
 }
