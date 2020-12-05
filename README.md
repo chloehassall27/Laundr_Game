@@ -128,7 +128,7 @@ To add additional tests, ensure that every test file is in the fileName.canvest.
 
 Functional tests can all be conducted by opening the [main heroku deployment](http://laundr-game.herokuapp.com/) and playing the game. 
 
-##How to play?
+## How to play?
 To play the game on desktop, press ‘space’ or ‘up’ to make the player character jump, and ‘down’ to make the player duck. To successfully duck under obstacles, ‘down’ will have to be pressed and held, as the player will exit the duck as soon as ‘down’ has been released. For longer air-time to help clear larger obstacles, press and hold the jump button. To accelerate the player’s fall from a jump, press the duck button while mid-jump. Use these controls to avoid the various obstacles, which include washing machines, hampers of dirty laundry, and flying clothes irons. 
 
 To pick up score bonus tokens, move the player character so it collides with the golden Laundr bomb sprites. 
