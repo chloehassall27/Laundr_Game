@@ -34,6 +34,7 @@ window.SCALE = HEIGHT / 225; // Scale used for compatibility with old code. Orig
 window.RELSCALE = HEIGHT / 225; // Scale relative to original scale.  Other scale is only calculated at start
 window.SCORE = 0;
 window.FPSSCALE;
+window.loaded = false;
 
 window.container = new PIXI.Container();
 app.stage.addChild(container);
@@ -199,6 +200,8 @@ function loadOnce() {
       //add windows;
       windows = new Windows(app);
       windows.setUpInstruct();
+
+      window.loaded = true;
     });
 
   reload();
@@ -219,7 +222,7 @@ function reload() {
 function gameLoop() {
   window.FPSSCALE = 144 / app.ticker.FPS;
   //must check &&player first or else itll be checking for loaded on a null object
-  if (!gameOver && player && player.loaded && started) {
+  if (!gameOver && loaded && player && player.loaded && started) {
     if (!windows.removedInstruct) {
       windows.removeInstruct();
     }
