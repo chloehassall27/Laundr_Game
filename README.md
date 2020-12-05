@@ -141,6 +141,7 @@ To play the game on mobile, tap the space above the road to jump, and tap the sp
 This game was inspired by the [Google Chrome dino game](https://chromedino.com/). 
 
 The people who worked on this project include:
+
 **Kyle Hassall** - [kylehassall27](https://github.com/kylehassall27)
 * Scrum Master
 * Canvas setup
