@@ -1,19 +1,4 @@
 export default class Player {
-    // groundLevel;
-
-    // app;
-
-
-
-
-    // currSprite;
-    // running;
-    // jumping;
-    // jumpStatic;
-    // ducking;
-    // falling;
-
-    // jumpS;
 
     constructor(app, jumpS) {
         this.app = app;
@@ -52,8 +37,9 @@ export default class Player {
         }
 
         // Cap max upward speed to prevent flying due to lag
-        if (this.speedY > 3.7)
-            this.speedY = 3.7;
+		// This probably causes problems on lower fps... dont do this
+        // if (this.speedY > 3.7)
+            //this.speedY = 3.7;
 
         // Once the jump animation is completed, switch to static animation
         // if (this.currSprite === this.jumping && this.currSprite.currentFrame == this.jumping.size - 1){
