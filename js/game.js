@@ -223,7 +223,7 @@ function reload() {
 function gameLoop() {
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
-    if(!windows.removedInstruct){
+    if (!windows.removedInstruct) {
       windows.removeInstruct();
     }
     checkFocus();
@@ -679,3 +679,23 @@ function endGameFall() {
 }
 
 // === End game functions === //
+
+
+// === exports for testing, not included in the actual deployed game === //
+
+module.exports = {
+  loadOnce: loadOnce,
+  reload: reload,
+  gameLoop: gameLoop,
+  displayScore: displayScore,
+  displayHighScore: displayHighScore,
+  checkCollision: checkCollision,
+  endGame: endGame,
+  slowMovement: slowMovement,
+  onClickRestart: onClickRestart,
+  onClickMute: onClickMute,
+  collectToken: collectToken,
+  cleanUp: cleanUp,
+  startGame: startGame,
+  moveBackground: moveBackground,
+}
