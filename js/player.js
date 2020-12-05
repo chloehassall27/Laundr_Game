@@ -86,8 +86,10 @@ export default class Player {
 
     reset() {
         this.currSprite.x = WIDTH * 0.22;
+        this.currSprite.y = HEIGHT - (HEIGHT * .1);
         this.switchSprite(this.running);
         this.currSprite.x = WIDTH * 0.22;
+        this.currSprite.y = HEIGHT - (HEIGHT * .1);
         this.currSprite.hitArea.y = WIDTH * 0.22;
     }
 
@@ -95,6 +97,9 @@ export default class Player {
         // Only switch sprite if necesary
         if (this.currSprite !== sprite) {
             let y = this.currSprite.y;
+            if (sprite === this.falling) y += WIDTH * 0.0016;
+            else if (this.currSprite === this.falling) y -= WIDTH * 0.0016;
+
             container.removeChild(this.currSprite);
             this.currSprite = sprite;
             this.currSprite.hitArea = sprite.hitArea;
@@ -132,10 +137,10 @@ export default class Player {
     }
 
     endGameFall() {
-        if (this.currSprite.y < this.groundLevel) {
+        if (this.currSprite.y < this.groundLevel + WIDTH * 0.0016) {
             this.currSprite.y += SCALE * 4;
         } else {
-            this.currSprite.y = this.groundLevel;
+            this.currSprite.y = this.groundLevel + WIDTH * 0.0016;
             this.fallComplete = true;
         }
     }
@@ -190,7 +195,7 @@ export default class Player {
         this.falling.scale.set(height);
         this.falling.interactive = true;
         this.falling.x = WIDTH * 0.22;
-        this.falling.y = HEIGHT - (HEIGHT * .1);
+        this.falling.y = HEIGHT - (HEIGHT * .1) + WIDTH * 0.0016;
         this.falling.hitArea = new PIXI.Rectangle(this.falling.x, this.falling.y, spriteWidth, spriteHeight);
         this.falling.animationSpeed = .25;
         this.falling.loop = false;
