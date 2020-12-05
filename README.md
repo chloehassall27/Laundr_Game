@@ -95,6 +95,15 @@ To add the game itself, the following html will need to be added inside the <bod
 
 If you would like for the game to display in the same location as we have set it up in the gameDemo deployment, please open that branch. The Laundr 404 page has been downloaded and modified in our gameDemo.html file. Our code has been indicated with large comment blocks; you may find the location of where to insert the above code by finding these comment blocks. 
 
+There are also several elements of our game that can be edited easily, if there is a desire to change them before/after integration. These elements can be edited through three text files:
+
+* lose_puns.txt: Contains all of the puns that will be shown on a lose screen, separated by a newline character
+* win_puns.txt: Contains all of the puns that will be shown on a win screen, separated by a newline character
+* couponcode.txt: Contains the coupon code that will show on a win screen
+
+To edit these files, open the relevant text file and edit the contents. Upon saving, the game will automatically include any changes that were made.
+
+
 ## API Reference
 The [Tweet Button](https://developer.twitter.com/en/docs/twitter-for-websites/tweet-button/overview) from Twitter was used to allow players to share their score to Twitter. 
 
