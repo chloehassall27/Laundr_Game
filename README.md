@@ -33,7 +33,7 @@ Game code was created using Javascript. Active deployments are created with [her
 * Sound Effects on jumping, collecting a token, losing, and winning	
 
 ## Installation
-To install all necessary files required for further development, run: 
+To install all necessary files required for further development, open this project and run: 
 ```
 npm i
 ```
