@@ -49,7 +49,7 @@ export default class Spawner {
 
     spawn() {
         if (!this.gameOver) {
-            if (this.focus) {
+            if (this.focus && (this.houses[this.houses.length-1].x < WIDTH*3/4 || this.houses.length == 0) && (performance.now() - window.timeOffset) < window.winTime - 2200 ) {
                 this.buildHouse(this.chooseSprite());
             }
 

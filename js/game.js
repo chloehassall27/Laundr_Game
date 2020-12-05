@@ -47,6 +47,8 @@ app.ticker.minFPS = 30;
 
 // Basic game variables
 
+window.winTime = 300000;
+
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
 });
@@ -74,7 +76,7 @@ let visible = true;
 window.mute = false;
 let winTriggered = false;
 let winTimeout;
-let timeOffset;
+window.timeOffset;
 let firstLoop = true;
 let touchDisable = false;
 
@@ -225,11 +227,11 @@ function gameLoop() {
     if (!windows.removedInstruct) {
       windows.removeInstruct();
     }
-    checkFocus();
+    // checkFocus();
 
     if (focus && visible) {
       if (firstLoop) {
-        timeOffset = performance.now();
+        window.timeOffset = performance.now();
         container.addChild(scoreText);
         firstLoop = false;
       }
@@ -243,11 +245,11 @@ function gameLoop() {
         player.updateDuck();
       }
 
-      spawner.moveSprites();
+      // spawner.moveSprites();
       houseGen.moveSprites();
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
+      if ((performance.now() - timeOffset) > winTime && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
@@ -256,7 +258,6 @@ function gameLoop() {
         winTimeout = setTimeout(endGame, 3000);
         slowTimout = setInterval(slowMovement, 700);
       }
-
     }
   } else if (gameOver && player && player.needsFall) {
     endGameFall();
