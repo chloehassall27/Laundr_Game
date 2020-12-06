@@ -233,10 +233,12 @@ export default class Windows {
   }
 
   setUpWin() {
-    this.socials.endGame();
+    // this.socials.endGame();
 
     if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
     else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
+
+    if(this.creditsShowing) this.removeCredits();
 
     this.socials.endGame();
     this.invisDiv.style.left = "-999%";
@@ -330,7 +332,7 @@ export default class Windows {
     this.creditsMessage.y = HEIGHT / 1.9;
     this.creditsMessage.x = WIDTH / 2;
     this.creditsMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-    this.titleMessage.zIndex = 13;
+    this.creditsMessage.zIndex = 13;
 
     container.addChild(this.popUpBackground);
     container.addChild(this.titleMessage);
