@@ -80,8 +80,8 @@ export default class Spawner {
 
             //check collision
             if (checkCollision(this.player.currSprite, this.obstacles[i])) {
-                // lose = true;
-                // endGame();
+                lose = true;
+                endGame();
             }
 
             //remove box if it's offscreen
