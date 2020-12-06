@@ -79,6 +79,7 @@ let winTimeout;
 window.timeOffset;
 let firstLoop = true;
 let touchDisable = false;
+let creditsShowing = false;
 
 window.inputs = {
   jump: false,
@@ -118,6 +119,7 @@ let timeout = 0;
 let winTimeoutTime = 0;
 let slowTimout;
 let twtTimeout;
+let showingCredits;
 // === End basic app setup === //
 
 // === Sprite setup === //
@@ -271,6 +273,10 @@ function gameLoop() {
   else if (gameOver && player && player.winSequence && !lose) {
     player.currSprite.x += 3.5 * playerSpeedScale;
   }
+
+  if(gameOver){
+    creditsShowing = windows.creditsShowing;
+  }
 }
 
 // Display the current score
@@ -325,6 +331,7 @@ window.endGame = function () {
   timeout = performance.now();
   clearTimeout(winTimeout);
   clearTimeout(twtTimeout);
+  
 
   if (score > highscore) {
     highscore = score;
@@ -335,22 +342,27 @@ window.endGame = function () {
   restartButton.y = HEIGHT / 1.65;
   restartButton.scale.set(SCALE * 0.3);
 
+  windows.getScore(score);
+
   if (lose) {
     if (!mute) {
       deathS.play();
     }
     //this is on a timeout so that the twitter button has enough time to render
     setTimeout(() => {
+      windows.setUpLose();
       container.addChild(restartButton);
-      socials.endGame();
+      //socials.endGame();
+      
     }, 60);
   } else if (win) {
     setTimeout(() => {
       if (!mute) {
         winS.play();
       }
-      container.addChild(restartButton);
-      socials.endGame();
+      windows.setUpWin();
+      //container.addChild(restartButton);
+      //socials.endGame();
     }, 950);
   }
 
@@ -390,8 +402,11 @@ function onReleaseMute() {
 function cleanUp() {
   if (win) {
     player.reset();
+    windows.removeWin();
+    windows.removeCredits();
     clearInterval(slowTimout);
   }
+  if(lose) windows.removeLose();
   clearInterval(spawnerInterval);
   clearInterval(speedInterval);
   gameOver = false;
@@ -408,7 +423,6 @@ function cleanUp() {
   firstLoop = true;
   // clearInterval(gameInterval);
   endHouse.x = WIDTH * 1.5;
-  windows.removeLose();
   socials.restartGame();
 
   // Remove obstacles
@@ -626,13 +640,19 @@ function resize() {
   scoreText.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
 
-  if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
-  else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
+  windows.getCanvasSize(canvas.width);
+  //if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
+  //else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
   windows.topMessageInstruct.resolution = RELSCALE * 1.5;
   windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
   if(gameOver){
     windows.scoreMessage.resolution = RELSCALE * 1.5;
-    windows.punAtLose.resolution = RELSCALE * 1.5;
+    windows.pun.resolution = RELSCALE * 1.5;
+    windows.topMessageCoupon.resolution = RELSCALE * 1.5;
+    windows.code.resolution = RELSCALE * 1.5;
+    windows.bottomMessageCoupon.resolution = RELSCALE * 1.5;
+    if(creditsShowing){windows.creditsMessage.resolution = RELSCALE * 1.5;}
+    else if(!creditsShowing){windows.socialsResizing(canvas.width, gameOver);}
   } 
 }
 
