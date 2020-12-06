@@ -1,13 +1,15 @@
 /*
+ References (outside of API/framework documentation) used while building this project include: 
+ kittykatattack's Learning Pixi tutorial - https://github.com/kittykatattack/learningPixi
+ Dower Chin's Pixi.js Video Tutorials - https://www.youtube.com/user/dowerchin 
+*/
+
+
+/*
   current bugs:
    - jiggle bug
    - mute token collect sound
    - Audio on touch devices will not play until first touch has been let go. Will be fixed by instructions requiring touch
-   - social media icons look a bit fuzzy
-
-  to test win functionality:
-   - change win time to a lower value (i usually use 3000 instead of 300000)
-   - uncomment out the line in moveBackground that sets speedScale = 1.3
 */
 
 import Spawner from "./spawner.js"
@@ -67,6 +69,7 @@ let socials;
 let backgroundFront, backgroundBack;
 window.groundLevel = HEIGHT * .9;
 
+let focusHold;
 let win = false;
 window.lose = false;
 let gameOver = false;
@@ -138,6 +141,8 @@ app.loader
 loadOnce();
 
 function loadOnce() {
+  //speedScale = 1.3;
+
   app.loader
     .load((loader, resources) => {
       deathS = PIXI.sound.Sound.from(resources.deathSound);
@@ -272,18 +277,20 @@ function gameLoop() {
   }
 
   else if (gameOver && player && player.winSequence && !lose) {
-    player.currSprite.x += 3.5 * playerSpeedScale;
+    player.currSprite.x += 2.5 * playerSpeedScale;
   }
 
-  if(gameOver){
+  if (gameOver) {
     creditsShowing = windows.creditsShowing;
   }
 }
 
 // Display the current score
 function displayScore() {
-  score += .01;
+  let increaseAmt = (13.0 / 900.0) * window.FPSSCALE;
+  score += increaseAmt;
   let roundedScore = Math.round(score);
+  if (roundedScore > 999) roundedScore = 999;
   scoreText.text = roundedScore;
   window.SCORE = roundedScore;
   displayHighScore();
@@ -298,7 +305,8 @@ function displayHighScore() {
   }
 }
 
-//collision
+
+//collision function largely from Dower Chin's Pixi.js Video Tutorials - https://www.youtube.com/user/dowerchin 
 window.checkCollision = function (a, b) {
   const aBox = a.hitArea;
   const bBox = b.hitArea;
@@ -332,10 +340,11 @@ window.endGame = function () {
   timeout = performance.now();
   clearTimeout(winTimeout);
   clearTimeout(twtTimeout);
-  
+
 
   if (score > highscore) {
     highscore = score;
+    if (highscore > 999) highscore = 999;
     displayHighScore();
   }
 
@@ -354,7 +363,7 @@ window.endGame = function () {
       windows.setUpLose();
       container.addChild(restartButton);
       //socials.endGame();
-      
+
     }, 60);
   } else if (win) {
     setTimeout(() => {
@@ -407,7 +416,7 @@ function cleanUp() {
     windows.removeCredits();
     clearInterval(slowTimout);
   }
-  if(lose) windows.removeLose();
+  if (lose) windows.removeLose();
   clearInterval(spawnerInterval);
   clearInterval(speedInterval);
   gameOver = false;
@@ -425,6 +434,7 @@ function cleanUp() {
   // clearInterval(gameInterval);
   endHouse.x = WIDTH * 1.5;
   socials.restartGame();
+  window.winTime = 300000;
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++) {
@@ -468,7 +478,7 @@ window.addEventListener("keyup", keysUp);
 function keysDown(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     window.inputs.jump = true;
-    if (!started && firstLoad)
+    if (!started && firstLoad && windows.removedInstruct)
       startGame();
 
     if (gameOver) {
@@ -520,7 +530,7 @@ function touchStart(e) {
   if (pos.y < (2 * container.height / 3)) {
     inputs.jump = true;
 
-    if (!started && firstLoad)
+    if (!started && firstLoad && removedInstruct)
       startGame();
   }
   // Bottom 1/3 of the canvas will call the duck function
@@ -595,6 +605,10 @@ document.addEventListener('visibilitychange', () => {
 
 function checkFocus() {
   if (document.hasFocus()) {
+    if (focus === false) {
+      focusHold = performance.now() - focusHold;
+      winTime += focusHold;
+    }
     spawner.gainFocus();
     houseGen.gainFocus();
     focus = true;
@@ -608,6 +622,9 @@ function checkFocus() {
     }
 
   } else if (!document.hasFocus()) {
+    if (focus === true) {
+      focusHold = performance.now();
+    }
     spawner.loseFocus();
     houseGen.loseFocus();
     focus = false;
@@ -646,15 +663,15 @@ function resize() {
   //else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
   windows.topMessageInstruct.resolution = RELSCALE * 1.5;
   windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
-  if(gameOver){
+  if (gameOver) {
     windows.scoreMessage.resolution = RELSCALE * 1.5;
     windows.pun.resolution = RELSCALE * 1.5;
     windows.topMessageCoupon.resolution = RELSCALE * 1.5;
     windows.code.resolution = RELSCALE * 1.5;
     windows.bottomMessageCoupon.resolution = RELSCALE * 1.5;
-    if(creditsShowing){windows.creditsMessage.resolution = RELSCALE * 1.5;}
-    else if(!creditsShowing){windows.socialsResizing(canvas.width, gameOver);}
-  } 
+    if (creditsShowing) { windows.creditsMessage.resolution = RELSCALE * 1.5; }
+    else if (!creditsShowing) { windows.socialsResizing(canvas.width, gameOver); }
+  }
 }
 
 // === End helper functions === //
@@ -665,11 +682,9 @@ function moveBackground() {
   //background.tilePosition.x -= 3.5*speedScale;
   //parallax
 
-  //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
-  //speedScale = 1.3;
   backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale * FPSSCALE;
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale * FPSSCALE;
-  if (winTriggered && performance.now() >= (winTimeoutTime + 1600)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
+  if (winTriggered && performance.now() >= (winTimeoutTime)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 }
 
 function endGameFall() {
