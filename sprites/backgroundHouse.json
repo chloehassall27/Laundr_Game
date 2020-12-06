@@ -1,0 +1,94 @@
+{
+  "frames": {
+    "backgroundHouse0.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 53,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 53,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 53,
+        "h": 75
+      }
+    },
+    "backgroundHouse1.png": {
+      "frame": {
+        "x": 53,
+        "y": 0,
+        "w": 53,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 53,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 53,
+        "h": 75
+      }
+    },
+    "backgroundHouse2.png": {
+      "frame": {
+        "x": 0,
+        "y": 75,
+        "w": 53,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 53,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 53,
+        "h": 75
+      }
+    },
+    "backgroundHouse3.png": {
+      "frame": {
+        "x": 53,
+        "y": 75,
+        "w": 53,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 53,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 53,
+        "h": 75
+      }
+    }
+  },
+  "meta": {
+    "app": "https://github.com/piskelapp/piskel/",
+    "version": "1.0",
+    "image": "backgroundHouse.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 106,
+      "h": 150
+    }
+  }
+}

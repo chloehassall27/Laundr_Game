@@ -1,6 +1,5 @@
 export default class Spawner {
-
-    constructor(app) {
+    constructor(app, player) {
         this.app = app;
 
         this.interval = 1100;
@@ -15,7 +14,8 @@ export default class Spawner {
 
         this.obstacles = [];
         this.tokens = [];
-
+    
+        this.player = player;
         this.gameOver = false;
         this.focus = true;
 
@@ -50,6 +50,7 @@ export default class Spawner {
             obstacle.x = WIDTH * 1.1;
             obstacle.x += xOffset;
             obstacle.y = posy;
+            obstacle.zIndex = 3
             //console.log(obstacle.getBounds());
 
             //Calculate hit boxes based on which sprite is spawned
@@ -69,6 +70,42 @@ export default class Spawner {
         }
     }
 
+    moveSprites() {
+        for (var i = 0; i < this.obstacles.length; i++) {
+            const xBox = this.obstacles[i].getBounds().x + this.obstacles[i].getBounds().width;
+            this.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
+            this.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;;
+    
+            //check collision
+            if (checkCollision(this.player.currSprite, this.obstacles[i])) {
+              lose = true;
+              endGame();
+            }
+    
+            //remove box if it's offscreen
+            if (xBox <= 0) {
+              container.removeChild(this.obstacles[i]);
+              this.obstacles.shift();
+              i--;
+            }
+          }
+      
+        for (var i = 0; i < this.tokens.length; i++) {
+            const xBox = this.tokens[i].getBounds().x + this.tokens[i].getBounds().width;
+            this.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
+            this.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
+
+            if (checkCollision(this.player.currSprite, this.tokens[i]))
+                this.collectToken(i);
+
+            if (xBox <= 0) {
+                container.removeChild(this.tokens[i]);
+                this.tokens.shift();
+                i--;
+            }
+        }
+    }
+
     buildToken() {
         var token = new PIXI.AnimatedSprite(this.app.loader.resources.tokenSheet.spritesheet.animations["tokenSprite"]);
 
@@ -78,6 +115,7 @@ export default class Spawner {
         if (rand % 3 == 0) token.y = this.jumpLevel;
         else token.y = this.walkingLevel;
         token.x = WIDTH * 1.1;
+        token.zIndex = 3;
 
         token.hitArea = new PIXI.Rectangle(token.x - (token.width * 0.25), token.y - (token.height * 0.28), token.width * 0.52, token.height * 0.55);
 
@@ -157,9 +195,9 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(100 * SCALE, window.groundLevel / 2 - HEIGHT * 0.05, "ironSprite");
             this.buildObstacles(0 * SCALE, window.groundLevel / 2 + HEIGHT * 0.1, "ironSprite");
             this.buildObstacles(85 * SCALE, window.groundLevel / 2 + HEIGHT * 0.2, "ironSprite");
+            this.buildObstacles(100 * SCALE, window.groundLevel / 2 - HEIGHT * 0.05, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
             let yPos = Math.floor(Math.random() * this.ironRandScale) + this.ironRandAdd;
@@ -215,6 +253,8 @@ export default class Spawner {
     }
 
     collectToken(index) {
+        tokenS.play();
+        score += 25;
         container.removeChild(this.tokens[index]);
         this.tokens.splice(index, 1);
     }

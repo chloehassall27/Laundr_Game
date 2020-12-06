@@ -11,11 +11,10 @@
 */
 
 import Spawner from "./spawner.js"
+import HouseGen from "./houseGen.js"
 import Player from "./player.js"
 import Windows from "./windows.js"
 import Socials from "./socials.js"
-
-window.RESOLUTION = 1;
 
 // === Basic app setup === //
 let canvas = document.getElementById('pixiCanvas');
@@ -25,7 +24,7 @@ const app = new PIXI.Application({
 canvas.style.zIndex = "-1";
 PIXI.sound.context.paused = true;
 
-PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 PIXI.settings.ROUND_PIXELS = true;
 
 window.HEIGHT = app.screen.height;
@@ -48,6 +47,8 @@ app.ticker.minFPS = 30;
 
 // Basic game variables
 
+window.winTime = 300000;
+
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
 });
@@ -59,6 +60,7 @@ const highscoreStyle = new PIXI.TextStyle({
 })
 
 let spawner;
+window.houseGen;
 let player;
 let windows;
 let socials;
@@ -66,15 +68,15 @@ let backgroundFront, backgroundBack;
 window.groundLevel = HEIGHT * .9;
 
 let win = false;
-let lose = false;
+window.lose = false;
 let gameOver = false;
-let speedScale = 1.0;
+window.speedScale = 1.0;
 let focus = true;
 let visible = true;
 window.mute = false;
 let winTriggered = false;
 let winTimeout;
-let timeOffset;
+window.timeOffset;
 let firstLoop = true;
 let touchDisable = false;
 let creditsShowing = false;
@@ -89,20 +91,23 @@ let playerSpeedScale = 1;
 let endHouse;
 let restartButton;
 let muteButton;
-let score = 0;
+window.score = 0;
+
+
 let scoreText = new PIXI.Text(score, scoreStyle);
 scoreText.x = WIDTH / 1.07;
 scoreText.resolution = 1.5;
+scoreText.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
 let highscore = 0;
 let highscoreText = new PIXI.Text(highscore, highscoreStyle);
 highscoreText.x = WIDTH / 1.21;
 highscoreText.resolution = 1.5;
+highscoreText.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
 //noises
 let deathS;
 let jumpS;
-let tokenS;
 let winS;
 
 let started = false;
@@ -121,6 +126,7 @@ let showingCredits;
 app.loader
   .add('charaSheet', "sprites/charaSpriteSheet.json")
   .add('obSheet', "sprites/obstacleSprites.json")
+  .add('houseSheet', "sprites/backgroundHouse.json")
   .add('tokenSheet', "sprites/LaundrBombSprite.json")
   .add('buttonSheet', "sprites/PodsAndButtons.json")
   .add('muteSheet', "sprites/MuteUnmute.json")
@@ -138,8 +144,8 @@ function loadOnce() {
       deathS.volume = 0.4;
       jumpS = PIXI.sound.Sound.from(resources.jumpSound);
       jumpS.volume = 0.4;
-      tokenS = PIXI.sound.Sound.from(resources.tokenSound);
-      tokenS.volume = 0.4;
+      window.tokenS = PIXI.sound.Sound.from(resources.tokenSound);
+      window.tokenS.volume = 0.4;
       winS = PIXI.sound.Sound.from(resources.winSound);
       winS.volume = 0.35;
 
@@ -157,6 +163,7 @@ function loadOnce() {
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
+      backgroundFront.zIndex = 2;
       backgroundFront.tileScale.set(SCALE * .25);
       backgroundFront.y = HEIGHT - SCALE * 50.25;
       backgroundBack.tileScale.set(SCALE * .25);
@@ -172,12 +179,12 @@ function loadOnce() {
       muteButton.scale.set(SCALE);
       muteButton.interactive = true;
       muteButton.buttonMode = true;
+      muteButton.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
       container.addChild(muteButton);
 
       //create player object - handles jumping + ducking
       player = new Player(app, jumpS);
       player.currSprite.stop();
-
 
       //restart functionality stuff
       restartButton = new PIXI.Sprite(resources.buttonSheet.spritesheet.textures["BlueRestart.png"]);
@@ -188,6 +195,7 @@ function loadOnce() {
       restartButton.on('pointerdown', onClickRestart);
       restartButton.on('pointerover', function () { restartButton.tint = 0xF0F0F0; });
       restartButton.on('pointerout', function () { restartButton.tint = 0xFFFFFF; });
+      restartButton.zIndex = 15;
 
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
       endHouse = new PIXI.Sprite(endHouseText);
@@ -211,7 +219,8 @@ function reload() {
   app.loader
     .load((loader, resources) => {
       //create our spawner - handles obstacles + tokens
-      spawner = new Spawner(app);
+      spawner = new Spawner(app, player);
+      window.houseGen = new HouseGen(app);
     });
 
   speedInterval = setInterval(increaseSpeedScale, 20000);
@@ -230,7 +239,7 @@ function gameLoop() {
 
     if (focus && visible) {
       if (firstLoop) {
-        timeOffset = performance.now();
+        window.timeOffset = performance.now();
         container.addChild(scoreText);
         firstLoop = false;
       }
@@ -244,40 +253,11 @@ function gameLoop() {
         player.updateDuck();
       }
 
-      //we should try to move this into like a spawner.moveSprites() function or something
-      for (var i = 0; i < spawner.obstacles.length; i++) {
-        const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-        spawner.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
-        spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
-
-        //check collision
-        if (checkCollision(player.currSprite, spawner.obstacles[i])) {
-          socials.renderTwt();
-          lose = true;
-          endGame();
-        }
-
-        //remove box if it's offscreen
-        if (xBox === 0) {
-          container.removeChild(spawner.obstacles[i]);
-          spawner.obstacles.shift();
-        }
-      }
-      for (var i = 0; i < spawner.tokens.length; i++) {
-        const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-        spawner.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
-        spawner.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
-
-        if (checkCollision(player.currSprite, spawner.tokens[i]))
-          collectToken(i);
-
-        if (xBox === 0) {
-          spawner.tokens.shift();
-        }
-      }
+      spawner.moveSprites();
+      houseGen.moveSprites();
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
+      if ((performance.now() - timeOffset) > winTime && !winTriggered && !gameOver) {
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
@@ -286,7 +266,6 @@ function gameLoop() {
         winTimeout = setTimeout(endGame, 3000);
         slowTimout = setInterval(slowMovement, 700);
       }
-
     }
   } else if (gameOver && player && player.needsFall) {
     endGameFall();
@@ -307,22 +286,20 @@ function displayScore() {
   let roundedScore = Math.round(score);
   scoreText.text = roundedScore;
   window.SCORE = roundedScore;
-
-  // app.stage.addChild(scoreText);
-
   displayHighScore();
 }
 
 //display the highest score
 function displayHighScore() {
   if (highscore > 0) {
+    if(!container.children.includes(highscoreText))
+      container.addChild(highscoreText);
     highscoreText.text = 'HI ' + Math.round(highscore);
-    container.addChild(highscoreText);
   }
 }
 
 //collision
-function checkCollision(a, b) {
+window.checkCollision = function (a, b) {
   const aBox = a.hitArea;
   const bBox = b.hitArea;
 
@@ -336,13 +313,13 @@ function checkCollision(a, b) {
   let obsBottom = bBox.y + bBox.height;
   let obsTop = bBox.y;
 
-  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom))
+  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom) && !win)
     return true;
   else
     return false;
 }
 
-function endGame() {
+window.endGame = function () {
   //call whatever clean up is needed, trigger popups, etc..
   if (lose && winTriggered) {
     winTriggered = false;
@@ -411,6 +388,7 @@ function onClickRestart() {
   startGame();
 }
 
+
 function onClickMute() {
   touchDisable = true;
   window.mute = !window.mute;
@@ -420,13 +398,6 @@ function onClickMute() {
 
 function onReleaseMute() {
   touchDisable = false;
-}
-
-function collectToken(index) {
-  //whatever score stuff has to happen here, noises, etc
-  spawner.collectToken(index);
-  tokenS.play();
-  score += 25;
 }
 
 function cleanUp() {
@@ -459,6 +430,12 @@ function cleanUp() {
   for (var i = 0; i < spawner.obstacles.length; i++) {
     container.removeChild(spawner.obstacles[i]);
   }
+
+  // Clean up houses too
+  for (var i = 0; i < houseGen.houses.length; i++) {
+    container.removeChild(houseGen.houses[i]);
+  }
+  houseGen.houses.shift();
 
   // Remove tokens
   for (var i = 0; i < spawner.tokens.length; i++) {
@@ -607,16 +584,19 @@ document.addEventListener('visibilitychange', () => {
     // console.log("hidden!");
     visible = false;
     spawner.loseFocus();
+    houseGen.loseFocus();
   }
   else if (document.visibilityState === 'visible') {
     visible = true;
     spawner.gainFocus();
+    houseGen.gainFocus();
   }
 });
 
 function checkFocus() {
   if (document.hasFocus()) {
     spawner.gainFocus();
+    houseGen.gainFocus();
     focus = true;
     player.running.play();
 
@@ -629,6 +609,7 @@ function checkFocus() {
 
   } else if (!document.hasFocus()) {
     spawner.loseFocus();
+    houseGen.loseFocus();
     focus = false;
 
     window.inputs.duck = false;
