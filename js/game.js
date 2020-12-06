@@ -477,7 +477,7 @@ window.addEventListener("keyup", keysUp);
 function keysDown(e) {
   if (e.key == "ArrowUp" || e.key == " ") {
     window.inputs.jump = true;
-    if (!started && firstLoad)
+    if (!started && firstLoad && windows.removedInstruct)
       startGame();
 
     if (gameOver) {
@@ -529,7 +529,7 @@ function touchStart(e) {
   if (pos.y < (2 * container.height / 3)) {
     inputs.jump = true;
 
-    if (!started && firstLoad)
+    if (!started && firstLoad && removedInstruct)
       startGame();
   }
   // Bottom 1/3 of the canvas will call the duck function
