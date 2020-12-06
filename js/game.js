@@ -12,7 +12,7 @@
 
 import Spawner from "./spawner.js"
 import Player from "./player.js"
-import Window from "./windows.js"
+import Windows from "./windows.js"
 import Socials from "./socials.js"
 
 window.RESOLUTION = 1;
@@ -23,7 +23,7 @@ const app = new PIXI.Application({
   width: canvas.getBoundingClientRect().width, height: canvas.getBoundingClientRect().width / 4, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1, view: canvas,
 });
 canvas.style.zIndex = "-1";
-document.body.appendChild(app.view);
+
 PIXI.sound.context.paused = true;
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
@@ -33,14 +33,19 @@ window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
 window.SCALE = HEIGHT / 225; // Scale used for compatibility with old code. Originally, we hard coded values with a screen size of 900x225
 window.RELSCALE = HEIGHT / 225; // Scale relative to original scale.  Other scale is only calculated at start
+window.SCORE = 0;
+window.FPSSCALE;
 
 window.container = new PIXI.Container();
 app.stage.addChild(container);
 container.width = app.screen.width;
 container.height = app.screen.height;
 container.interactive = true;
+container.sortableChildren = true;
 
-//app.ticker.add(gameLoop);
+app.ticker.add(gameLoop);
+app.ticker.minFPS = 30;
+// app.ticker.maxFPS = 30;
 
 // Basic game variables
 
@@ -58,7 +63,6 @@ let spawner;
 let player;
 let windows;
 let socials;
-// let background;
 let backgroundFront, backgroundBack;
 window.groundLevel = HEIGHT * .9;
 
@@ -73,7 +77,6 @@ let winTriggered = false;
 let winTimeout;
 let timeOffset;
 let firstLoop = true;
-let endMessage;
 let touchDisable = false;
 
 window.inputs = {
@@ -106,7 +109,7 @@ let started = false;
 let firstLoad = true;
 let spawnerInterval;
 let speedInterval;
-let gameInterval;
+// let gameInterval;
 let timeout = 0;
 let winTimeoutTime = 0;
 let slowTimout;
@@ -197,9 +200,6 @@ function loadOnce(){
     
       container.addChild(endHouse);
 
-      endMessage = new PIXI.Text('G A M E  O V E R', style);
-      endMessage.resolution = 1.5;
-
       socials = new Socials(app);
     });
 
@@ -230,14 +230,15 @@ function reload() {
     });
 
   speedInterval = setInterval(increaseSpeedScale, 20000);
-  gameInterval = setInterval(gameLoop, 7);
+  // gameInterval = setInterval(gameLoop, 7);
 }
 
 // === Main game loop === //
 function gameLoop() {
+  window.FPSSCALE = 144 / app.ticker.FPS;
   //must check &&player first or else itll be checking for loaded on a null object
   if (!gameOver && player && player.loaded && started) {
-    if(!windows.removedInstruct){
+    if (!windows.removedInstruct) {
       windows.removeInstruct();
     }
     checkFocus();
@@ -261,12 +262,14 @@ function gameLoop() {
       //we should try to move this into like a spawner.moveSprites() function or something
       for (var i = 0; i < spawner.obstacles.length; i++) {
         const xBox = spawner.obstacles[i].getBounds().x + spawner.obstacles[i].getBounds().width;
-        spawner.obstacles[i].x -= SCALE * 3.5 * speedScale;
-        spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale;
+        spawner.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
+        spawner.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
         //check collision
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
           lose = true;
+          socials.renderTwt();
+          windows.setUpLose(score);
           endGame();
         }
 
@@ -278,8 +281,8 @@ function gameLoop() {
       }
       for (var i = 0; i < spawner.tokens.length; i++) {
         const xBox = spawner.tokens[i].getBounds().x + spawner.tokens[i].getBounds().width;
-        spawner.tokens[i].x -= SCALE * 3.5 * speedScale;
-        spawner.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale;
+        spawner.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
+        spawner.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
         if (checkCollision(player.currSprite, spawner.tokens[i]))
           collectToken(i);
@@ -369,27 +372,24 @@ function endGame() {
     displayHighScore();
   }
 
-  if (win) endMessage.text = 'W I N N E R';
-  endMessage.anchor.set(.5, 0);
-  endMessage.x = WIDTH / 2;
-  endMessage.y = HEIGHT / 4;
-
   restartButton.x = WIDTH / 2;
-  restartButton.y = HEIGHT / 1.75;
+  restartButton.y = HEIGHT / 1.65;
   restartButton.scale.set(SCALE * 0.3);
 
   if (lose) {
     if (!mute) {
       deathS.play();
     }
-    container.addChild(endMessage);
-    container.addChild(restartButton);
+    //this is on a timeout so that the twitter button has enough time to render
+    setTimeout(() => {
+      container.addChild(restartButton);
+      socials.endGame();
+    }, 60);
   } else if (win) {
     setTimeout(() => {
       if (!mute) {
         winS.play();
       }
-      container.addChild(endMessage);
       container.addChild(restartButton);
     }, 950);
   }
@@ -452,15 +452,21 @@ function cleanUp() {
   player.speedY = 0;
   winTriggered = false;
   firstLoop = true;
-  clearInterval(gameInterval);
+  // clearInterval(gameInterval);
   endHouse.x = WIDTH * 1.5;
-  socials.resetGame();
+  windows.removeLose();
+  socials.restartGame();
 
   // Remove obstacles
   for (var i = 0; i < spawner.obstacles.length; i++){
     container.removeChild(spawner.obstacles[i]);
   }
-  container.removeChild(endMessage);
+
+  // Remove tokens
+  for (var i = 0; i < spawner.tokens.length; i++) {
+    container.removeChild(spawner.tokens[i]);
+  }
+
   container.removeChild(restartButton);
 }
 
@@ -655,7 +661,14 @@ function resize(){
   
   scoreText.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
-  endMessage.resolution = RELSCALE * 1.5;
+  if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
+  else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
+  windows.topMessageInstruct.resolution = RELSCALE * 1.5;
+  windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
+  if(gameOver){
+    windows.scoreMessage.resolution = RELSCALE * 1.5;
+    windows.punAtLose.resolution = RELSCALE * 1.5;
+  } 
 }
 
 function preventDefaultForScrollKeys(e) {
@@ -678,9 +691,9 @@ function moveBackground() {
 
   //TO TEST WIN FUNCTIONALITY - at the end of the 5 minutes, speed scale will have reached 1.3, so uncomment this out!
   //speedScale = 1.3;
-  backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale;
-  backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale;
-  if (winTriggered && performance.now() >= (winTimeoutTime + 1600)) endHouse.x -= SCALE * 3.5 * speedScale;
+  backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale * FPSSCALE;
+  backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale * FPSSCALE;
+  if (winTriggered && performance.now() >= (winTimeoutTime + 1600)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 }
 
 function endGameFall() {
