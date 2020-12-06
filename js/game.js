@@ -47,7 +47,7 @@ app.ticker.minFPS = 30;
 
 // Basic game variables
 
-window.winTime = 300000;
+window.winTime = 3000;
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
@@ -195,6 +195,7 @@ function loadOnce() {
       restartButton.on('pointerdown', onClickRestart);
       restartButton.on('pointerover', function () { restartButton.tint = 0xF0F0F0; });
       restartButton.on('pointerout', function () { restartButton.tint = 0xFFFFFF; });
+      restartButton.zIndex = 15;
 
       let endHouseText = PIXI.Texture.from("../sprites/endHouse.png");
       endHouse = new PIXI.Sprite(endHouseText);
@@ -256,7 +257,7 @@ function gameLoop() {
       houseGen.moveSprites();
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > winTime && !winTriggered && !gameOver) {//300000
+      if ((performance.now() - timeOffset) > winTime && !winTriggered && !gameOver) {
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
@@ -312,7 +313,7 @@ window.checkCollision = function (a, b) {
   let obsBottom = bBox.y + bBox.height;
   let obsTop = bBox.y;
 
-  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom))
+  if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom) && !win)
     return true;
   else
     return false;

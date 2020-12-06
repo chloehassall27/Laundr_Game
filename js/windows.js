@@ -31,7 +31,13 @@ export default class Windows {
     this.scoreMessage = new PIXI.Text(0, this.scoreStyle);
     this.scoreMessage.anchor.set(0.5);
     this.scoreMessage.x = WIDTH / 2;
-    this.bottomMessageInstruct.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    this.scoreMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+
+    this.popUpBackground.zIndex = 10;
+    this.scoreBackgroundLose.zIndex = 10;
+    this.scoreBackgroundWin.zIndex = 10;
+    this.scoreMessage.zIndex = 10;
+    this.pun.zIndex = 10;
   }
 
   setUpCode(){
