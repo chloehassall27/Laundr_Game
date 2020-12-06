@@ -12,7 +12,7 @@ console.log("Started server on port " + port);
 http.createServer(function (req, res) {
   let url = req.url;
   if(req.url == "/"){
-    url = "/index.html";
+    url = "/Demo.htm";
   }
   fs.readFile(__dirname + url, function (err,data) {
     if (err) {
