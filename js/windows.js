@@ -50,6 +50,9 @@ export default class Windows {
     this.code.anchor.set(0.5);
     this.code.x = WIDTH / 2;
     this.code.y = HEIGHT / 1.75;
+    this.code.zIndex = 15;
+    this.code.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    
   }
 
   setUpPuns() {
@@ -262,11 +265,15 @@ export default class Windows {
     this.topMessageCoupon.anchor.set(0.5);
     this.topMessageCoupon.x = WIDTH / 2;
     this.topMessageCoupon.y = this.popUpBackground.y;
+    this.topMessageCoupon.zIndex = 15;
+    this.topMessageCoupon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     this.bottomMessageCoupon = new PIXI.Text(bottomText, this.couponInfoStyle);
     this.bottomMessageCoupon.anchor.set(0.5);
     this.bottomMessageCoupon.x = WIDTH / 2;
     this.bottomMessageCoupon.y = this.popUpBackground.y + (this.popUpBackground.y * 0.3);
+    this.bottomMessageCoupon.zIndex = 15;
+    this.bottomMessageCoupon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     container.addChild(this.popUpBackground);
     container.addChild(this.scoreBackgroundWin);
@@ -315,11 +322,15 @@ export default class Windows {
     this.titleMessage.anchor.set(0.5);
     this.titleMessage.y = HEIGHT / 1.9;
     this.titleMessage.x = WIDTH / 2.3;
+    this.titleMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    this.titleMessage.zIndex = 13;
 
     this.creditsMessage = new PIXI.Text(this.credits, this.creditsStyle);
     this.creditsMessage.anchor.set(0.5);
     this.creditsMessage.y = HEIGHT / 1.9;
     this.creditsMessage.x = WIDTH / 2;
+    this.creditsMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    this.titleMessage.zIndex = 13;
 
     container.addChild(this.popUpBackground);
     container.addChild(this.titleMessage);
