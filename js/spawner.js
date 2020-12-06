@@ -195,9 +195,9 @@ export default class Spawner {
         //randomly pick if the irons will spawn in a V formation or not
         const pattern = Math.floor(Math.random() * 2);
         if (pattern === 0) { //Irons spawn in pattern
-            this.buildObstacles(100 * SCALE, window.groundLevel / 2 - HEIGHT * 0.05, "ironSprite");
             this.buildObstacles(0 * SCALE, window.groundLevel / 2 + HEIGHT * 0.1, "ironSprite");
             this.buildObstacles(85 * SCALE, window.groundLevel / 2 + HEIGHT * 0.2, "ironSprite");
+            this.buildObstacles(100 * SCALE, window.groundLevel / 2 - HEIGHT * 0.05, "ironSprite");
         }
         else { //Irons spawn between range that can be jumped over or ducked under
             let yPos = Math.floor(Math.random() * this.ironRandScale) + this.ironRandAdd;

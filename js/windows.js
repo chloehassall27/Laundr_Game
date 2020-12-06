@@ -17,6 +17,7 @@ export default class Windows {
     this.scoreMessage.anchor.set(0.5);
     this.scoreMessage.x = WIDTH / 2;
     this.scoreMessage.y = this.scoreBackgroundLose.y;
+    this.scoreMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
   }
 
   setUpPuns() {
@@ -35,6 +36,7 @@ export default class Windows {
       this.punAtLose.anchor.set(0.5);
       this.punAtLose.x = WIDTH / 2;
       this.punAtLose.y = HEIGHT / 2.5;
+      this.punAtLose.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
   }
 
   setUpSprites() {
@@ -69,12 +71,14 @@ export default class Windows {
     this.topMessageInstruct.x = WIDTH / 2;
     this.topMessageInstruct.y = this.popUpBackground.y - (this.popUpBackground.y * 0.25);
     this.topMessageInstruct.zIndex = 11;
+    this.topMessageInstruct.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     this.bottomMessageInstruct = new PIXI.Text(bottomText, this.style);
     this.bottomMessageInstruct.anchor.set(0.5);
     this.bottomMessageInstruct.x = WIDTH / 2;
     this.bottomMessageInstruct.y = this.popUpBackground.y + (this.popUpBackground.y * 0.25);
     this.bottomMessageInstruct.zIndex = 11;
+    this.bottomMessageInstruct.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     this.setupXButton();
 

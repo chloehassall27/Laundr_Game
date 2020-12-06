@@ -91,14 +91,18 @@ let endHouse;
 let restartButton;
 let muteButton;
 window.score = 0;
+
+
 let scoreText = new PIXI.Text(score, scoreStyle);
 scoreText.x = WIDTH / 1.07;
 scoreText.resolution = 1.5;
+scoreText.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
 let highscore = 0;
 let highscoreText = new PIXI.Text(highscore, highscoreStyle);
 highscoreText.x = WIDTH / 1.21;
 highscoreText.resolution = 1.5;
+highscoreText.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
 //noises
 let deathS;
@@ -173,6 +177,7 @@ function loadOnce() {
       muteButton.scale.set(SCALE);
       muteButton.interactive = true;
       muteButton.buttonMode = true;
+      muteButton.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
       container.addChild(muteButton);
 
       //create player object - handles jumping + ducking
@@ -274,9 +279,6 @@ function displayScore() {
   let roundedScore = Math.round(score);
   scoreText.text = roundedScore;
   window.SCORE = roundedScore;
-
-  // app.stage.addChild(scoreText);
-
   displayHighScore();
 }
 
