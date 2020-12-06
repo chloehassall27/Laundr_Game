@@ -229,7 +229,7 @@ export default class Windows {
     let bottomText = 'for 15% off your next order!';
 
     this.scoreMessage.text = Math.round(this.score);
-    this.scoreMessage.y = this.scoreBackgroundWin.y / 2.35;
+    this.scoreMessage.y = this.scoreBackgroundWin.y / 2.5;
 
     this.rand = Math.floor(Math.random() * Math.floor(this.winPuns.length));
     this.punSize;
