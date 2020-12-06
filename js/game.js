@@ -299,11 +299,12 @@ function displayScore() {
 //display the highest score
 function displayHighScore() {
   if (highscore > 0) {
-    if (!container.children.includes(highscoreText))
+    if(!container.children.includes(highscoreText))
       container.addChild(highscoreText);
     highscoreText.text = 'HI ' + Math.round(highscore);
   }
 }
+
 
 //collision function largely from Dower Chin's Pixi.js Video Tutorials - https://www.youtube.com/user/dowerchin 
 window.checkCollision = function (a, b) {

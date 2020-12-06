@@ -16,6 +16,7 @@ export default class Spawner {
         this.tokens = [];
         this.tokenAmt = 0;
 
+
         this.player = player;
         this.gameOver = false;
         this.focus = true;
