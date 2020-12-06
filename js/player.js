@@ -2,9 +2,9 @@ export default class Player {
     // groundLevel;
 
     // app;
-    
 
-    
+
+
 
     // currSprite;
     // running;
@@ -12,7 +12,7 @@ export default class Player {
     // jumpStatic;
     // ducking;
     // falling;
-    
+
     // jumpS;
 
     constructor(app, jumpS) {
@@ -27,7 +27,7 @@ export default class Player {
         this.fallComplete = false;
 
         this.jumpS = jumpS;
-        
+
         //set up all the sprites
         this.createSprites();
     }
@@ -41,22 +41,14 @@ export default class Player {
             // this.switchSprite(this.jumping);
         }
 
-        // If player is below ground, set them on the ground and reset speed and animation
-        else if (this.currSprite.y > this.groundLevel) {
-            this.speedY = 0;
-            this.currSprite.y = this.groundLevel;
-            this.currSprite.hitArea.y = this.groundLevel;
-            this.switchSprite(this.running);
-        }
-
         // If player is in air, add gravity
         else if (this.currSprite.y < this.groundLevel) {
-            this.speedY -= .12;
+            this.speedY -= .12 * FPSSCALE;
         }
 
         // If player is rising and holding jump, keep them up longer
         if (this.speedY > 0 && window.inputs.jump) {
-            this.speedY += .06;
+            this.speedY += .06 * FPSSCALE;
         }
 
         // Once the jump animation is completed, switch to static animation
@@ -64,8 +56,15 @@ export default class Player {
         //     this.switchSprite(this.jumpStatic);
         // }
 
-        this.currSprite.y -= SCALE * this.speedY;
-        this.currSprite.hitArea.y -= SCALE * this.speedY;
+        this.currSprite.y -= SCALE * this.speedY * FPSSCALE;
+        this.currSprite.hitArea.y = this.currSprite.y;
+
+        if (this.currSprite.y > this.groundLevel) {
+            this.speedY = 0;
+            this.currSprite.y = this.groundLevel;
+            this.currSprite.hitArea.y = this.groundLevel;
+            this.switchSprite(this.running);
+        }
     }
 
     updateDuck() {
@@ -80,22 +79,27 @@ export default class Player {
         }
 
         // End of duck
-        else if(this.currSprite === this.ducking){
+        else if (this.currSprite === this.ducking) {
             this.switchSprite(this.running);
         }
     }
 
     reset() {
         this.currSprite.x = WIDTH * 0.22;
+        this.currSprite.y = HEIGHT - (HEIGHT * .1);
         this.switchSprite(this.running);
         this.currSprite.x = WIDTH * 0.22;
-        this.currSprite.hitArea.y = this.currSprite.y;
+        this.currSprite.y = HEIGHT - (HEIGHT * .1);
+        this.currSprite.hitArea.y = WIDTH * 0.22;
     }
 
     switchSprite(sprite) {
         // Only switch sprite if necesary
         if (this.currSprite !== sprite) {
             let y = this.currSprite.y;
+            if (sprite === this.falling) y += WIDTH * 0.0016;
+            else if (this.currSprite === this.falling) y -= WIDTH * 0.0016;
+
             container.removeChild(this.currSprite);
             this.currSprite = sprite;
             this.currSprite.hitArea = sprite.hitArea;
@@ -133,10 +137,10 @@ export default class Player {
     }
 
     endGameFall() {
-        if (this.currSprite.y < this.groundLevel) {
+        if (this.currSprite.y < this.groundLevel + WIDTH * 0.0016) {
             this.currSprite.y += SCALE * 4;
         } else {
-            this.currSprite.y = this.groundLevel;
+            this.currSprite.y = this.groundLevel + WIDTH * 0.0016;
             this.fallComplete = true;
         }
     }
@@ -145,18 +149,23 @@ export default class Player {
         //only call this the one time in the construtor!!
         let height = SCALE / 1.7;
 
-        let spriteWidth = -(WIDTH - (WIDTH * 0.22)) / 9.3;
-        let spriteHeight = -(WIDTH - (WIDTH * 0.22)) / 10;
+        let spriteWidth = -(WIDTH - (WIDTH * 0.22)) / 9.8;
+        let spriteHeight = -(WIDTH - (WIDTH * 0.25)) / 10.5;
+        let spriteSmallHeight = -(WIDTH - (WIDTH * 0.35)) / 11.5;
+        let widthOffset = WIDTH * 0.005;
+        let heightOffset = spriteHeight - spriteSmallHeight;
 
         this.running = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["running_WithSock"]);
         this.running.scale.set(height);
         this.running.interactive = true;
         this.running.x = WIDTH * 0.22;
         this.running.y = HEIGHT - (HEIGHT * .1);
-        this.running.hitArea = new PIXI.Rectangle(this.running.x, this.running.y, spriteWidth, spriteHeight);
+        this.running.hitArea = new PIXI.Rectangle(this.running.x - widthOffset, this.running.y + heightOffset, spriteWidth, spriteSmallHeight);
         //console.log(this.running.hitArea.width);
         this.running.animationSpeed = .15;
         this.running.play();
+        this.running.zIndex = 3;
+
 
         this.jumping = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["jumping_WithSock"]);
         this.jumping.scale.set(height);
@@ -166,31 +175,35 @@ export default class Player {
         this.jumping.hitArea = new PIXI.Rectangle(this.jumping.x, this.jumping.y, spriteWidth, spriteHeight);
         this.jumping.animationSpeed = .15;
         this.jumping.play();
+        this.jumping.zIndex = 3;
 
         this.jumpStatic = new PIXI.Sprite(this.app.loader.resources.charaSheet.spritesheet.textures["jumping_WithSock_1.png"]);
         this.jumpStatic.scale.set(height);
         this.jumpStatic.interactive = true;
         this.jumpStatic.x = WIDTH * 0.22;
         this.jumpStatic.y = HEIGHT - (HEIGHT * .1);
-        this.jumpStatic.hitArea = new PIXI.Rectangle(this.jumpStatic.x, this.jumpStatic.y, spriteWidth, spriteHeight);
+        this.jumpStatic.hitArea = new PIXI.Rectangle(this.jumpStatic.x - widthOffset, this.jumpStatic.y + heightOffset, spriteWidth, spriteHeight);
+        this.jumpStatic.zIndex = 3;
 
         this.ducking = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["duck_WithSock"]);
         this.ducking.scale.set(height);
         this.ducking.interactive = true;
         this.ducking.x = WIDTH * 0.22;
         this.ducking.y = HEIGHT - (HEIGHT * .1);
-        this.ducking.hitArea = new PIXI.Rectangle(this.ducking.x, this.ducking.y, spriteWidth, spriteHeight * 0.65);
+        this.ducking.hitArea = new PIXI.Rectangle(this.ducking.x, this.ducking.y, spriteWidth, spriteHeight * 0.68);
         this.ducking.animationSpeed = .15;
         this.ducking.play();
+        this.ducking.zIndex = 3;
 
         this.falling = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["falling_WithSock"]);
         this.falling.scale.set(height);
         this.falling.interactive = true;
         this.falling.x = WIDTH * 0.22;
-        this.falling.y = HEIGHT - (HEIGHT * .1);
+        this.falling.y = HEIGHT - (HEIGHT * .1) + WIDTH * 0.0016;
         this.falling.hitArea = new PIXI.Rectangle(this.falling.x, this.falling.y, spriteWidth, spriteHeight);
         this.falling.animationSpeed = .25;
         this.falling.loop = false;
+        this.falling.zIndex = 3;
 
         this.currSprite = this.ducking;
         this.currSprite.hitArea = this.ducking.hitArea;
