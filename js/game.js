@@ -252,9 +252,9 @@ function gameLoop() {
 
         //check collision
         if (checkCollision(player.currSprite, spawner.obstacles[i])) {
-          /*socials.renderTwt();
+          socials.renderTwt();
           lose = true;
-          endGame();*/
+          endGame();
         }
 
         //remove box if it's offscreen
@@ -277,7 +277,7 @@ function gameLoop() {
       }
 
       //check if it's time to win!
-      if ((performance.now() - timeOffset) > 50 && !winTriggered && !gameOver) {//300000
+      if ((performance.now() - timeOffset) > 300000 && !winTriggered && !gameOver) {//300000
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
