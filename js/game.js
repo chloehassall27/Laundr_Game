@@ -1,9 +1,15 @@
 /*
+ References (outside of API/framework documentation) used while building this project include: 
+ kittykatattack's Learning Pixi tutorial - https://github.com/kittykatattack/learningPixi
+ Dower Chin's Pixi.js Video Tutorials - https://www.youtube.com/user/dowerchin 
+*/
+
+
+/*
   current bugs:
    - jiggle bug
    - mute token collect sound
    - Audio on touch devices will not play until first touch has been let go. Will be fixed by instructions requiring touch
-   - social media icons look a bit fuzzy
 */
 
 import Spawner from "./spawner.js"
@@ -299,7 +305,7 @@ function displayHighScore() {
   }
 }
 
-//collision
+//collision function largely from Dower Chin's Pixi.js Video Tutorials - https://www.youtube.com/user/dowerchin 
 window.checkCollision = function (a, b) {
   const aBox = a.hitArea;
   const bBox = b.hitArea;
