@@ -15,7 +15,10 @@ export default class Windows {
       fontFamily: 'Arial', fontSize: RELSCALE * 10, fill: '#4b4b4b'
     });
     this.creditsStyle = new PIXI.TextStyle({
-      fontFamily: 'Arial', fontSize: RELSCALE * 14, fill: '#4e4e4e'
+      fontFamily: 'Arial', fontSize: RELSCALE * 12, fill: '#4e4e4e'
+    });
+    this.titlesStyle = new PIXI.TextStyle({
+      fontFamily: 'Arial', fontSize: RELSCALE * 12, fill: '#01C9E1'
     });
 
     this.removedInstruct = false;
@@ -277,19 +280,34 @@ export default class Windows {
     this.creditsShowing = true;
     this.socials.resetGame();
 
-    this.credits = "Kyle Hassall:                 Supervisor of Suds" + '\n' +
-                   "Oliver Thomas:    Old man in a laundromat" + '\n' +
-                   "Olivia Jacques-Baker: CEO of Clean Code" + '\n' +
-                   "Simran Patel:             Director of Detergent" + '\n' +
-                   "Michael Zinn:                     Stain Generator";
+    this.titles = "Supervisor of Suds:" + '\n' + '\n' +
+                  "Old man in a laundromat:" + '\n' + '\n' +
+                  "CEO of Clean Code:" + '\n' + '\n' +
+                  "Director of Detergent:" + '\n' + '\n' +
+                  "Stain Generator:" + '\n';
+    this.credits = '\n' + 
+                   "                                          Kyle Hassall" + '\n' +
+                   '\n' + 
+                   "                                          Oliver Thomas" + '\n' +
+                   '\n' + 
+                   "                                          Olivia Jacques-Baker" + '\n' +
+                   '\n' + 
+                   "                                          Simran Patel" + '\n' +
+                   '\n' + 
+                   "                                          Michael Zinn";
 
+    this.titleMessage = new PIXI.Text(this.titles, this.titlesStyle);
+    this.titleMessage.anchor.set(0.5);
+    this.titleMessage.y = HEIGHT / 1.9;
+    this.titleMessage.x = WIDTH / 2.3;
 
     this.creditsMessage = new PIXI.Text(this.credits, this.creditsStyle);
     this.creditsMessage.anchor.set(0.5);
-    this.creditsMessage.y = HEIGHT / 2.1;
+    this.creditsMessage.y = HEIGHT / 1.9;
     this.creditsMessage.x = WIDTH / 2;
 
     container.addChild(this.popUpBackground);
+    container.addChild(this.titleMessage);
     container.addChild(this.creditsMessage);
     this.setupXButton(95, 10, "credits");
   }
@@ -298,6 +316,7 @@ export default class Windows {
     this.creditsShowing = false;
 
     container.removeChild(this.creditsBackground);
+    container.removeChild(this.titleMessage);
     container.removeChild(this.creditsMessage);
 
     this.invisDiv.style.left = "-999%";
