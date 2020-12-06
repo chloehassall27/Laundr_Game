@@ -14,7 +14,8 @@ export default class Spawner {
 
         this.obstacles = [];
         this.tokens = [];
-    
+        this.tokenAmt = 0;
+
         this.player = player;
         this.gameOver = false;
         this.focus = true;
@@ -75,21 +76,21 @@ export default class Spawner {
             const xBox = this.obstacles[i].getBounds().x + this.obstacles[i].getBounds().width;
             this.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
             this.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;;
-    
+
             //check collision
             if (checkCollision(this.player.currSprite, this.obstacles[i])) {
-              lose = true;
-              endGame();
+                // lose = true;
+                // endGame();
             }
-    
+
             //remove box if it's offscreen
             if (xBox <= 0) {
-              container.removeChild(this.obstacles[i]);
-              this.obstacles.shift();
-              i--;
+                container.removeChild(this.obstacles[i]);
+                this.obstacles.shift();
+                i--;
             }
-          }
-      
+        }
+
         for (var i = 0; i < this.tokens.length; i++) {
             const xBox = this.tokens[i].getBounds().x + this.tokens[i].getBounds().width;
             this.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
@@ -153,7 +154,7 @@ export default class Spawner {
                 this.firstSpawn = false;
             }
             //first check if it's time to spawn in a token :D
-            if (this.tokenTime) {
+            if (this.tokenTime && this.tokenAmt < 15) {
                 let rand = Math.floor(Math.random() * (10 - 5)) + 4;
                 if (!this.firstSpawn && (performance.now() - this.startTime >= 15000)) {
                     if (this.focus) this.buildToken();
@@ -161,6 +162,7 @@ export default class Spawner {
                     setTimeout(this.setTokenTimer.bind(this), this.interval * rand * 1.5);
                     clearTimeout(this.tokenTimeoutHold);
                     this.tokenTime = false;
+                    this.tokenAmt++;
                     return;
                 }
                 else {

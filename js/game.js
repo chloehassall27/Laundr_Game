@@ -47,7 +47,7 @@ app.ticker.minFPS = 30;
 
 // Basic game variables
 
-window.winTime = 3000;
+window.winTime = 300000;
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
@@ -275,15 +275,17 @@ function gameLoop() {
     player.currSprite.x += 3.5 * playerSpeedScale;
   }
 
-  if(gameOver){
+  if (gameOver) {
     creditsShowing = windows.creditsShowing;
   }
 }
 
 // Display the current score
 function displayScore() {
-  score += .01;
+  let increaseAmt = (13.0 / 900.0) * window.FPSSCALE;
+  score += increaseAmt;
   let roundedScore = Math.round(score);
+  if (roundedScore > 999) roundedScore = 999;
   scoreText.text = roundedScore;
   window.SCORE = roundedScore;
   displayHighScore();
@@ -292,7 +294,7 @@ function displayScore() {
 //display the highest score
 function displayHighScore() {
   if (highscore > 0) {
-    if(!container.children.includes(highscoreText))
+    if (!container.children.includes(highscoreText))
       container.addChild(highscoreText);
     highscoreText.text = 'HI ' + Math.round(highscore);
   }
@@ -332,10 +334,11 @@ window.endGame = function () {
   timeout = performance.now();
   clearTimeout(winTimeout);
   clearTimeout(twtTimeout);
-  
+
 
   if (score > highscore) {
     highscore = score;
+    if (highscore > 999) highscore = 999;
     displayHighScore();
   }
 
@@ -354,7 +357,7 @@ window.endGame = function () {
       windows.setUpLose();
       container.addChild(restartButton);
       //socials.endGame();
-      
+
     }, 60);
   } else if (win) {
     setTimeout(() => {
@@ -407,7 +410,7 @@ function cleanUp() {
     windows.removeCredits();
     clearInterval(slowTimout);
   }
-  if(lose) windows.removeLose();
+  if (lose) windows.removeLose();
   clearInterval(spawnerInterval);
   clearInterval(speedInterval);
   gameOver = false;
@@ -646,15 +649,15 @@ function resize() {
   //else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
   windows.topMessageInstruct.resolution = RELSCALE * 1.5;
   windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
-  if(gameOver){
+  if (gameOver) {
     windows.scoreMessage.resolution = RELSCALE * 1.5;
     windows.pun.resolution = RELSCALE * 1.5;
     windows.topMessageCoupon.resolution = RELSCALE * 1.5;
     windows.code.resolution = RELSCALE * 1.5;
     windows.bottomMessageCoupon.resolution = RELSCALE * 1.5;
-    if(creditsShowing){windows.creditsMessage.resolution = RELSCALE * 1.5;}
-    else if(!creditsShowing){windows.socialsResizing(canvas.width, gameOver);}
-  } 
+    if (creditsShowing) { windows.creditsMessage.resolution = RELSCALE * 1.5; }
+    else if (!creditsShowing) { windows.socialsResizing(canvas.width, gameOver); }
+  }
 }
 
 // === End helper functions === //
