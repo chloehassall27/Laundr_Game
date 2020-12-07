@@ -15,7 +15,7 @@ export default class Spawner {
 
         this.obstacles = [];
         this.tokens = [];
-    
+
         this.player = player;
         this.gameOver = false;
         this.focus = true;
@@ -43,7 +43,7 @@ export default class Spawner {
         if (typeof obstacle !== 'undefined' && obstacle !== undefined) {
             obstacle.anchor.set(0.5);
             obstacle.scale.set(this.obstScale);
-          
+
             //ensure irons are always rendered on top of the player
             if (spriteName == "ironSprite") obstacle.zIndex = 5;
             //the laundry sprite doesn't line up well with the washer one, so offset it a bit
@@ -77,21 +77,21 @@ export default class Spawner {
             const xBox = this.obstacles[i].getBounds().x + this.obstacles[i].getBounds().width;
             this.obstacles[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
             this.obstacles[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;;
-    
+
             //check collision
             if (checkCollision(this.player.currSprite, this.obstacles[i])) {
-              lose = true;
-              endGame();
+                lose = true;
+                endGame();
             }
-    
+
             //remove box if it's offscreen
             if (xBox <= 0) {
-              container.removeChild(this.obstacles[i]);
-              this.obstacles.shift();
-              i--;
+                container.removeChild(this.obstacles[i]);
+                this.obstacles.shift();
+                i--;
             }
-          }
-      
+        }
+
         for (var i = 0; i < this.tokens.length; i++) {
             const xBox = this.tokens[i].getBounds().x + this.tokens[i].getBounds().width;
             this.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
@@ -106,7 +106,7 @@ export default class Spawner {
                 i--;
             }
         }
-      
+
     }
 
     buildToken() {
@@ -256,7 +256,7 @@ export default class Spawner {
     }
 
     collectToken(index) {
-        tokenS.play();
+        //tokenS.play();
         score += 25;
         container.removeChild(this.tokens[index]);
         this.tokens.splice(index, 1);
