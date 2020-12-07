@@ -23,6 +23,7 @@ describe('houseGen buildHouse tests', async () => {
         container.width = app.screen.width;
         container.height = app.screen.height;
         container.interactive = true;
+        window.speedScale = 1.0;
 
         app.loader
             .add('houseSheet', "sprites/backgroundHouse.json");
@@ -41,22 +42,22 @@ describe('houseGen buildHouse tests', async () => {
     it('should build houses with valid names', async () => {
         houseGen.houses = [];
         houseGen.buildHouse("backgroundHouse0.png");
-        let test = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures["backgroundHouse0.png"]);
+        let test = new PIXI.Sprite(app.loader.resources.houseSheet.spritesheet.textures["backgroundHouse0.png"]);
         expect(houseGen.houses[0].texture).to.eql(test.texture);
 
         houseGen.houses = [];
         houseGen.buildHouse("backgroundHouse1.png");
-        let test = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures["backgroundHouse1.png"]);
+        test = new PIXI.Sprite(app.loader.resources.houseSheet.spritesheet.textures["backgroundHouse1.png"]);
         expect(houseGen.houses[0].texture).to.eql(test.texture);
 
         houseGen.houses = [];
         houseGen.buildHouse("backgroundHouse2.png");
-        let test = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures["backgroundHouse2.png"]);
+        test = new PIXI.Sprite(app.loader.resources.houseSheet.spritesheet.textures["backgroundHouse2.png"]);
         expect(houseGen.houses[0].texture).to.eql(test.texture);
 
         houseGen.houses = [];
         houseGen.buildHouse("backgroundHouse3.png");
-        let test = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures["backgroundHouse3.png"]);
+        test = new PIXI.Sprite(app.loader.resources.houseSheet.spritesheet.textures["backgroundHouse3.png"]);
         expect(houseGen.houses[0].texture).to.eql(test.texture);
 
     });
@@ -98,6 +99,7 @@ describe('houseGen moveSprites tests', async () => {
         container.width = app.screen.width;
         container.height = app.screen.height;
         container.interactive = true;
+        window.speedScale = 1.0;
 
         app.loader
             .add('houseSheet', "sprites/backgroundHouse.json");
@@ -153,6 +155,7 @@ describe('houseGen spawn tests', async () => {
         container.width = app.screen.width;
         container.height = app.screen.height;
         container.interactive = true;
+        window.speedScale = 1.0;
 
         app.loader
             .add('houseSheet', "sprites/backgroundHouse.json");
@@ -182,7 +185,10 @@ describe('houseGen spawn tests', async () => {
         houseGen.gameOver = false;
         houseGen.spawn();
 
-        expect(houseGen.houses.length).to.equal(1);
+        setTimeout(() => {
+            expect(houseGen.houses.length).to.equal(1);
+
+        }, 200);
 
     });
 
@@ -218,6 +224,7 @@ describe('houseGen chooseSprite tests', async () => {
         container.width = app.screen.width;
         container.height = app.screen.height;
         container.interactive = true;
+        window.speedScale = 1.0;
 
         app.loader
             .add('houseSheet', "sprites/backgroundHouse.json");
@@ -240,7 +247,7 @@ describe('houseGen chooseSprite tests', async () => {
 
         for (let i = 0; i < 50; i++) {
             let name = houseGen.chooseSprite();
-            if (name === "backgroundHouse0.png" || name === "backgroundHouse1.png" || name === "backgroundHouse2.png" || name === "backgroundHouse4.png") {
+            if (name === "backgroundHouse0.png" || name === "backgroundHouse1.png" || name === "backgroundHouse2.png" || name === "backgroundHouse3.png") {
                 //we good
             } else {
                 working = false;
@@ -273,6 +280,7 @@ describe('houseGen loseFocus tests', async () => {
         container.width = app.screen.width;
         container.height = app.screen.height;
         container.interactive = true;
+        window.speedScale = 1.0;
 
         app.loader
             .add('houseSheet', "sprites/backgroundHouse.json");
@@ -297,9 +305,11 @@ describe('houseGen loseFocus tests', async () => {
 
     it('should clear timeout', async () => {
         houseGen.focus = true;
+        let timeout = setTimeout(() => { console.log("boop") }, 500);
+        houseGen.timeout = setTimeout(() => { console.log("boop") }, 500);
         houseGen.loseFocus();
 
-        expect(houseGen.timeout).to.equal(null);
+        expect(houseGen.timeout).to.not.equal(timeout);
     });
 });
 
@@ -325,6 +335,7 @@ describe('houseGen gainFocus tests', async () => {
         container.width = app.screen.width;
         container.height = app.screen.height;
         container.interactive = true;
+        window.speedScale = 1.0;
 
         app.loader
             .add('houseSheet', "sprites/backgroundHouse.json");

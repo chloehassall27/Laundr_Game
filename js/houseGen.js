@@ -17,12 +17,11 @@ export default class Spawner {
     }
 
     buildHouse(spriteName) {
-        let house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[spriteName]);
-        try {
-            house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[spriteName]);
-        } catch (error) { console.log("unable to create house with name " + spriteName); }
+        let texture = this.app.loader.resources.houseSheet.spritesheet.textures[spriteName];
 
-        if (typeof house !== 'undefined' && house !== undefined) {
+        if (texture != undefined) {
+            let house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[spriteName]);
+
             house.anchor.set(0, 1);
             house.x = WIDTH;
             house.y = 4 * HEIGHT / 5;
