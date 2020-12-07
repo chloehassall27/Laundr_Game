@@ -40,12 +40,12 @@ export default class Windows {
     this.pun.zIndex = 10;
   }
 
-  setUpCode(){
+  setUpCode() {
     fetch('inputData/couponCode.txt')
       .then(response => response.text())
-      .then(data => { 
+      .then(data => {
         this.couponCode = data;
-    })
+      })
     this.code = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
     this.code.anchor.set(0.5);
     this.code.x = WIDTH / 2;
@@ -53,7 +53,7 @@ export default class Windows {
     this.code.zIndex = 15;
     this.code.resolution = 1.5 * RELSCALE;
     this.code.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-    
+
   }
 
   setUpPuns() {
@@ -68,11 +68,11 @@ export default class Windows {
       .then(data => {
         this.losePuns = data.split('\n');
       })
-      this.pun = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
-      this.pun.anchor.set(0.5);
-      this.pun.x = WIDTH / 2;
-      this.pun.y = HEIGHT / 2.5;
-      this.pun.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    this.pun = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
+    this.pun.anchor.set(0.5);
+    this.pun.x = WIDTH / 2;
+    this.pun.y = HEIGHT / 2.5;
+    this.pun.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
   }
 
   setUpSprites() {
@@ -186,15 +186,15 @@ export default class Windows {
     this.xButton.style.left = xLoc;
     this.xButton.style.transform = "translate(-50%, -50%)";
 
-    if(toRemove == "instruct"){this.xButton.onclick = this.removeInstruct.bind(this);}
-    else if(toRemove == "credits"){this.xButton.onclick = this.setUpWin.bind(this);}
+    if (toRemove == "instruct") { this.xButton.onclick = this.removeInstruct.bind(this); }
+    else if (toRemove == "credits") { this.xButton.onclick = this.setUpWin.bind(this); }
   }
 
-  getScore(score){
+  getScore(score) {
     this.score = score;
   }
 
-  getCanvasSize(canvasSize){
+  getCanvasSize(canvasSize) {
     this.canvasSize = canvasSize;
   }
 
@@ -239,7 +239,7 @@ export default class Windows {
     if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
     else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
 
-    if(this.creditsShowing) this.removeCredits();
+    if (this.creditsShowing) this.removeCredits();
 
     this.socials.endGame();
     this.invisDiv.style.left = "-999%";
@@ -296,33 +296,33 @@ export default class Windows {
     container.removeChild(this.scoreBackgroundWin);
     container.removeChild(this.scoreMessage);
     container.removeChild(this.pun);
-    if(!this.creditsShowing) this.laundrDiv.removeChild(this.creditsButton);
+    if (!this.creditsShowing) this.laundrDiv.removeChild(this.creditsButton);
     container.removeChild(this.topMessageCoupon);
     container.removeChild(this.code);
     container.removeChild(this.bottomMessageCoupon);
     this.socials.resetGame();
   }
 
-  showCredits(){
+  showCredits() {
     this.removeWin();
     this.creditsShowing = true;
     this.socials.resetGame();
 
     this.titles = "Supervisor of Suds:" + '\n' + '\n' +
-                  "Old man in a laundromat:" + '\n' + '\n' +
-                  "CEO of Clean Code:" + '\n' + '\n' +
-                  "Director of Detergent:" + '\n' + '\n' +
-                  "Stain Generator:" + '\n';
-    this.credits = '\n' + 
-                   "                                          Kyle Hassall" + '\n' +
-                   '\n' + 
-                   "                                          Oliver Thomas" + '\n' +
-                   '\n' + 
-                   "                                          Olivia Jacques-Baker" + '\n' +
-                   '\n' + 
-                   "                                          Simran Patel" + '\n' +
-                   '\n' + 
-                   "                                          Michael Zinn";
+      "Old man in a laundromat:" + '\n' + '\n' +
+      "CEO of Clean Code:" + '\n' + '\n' +
+      "Director of Detergent:" + '\n' + '\n' +
+      "Stain Generator:" + '\n';
+    this.credits = '\n' +
+      "                                          Kyle Hassall" + '\n' +
+      '\n' +
+      "                                          Oliver Thomas" + '\n' +
+      '\n' +
+      "                                          Olivia Jacques-Baker" + '\n' +
+      '\n' +
+      "                                          Simran Patel" + '\n' +
+      '\n' +
+      "                                          Michael Zinn";
 
     this.titleMessage = new PIXI.Text(this.titles, this.titlesStyle);
     this.titleMessage.anchor.set(0.5);
@@ -346,7 +346,7 @@ export default class Windows {
     this.setupXButton(95, 10, "credits");
   }
 
-  removeCredits(){
+  removeCredits() {
     this.creditsShowing = false;
 
     container.removeChild(this.creditsBackground);
@@ -356,9 +356,9 @@ export default class Windows {
     this.invisDiv.style.left = "-999%";
   }
 
-  socialsResizing(gameOver){
-    if (this.canvasSize < 675 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
-    else if (this.canvasSize >= 675 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
+  socialsResizing(gameOver) {
+    if (this.canvasSize < 745 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
+    else if (this.canvasSize >= 745 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
   }
 
 }
