@@ -658,20 +658,14 @@ function resize() {
   scoreText.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
 
-  windows.getCanvasSize(canvas.width);
-  //if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
-  //else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
+  if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
+  else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
   windows.topMessageInstruct.resolution = RELSCALE * 1.5;
   windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
-  if (gameOver) {
+  if(gameOver){
     windows.scoreMessage.resolution = RELSCALE * 1.5;
-    windows.pun.resolution = RELSCALE * 1.5;
-    windows.topMessageCoupon.resolution = RELSCALE * 1.5;
-    windows.code.resolution = RELSCALE * 1.5;
-    windows.bottomMessageCoupon.resolution = RELSCALE * 1.5;
-    if (creditsShowing) { windows.creditsMessage.resolution = RELSCALE * 1.5; }
-    else if (!creditsShowing) { windows.socialsResizing(canvas.width, gameOver); }
-  }
+    windows.punAtLose.resolution = RELSCALE * 1.5;
+  } 
 }
 
 // === End helper functions === //
