@@ -50,7 +50,7 @@ app.ticker.minFPS = 30;
 
 // Basic game variables
 
-window.winTime = 300;
+window.winTime = 300000; //300000
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
