@@ -660,8 +660,7 @@ function resize() {
 
   if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
   else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
-  windows.topMessageInstruct.resolution = RELSCALE * 1.5;
-  windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
+  windows.instructMessage.resolution = RELSCALE * 1.5;
   if(gameOver){
     windows.scoreMessage.resolution = RELSCALE * 1.5;
     windows.punAtLose.resolution = RELSCALE * 1.5;
