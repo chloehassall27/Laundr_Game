@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js';
 import Spawner from '../js/spawner.js';
+import Player from '../js/player.js';
+
 
 describe('spawner buildObstacles tests', async () => {
     let spawner;
@@ -94,6 +96,118 @@ describe('spawner buildObstacles tests', async () => {
 
         expect(spawner.obstacles[0].hitArea).not.be.equal(null);
     });
+});
+
+describe('spawner moveSprites tests', async () => {
+    let spawner;
+    let app;
+    let player;
+
+    before((done) => {
+        app = new PIXI.Application({
+            width: 900, height: 225, backgroundColor: 0xF9F9F9, resolution: window.devicePixelRatio || 1, preserveDrawingBuffer: true
+        });
+
+        window.HEIGHT = app.screen.height;
+        window.WIDTH = app.screen.width;
+        window.SCALE = HEIGHT / 225;
+        window.RELSCALE = HEIGHT / 225;
+        window.SCORE = 0;
+        window.FPSSCALE = 144 / app.ticker.FPS;
+        window.PIXI = PIXI;
+        window.speedScale = 1.0;
+
+        window.container = new PIXI.Container();
+        app.stage.addChild(container);
+        container.width = app.screen.width;
+        container.height = app.screen.height;
+        container.interactive = true;
+        window.score = 0;
+
+        window.endGame = function () { console.log(":)") };
+
+        window.checkCollision = function (a, b) {
+            const aBox = a.hitArea;
+            const bBox = b.hitArea;
+
+            let playerRight = aBox.x;
+            let playerLeft = aBox.x + aBox.width;
+            let playerBottom = aBox.y;
+            let playerTop = aBox.y + aBox.height;
+
+            let obsLeft = bBox.x;
+            let obsRight = bBox.x + bBox.width;
+            let obsBottom = bBox.y + bBox.height;
+            let obsTop = bBox.y;
+
+            if ((playerRight > obsLeft) && (playerLeft < obsRight) && (playerBottom > obsTop) && (playerTop < obsBottom) && !win)
+                return true;
+            else
+                return false;
+        }
+
+        let holder = document.createElement('div');
+        let newScript = document.createElement("script");
+        newScript.src = "/node_modules/pixi-sound/dist/pixi-sound.js";
+        holder.appendChild(newScript);
+        document.body.appendChild(holder);
+
+        app.loader
+            .add('tokenSound', "sounds/jelly2.wav")
+            .add('obSheet', "sprites/obstacleSprites.json")
+            .add('charaSheet', "sprites/charaSpriteSheet.json")
+            .add('jumpSound', "sounds/jump.wav")
+            .add('tokenSheet', "sprites/LaundrBombSprite.json");
+
+        app.loader
+            .load((loader, resources) => {
+                //window.tokenS = PIXI.sound.Sound.from(resources.tokenSound);
+                let jumpS = PIXI.sound.Sound.from(resources.jumpSound);
+                jumpS.volume = 0;
+                player = new Player(app, jumpS);
+                spawner = new Spawner(app, player);
+
+            });
+
+        setTimeout(() => {
+            done();
+        }, 300);
+    });
+
+
+    it('should move both sprites and hitareas left', async () => {
+        spawner.obstacles = [];
+        spawner.tokens = [];
+        spawner.buildToken();
+        spawner.spawn();
+        let tokenX = spawner.tokens[0].x;
+        let tokenXH = spawner.tokens[0].hitArea.x;
+        let obsX = spawner.obstacles[0].x;
+        let obsXH = spawner.obstacles[0].hitArea.x;
+
+        spawner.moveSprites();
+
+        expect(spawner.tokens[0].x).to.be.below(tokenX);
+        expect(spawner.obstacles[0].x).to.be.below(obsX);
+        expect(spawner.tokens[0].hitArea.x).to.be.below(tokenXH);
+        expect(spawner.obstacles[0].hitArea.x).to.be.below(obsXH);
+
+    });
+
+    it('should end game when obstacle-player collision', async () => {
+        spawner.obstacles = [];
+        spawner.tokens = [];
+        window.lose = false;
+        window.win = false;
+        spawner.spawn();
+        spawner.obstacles[0].hitArea.x = spawner.player.currSprite.hitArea.x;
+
+        spawner.moveSprites();
+
+        expect(window.lose).to.equal(true);
+
+    });
+
 });
 
 describe('spawner buildToken tests', async () => {
