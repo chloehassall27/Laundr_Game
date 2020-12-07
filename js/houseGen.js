@@ -1,4 +1,4 @@
-export default class Spawner { 
+export default class Spawner {
     constructor(app) {
         this.app = app;
         this.spawn();
@@ -13,21 +13,25 @@ export default class Spawner {
 
         //Spawn one house on screen 
         this.buildHouse(this.chooseSprite());
-        this.houses[0].x = Math.random() * 4 *WIDTH/5;
+        this.houses[0].x = Math.random() * 4 * WIDTH / 5;
     }
 
     buildHouse(spriteName) {
-        var house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[spriteName]);
+        let house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[spriteName]);
+        try {
+            house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[spriteName]);
+        } catch (error) { console.log("unable to create house with name " + spriteName); }
 
-        house.anchor.set(0, 1);
-        house.x = WIDTH;
-        house.y = 4 * HEIGHT / 5;
-        house.scale.set(1.9 * SCALE);
-        house.zIndex = 0;
-        
-        container.addChild(house);
-        this.houses.push(house);
+        if (typeof house !== 'undefined' && house !== undefined) {
+            house.anchor.set(0, 1);
+            house.x = WIDTH;
+            house.y = 4 * HEIGHT / 5;
+            house.scale.set(1.9 * SCALE);
+            house.zIndex = 0;
 
+            container.addChild(house);
+            this.houses.push(house);
+        }
     }
 
     moveSprites() {
@@ -36,11 +40,11 @@ export default class Spawner {
             this.houses[i].x -= SCALE * 1.28 * speedScale * FPSSCALE;
 
             if (xBox <= 0) {
-              container.removeChild(this.houses[i]);
-              this.houses.splice(i, 1);
-              i--;
+                container.removeChild(this.houses[i]);
+                this.houses.splice(i, 1);
+                i--;
             }
-          }
+        }
     }
 
     randomizeInterval() {
@@ -49,7 +53,7 @@ export default class Spawner {
 
     spawn() {
         if (!this.gameOver) {
-            if (this.focus && (this.houses.length == 0 || this.houses[this.houses.length-1].x < WIDTH*3/4) && (performance.now() - window.timeOffset) < window.winTime - 2200 ) {
+            if (this.focus && (this.houses.length == 0 || this.houses[this.houses.length - 1].x < WIDTH * 3 / 4) && (performance.now() - window.timeOffset) < window.winTime - 2200) {
                 this.buildHouse(this.chooseSprite());
             }
 
