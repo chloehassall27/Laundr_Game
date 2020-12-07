@@ -357,8 +357,8 @@ export default class Windows {
   }
 
   socialsResizing(gameOver) {
-    if (this.canvasSize < 745 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
-    else if (this.canvasSize >= 745 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
+    if (this.canvasSize < 1090 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
+    else if (this.canvasSize >= 1090 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
   }
 
 }
