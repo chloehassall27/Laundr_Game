@@ -76,8 +76,10 @@ export default class Player {
 
     reset() {
         this.currSprite.x = WIDTH * 0.22;
+        this.currSprite.y = HEIGHT - (HEIGHT * .1);
         this.switchSprite(this.running);
         this.currSprite.x = WIDTH * 0.22;
+        this.currSprite.y = HEIGHT - (HEIGHT * .1);
         this.currSprite.hitArea.y = WIDTH * 0.22;
     }
 
@@ -85,6 +87,9 @@ export default class Player {
         // Only switch sprite if necesary
         if (this.currSprite !== sprite) {
             let y = this.currSprite.y;
+            if (sprite === this.falling) y += WIDTH * 0.0016;
+            else if (this.currSprite === this.falling) y -= WIDTH * 0.0016;
+
             container.removeChild(this.currSprite);
             this.currSprite = sprite;
             this.currSprite.hitArea = sprite.hitArea;
@@ -122,10 +127,10 @@ export default class Player {
     }
 
     endGameFall() {
-        if (this.currSprite.y < this.groundLevel) {
+        if (this.currSprite.y < this.groundLevel + WIDTH * 0.0016) {
             this.currSprite.y += SCALE * 4;
         } else {
-            this.currSprite.y = this.groundLevel;
+            this.currSprite.y = this.groundLevel + WIDTH * 0.0016;
             this.fallComplete = true;
         }
     }
@@ -149,6 +154,7 @@ export default class Player {
         //console.log(this.running.hitArea.width);
         this.running.animationSpeed = .15;
         this.running.play();
+        this.running.zIndex = 3;
 
 
         this.jumping = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["jumping_WithSock"]);
@@ -159,6 +165,7 @@ export default class Player {
         this.jumping.hitArea = new PIXI.Rectangle(this.jumping.x, this.jumping.y, spriteWidth, spriteHeight);
         this.jumping.animationSpeed = .15;
         this.jumping.play();
+        this.jumping.zIndex = 3;
 
         this.jumpStatic = new PIXI.Sprite(this.app.loader.resources.charaSheet.spritesheet.textures["jumping_WithSock_1.png"]);
         this.jumpStatic.scale.set(height);
@@ -166,6 +173,7 @@ export default class Player {
         this.jumpStatic.x = WIDTH * 0.22;
         this.jumpStatic.y = HEIGHT - (HEIGHT * .1);
         this.jumpStatic.hitArea = new PIXI.Rectangle(this.jumpStatic.x - widthOffset, this.jumpStatic.y + heightOffset, spriteWidth, spriteHeight);
+        this.jumpStatic.zIndex = 3;
 
         this.ducking = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["duck_WithSock"]);
         this.ducking.scale.set(height);
@@ -175,15 +183,17 @@ export default class Player {
         this.ducking.hitArea = new PIXI.Rectangle(this.ducking.x, this.ducking.y, spriteWidth, spriteHeight * 0.68);
         this.ducking.animationSpeed = .15;
         this.ducking.play();
+        this.ducking.zIndex = 3;
 
         this.falling = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["falling_WithSock"]);
         this.falling.scale.set(height);
         this.falling.interactive = true;
         this.falling.x = WIDTH * 0.22;
-        this.falling.y = HEIGHT - (HEIGHT * .1);
+        this.falling.y = HEIGHT - (HEIGHT * .1) + WIDTH * 0.0016;
         this.falling.hitArea = new PIXI.Rectangle(this.falling.x, this.falling.y, spriteWidth, spriteHeight);
         this.falling.animationSpeed = .25;
         this.falling.loop = false;
+        this.falling.zIndex = 3;
 
         this.currSprite = this.ducking;
         this.currSprite.hitArea = this.ducking.hitArea;
