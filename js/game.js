@@ -27,7 +27,8 @@ canvas.style.zIndex = "-1";
 PIXI.sound.context.paused = true;
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-PIXI.settings.ROUND_PIXELS = true;
+// PIXI.settings.ROUND_PIXELS = true;
+PIXI.settings.MIPMAP_MODES = PIXI.MIPMAP_MODES.ON;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
@@ -493,8 +494,6 @@ function keysDown(e) {
     if (!started && firstLoad && windows.removedInstruct)
       startGame();
 
-    //speedScale = 1.3; // To test win
-
     if (gameOver) {
       if (lose && (performance.now() - timeout > 600))
         onClickRestart();
@@ -544,7 +543,7 @@ function touchStart(e) {
   if (pos.y < (2 * container.height / 3)) {
     inputs.jump = true;
 
-    if (!started && firstLoad && removedInstruct)
+    if (!started && firstLoad && windows.removedInstruct)
       startGame();
   }
   // Bottom 1/3 of the canvas will call the duck function
