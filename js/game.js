@@ -50,7 +50,7 @@ app.ticker.minFPS = 30;
 
 // Basic game variables
 
-window.winTime = 300000;
+window.winTime = 300;
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
@@ -659,10 +659,6 @@ function checkFocus() {
 
 window.addEventListener('resize', resize);
 function resize() {
-  // window.RELSCALE = (window.innerWidth / 4 / 225) / SCALE ;
-  // app.renderer.resolution = window.devicePixelRatio || RELSCALE * 1.25;
-  // console.log(app.renderer.resolution);
-
   app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width / 4);
 
   window.RELSCALE = (app.screen.height / 225) / SCALE;
@@ -673,18 +669,22 @@ function resize() {
   highscoreText.resolution = RELSCALE * 1.5;
 
   windows.getCanvasSize(canvas.width);
-  //if (canvas.width < 675 && !socials.smallScreen && gameOver) socials.switchSizes();
-  //else if (canvas.width >= 675 && socials.smallScreen && gameOver) socials.switchSizes();
   windows.topMessageInstruct.resolution = RELSCALE * 1.5;
   windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
-  if (gameOver) {
-    windows.scoreMessage.resolution = RELSCALE * 1.5;
-    windows.pun.resolution = RELSCALE * 1.5;
+  try {windows.scoreMessage.resolution = RELSCALE * 1.5;} catch{};
+  try {windows.pun.resolution = RELSCALE * 1.5;} catch{};
+  try {
     windows.topMessageCoupon.resolution = RELSCALE * 1.5;
     windows.code.resolution = RELSCALE * 1.5;
     windows.bottomMessageCoupon.resolution = RELSCALE * 1.5;
-    if (creditsShowing) { windows.creditsMessage.resolution = RELSCALE * 1.5; }
-    else if (!creditsShowing) { windows.socialsResizing(canvas.width, gameOver); }
+  } catch{};
+  try { 
+    windows.titleMessage.resolution = RELSCALE * 1.5;
+    windows.creditsMessage.resolution = RELSCALE * 1.5;
+  } catch{};
+
+  if (gameOver) {
+    if (!creditsShowing) { windows.socialsResizing(canvas.width, gameOver); }
   }
 }
 

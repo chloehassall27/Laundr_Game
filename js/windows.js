@@ -51,6 +51,7 @@ export default class Windows {
     this.code.x = WIDTH / 2;
     this.code.y = HEIGHT / 1.75;
     this.code.zIndex = 15;
+    this.code.resolution = 1.5 * RELSCALE;
     this.code.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
     
   }
@@ -246,6 +247,7 @@ export default class Windows {
 
     let topText = 'Use coupon code';
     this.code.text = this.couponCode;
+    this.code.resolution = RELSCALE * 1.5;
     let bottomText = 'for 15% off your next order!';
 
     this.scoreMessage.text = Math.round(this.score);
@@ -268,6 +270,7 @@ export default class Windows {
     this.topMessageCoupon.x = WIDTH / 2;
     this.topMessageCoupon.y = this.popUpBackground.y;
     this.topMessageCoupon.zIndex = 15;
+    this.topMessageCoupon.resolution = RELSCALE * 1.5;
     this.topMessageCoupon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     this.bottomMessageCoupon = new PIXI.Text(bottomText, this.couponInfoStyle);
@@ -275,6 +278,7 @@ export default class Windows {
     this.bottomMessageCoupon.x = WIDTH / 2;
     this.bottomMessageCoupon.y = this.popUpBackground.y + (this.popUpBackground.y * 0.3);
     this.bottomMessageCoupon.zIndex = 15;
+    this.bottomMessageCoupon.resolution = RELSCALE * 1.5;
     this.bottomMessageCoupon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     container.addChild(this.popUpBackground);
@@ -324,6 +328,7 @@ export default class Windows {
     this.titleMessage.anchor.set(0.5);
     this.titleMessage.y = HEIGHT / 1.9;
     this.titleMessage.x = WIDTH / 2.3;
+    this.titleMessage.resolution = RELSCALE * 1.5;
     this.titleMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
     this.titleMessage.zIndex = 13;
 
@@ -331,6 +336,7 @@ export default class Windows {
     this.creditsMessage.anchor.set(0.5);
     this.creditsMessage.y = HEIGHT / 1.9;
     this.creditsMessage.x = WIDTH / 2;
+    this.creditsMessage.resolution = RELSCALE * 1.5;
     this.creditsMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
     this.creditsMessage.zIndex = 13;
 
