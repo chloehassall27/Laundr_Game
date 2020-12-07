@@ -6,7 +6,7 @@ export default class Windows {
     this.socials = new Socials(app);
 
     this.style = new PIXI.TextStyle({
-      fontFamily: 'Arial', fontSize: SCALE * 13, fill: '#4e4e4e', align: 'center'
+      fontFamily: 'Arial', fontSize: RELSCALE * 15, fill: '#4e4e4e', align: 'center'
     });
     this.scoreStyle = new PIXI.TextStyle({
       fontFamily: 'Arial', fontSize: RELSCALE * 23, fill: '#4b4b4b'
@@ -106,18 +106,19 @@ export default class Windows {
 
     this.token = new PIXI.AnimatedSprite(this.app.loader.resources.tokenSheet.spritesheet.animations["tokenSprite"]);
     this.token.anchor.set(0.45);
-    this.token.scale.set(0.25);
+    this.token.scale.set(SCALE * 0.2);
     this.token.x = this.popUpBackground.x * 0.99;
-    this.token.y = this.popUpBackground.y * 1.39;
+    this.token.y = this.popUpBackground.y * 1.54;
     this.token.zIndex = 3;
     this.token.animationSpeed = 0.135;
     this.token.play();
 
     if (!PIXI.utils.isMobile.any) {
-      instructText = "Deliver the laundry without hitting any obstacles!" + '\n' + '\n' + 
+      instructText = "Deliver the laundry without" + '\n' + 
+                     "hitting any obstacles!" + '\n' + '\n' + 
                      "Press space/up arrow key to jump" + '\n' + '\n' + 
                      "Press down arrow key to duck" + '\n' + '\n' + 
-                     "Collect tokens         for extra points";
+                     "Collect tokens       for extra points";
     }
     else {
       instructText = "Deliver the laundry without hitting any obstacles!" + '\n' + 
