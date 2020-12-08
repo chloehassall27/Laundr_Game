@@ -21,10 +21,9 @@ export default class Spawner {
 
         if (texture != undefined) {
             let house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[spriteName]);
-
             house.anchor.set(0, 1);
             house.x = WIDTH;
-            house.y = 4 * HEIGHT / 5;
+            house.y = 3.96 * HEIGHT / 5;
             house.scale.set(1.9 * SCALE);
             house.zIndex = 0;
 
@@ -36,7 +35,7 @@ export default class Spawner {
     moveSprites() {
         for (var i = 0; i < this.houses.length; i++) {
             const xBox = this.houses[i].getBounds().x + this.houses[i].getBounds().width;
-            this.houses[i].x -= SCALE * 1.28 * speedScale * FPSSCALE;
+            this.houses[i].x -= SCALE * 1.33 * speedScale * FPSSCALE;
 
             if (xBox <= 0) {
                 container.removeChild(this.houses[i]);

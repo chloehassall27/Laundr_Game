@@ -16,6 +16,9 @@ export default class Spawner {
         this.obstacles = [];
         this.tokens = [];
 
+        this.tokenAmt = 0;
+
+
         this.player = player;
         this.gameOver = false;
         this.focus = true;
@@ -58,7 +61,7 @@ export default class Spawner {
             //Calculate hit boxes based on which sprite is spawned
             if (spriteName == "washerSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.40), obstacle.y - (obstacle.height * 0.38), obstacle.width * .7, obstacle.height * .53);
             else if (spriteName == "laundrySprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - obstacle.width * 0.40, obstacle.y - (obstacle.height * 0.01), obstacle.width * 0.68, obstacle.height * 0.53);
-            else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.2);
+            else if (spriteName == "ironSprite") obstacle.hitArea = new PIXI.Rectangle(obstacle.x - (obstacle.width * 0.44), obstacle.y - (obstacle.height * 0.29), obstacle.width * 0.8, obstacle.height * 0.4);
             else obstacle.hitArea = new PIXI.Rectangle(obstacle.x, obstacle.y, 0, 0);
             //console.log(obstacle.hitArea.y);
 
@@ -156,7 +159,7 @@ export default class Spawner {
                 this.firstSpawn = false;
             }
             //first check if it's time to spawn in a token :D
-            if (this.tokenTime) {
+            if (this.tokenTime && this.tokenAmt < 15) {
                 let rand = Math.floor(Math.random() * (10 - 5)) + 4;
                 if (!this.firstSpawn && (performance.now() - this.startTime >= 15000)) {
                     if (this.focus) this.buildToken();
@@ -164,6 +167,7 @@ export default class Spawner {
                     setTimeout(this.setTokenTimer.bind(this), this.interval * rand * 1.5);
                     clearTimeout(this.tokenTimeoutHold);
                     this.tokenTime = false;
+                    this.tokenAmt++;
                     return;
                 }
                 else {
@@ -237,7 +241,7 @@ export default class Spawner {
         } else if (rand % 5 == 0) {
             if (currTime > this.switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (currTime >= this.ironTime && rand % 8 == 0) {
+        } else if (currTime >= this.ironTime && rand % 8 == 0){
             return "ironSprite";
         }
         else {

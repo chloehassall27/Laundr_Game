@@ -1,4 +1,4 @@
-## HamperMan Game
+# HamperMan Game
 The HamperMan game is a Laundr-themed version of Google Chrome’s dino game. It is available on desktop and mobile browsers. The game is built on the pixi-js framework, allowing for wide compatibility and solid performance.
 
 ## Motivation
@@ -33,7 +33,7 @@ Game code was created using Javascript. Active deployments are created with [her
 * Sound Effects on jumping, collecting a token, losing, and winning	
 
 ## Installation
-To install all necessary files required for further development, open this project and run: 
+To install all necessary files required for further development, run: 
 ```
 npm i
 ```
@@ -49,53 +49,21 @@ npm start
 ```
 
 ## Integration
-To integrate the game into the Laundr website, add all files from our project into your directory, ensuring that pathways remain intact. For example, if you must  move the .js files from the js folder, ensure all import statements at the top of game.js are updated to remain accurate.
+To integrate the game into the Laundr website, add all files from our project into your directory, ensuring that pathways remain intact. For example, if you must move the .js files from the js folder, ensure all import statements at the top of game.js are updated to remain accurate.
 
-In the main index.html page of the Laundr website, several things will have to be added. In the <header> of the html file, add the following scripts:
-
-```
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.3.3/pixi.min.js"></script>
-<script>
-    if (typeof PIXI == 'undefined') {
-      document.write('<script src="js/pixi.min.js">\x3C/script>');
-    }
-  </script>
-
-<script src="/node_modules/pixi-sound/dist/pixi-sound.js"></script>
-```
-
-At the top of the <body> in the html file, add these additional scripts. They must be added in the <body> tag rather than the <header> to improve the response time between the Laundr website and the social media API. If these scripts are already present in the Laundr html file, they do not need to be added a second time.
-
-```
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v9.0"
-    nonce="nU5nxJVO"></script> 
-```
+In the main index.html page of the Laundr website, only 3 lines of code need to be added.
 
 To add the game itself, the following html will need to be added inside the <body> element.
 
 ```
-<div class="container">
-      <div class="laundr-game" id="laundr-game" style="position: relative;">
-        <canvas class="pixiCanvas" id="pixiCanvas" , style="width:100%;"></canvas>
-
-        <div class="socials" id="socials" style="width: 25%; min-width: 70px;">
-          <div class="twtDiv" id="twtDiv" style="display: inline-block; vertical-align: top; min-width:40%;"></div>
-          <div id="fb-root" style="display: inline-block; vertical-align: top; width:0%;"></div>
-          <div class="fbDiv fb-share-button" id="fbDiv" data-href="https://www.laundr.io/404" data-layout="button"
-            data-size="small" style="display: inline-block; vertical-align: top; min-width:40%;"><a target="_blank"
-              href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.laundr.io%2F404&amp;src=sdkpreparse"
-              class="fb-xfbml-parse-ignore">Share</a></div>
-        </div>
-
-      </div>
-    </div>
+<div style='position: relative; overflow: hidden; padding-top: 25%;'>
+    <iframe src="index.html" title="404 - Game Found!" style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;' scrolling="no" frameborder="0"  onload="parent.resize(document.body.scrollHeight);"></iframe>
+</div>
 ```
 
-If you would like for the game to display in the same location as we have set it up in the gameDemo deployment, please open that branch. The Laundr 404 page has been downloaded and modified in our gameDemo.html file. Our code has been indicated with large comment blocks; you may find the location of where to insert the above code by finding these comment blocks. 
+If you would like for the game to display in the same location as we have set it up in the gameDemo deployment, please open that branch. The Laundr 404 page has been downloaded and modified in our demo.htm file. Our code has been indicated with large comment blocks (stating “THIS IS OUR STUFF”); you may find the location of where to insert the above code by finding these comment blocks. 
 
-There are also several elements of our game that can be edited easily, if there is a desire to change them before/after integration. These elements can be edited through three text files:
+There are also several elements of our game that can be edited easily, if there is a desire to change them before/after integration. These elements can be edited through three text files within the inputData folder:
 
 * lose_puns.txt: Contains all of the puns that will be shown on a lose screen, separated by a newline character
 * win_puns.txt: Contains all of the puns that will be shown on a win screen, separated by a newline character
@@ -103,6 +71,9 @@ There are also several elements of our game that can be edited easily, if there 
 
 To edit these files, open the relevant text file and edit the contents. Upon saving, the game will automatically include any changes that were made.
 
+It is possible that the y location of the puns on the end-game screens will differ once fully integrated into your site. To change this y location:
+  * Within the js/windows.js file go to line 67, which should read: ``` this.pun.y = HEIGHT / 2.5; ```
+* Making “2.5” bigger will move the pun up, making it smaller will move the pun down.
 
 ## API Reference
 The [Tweet Button](https://developer.twitter.com/en/docs/twitter-for-websites/tweet-button/overview) from Twitter was used to allow players to share their score to Twitter. 
@@ -153,12 +124,12 @@ The people who worked on this project include:
 
 **Kyle Hassall** - [kylehassall27](https://github.com/kylehassall27)
 * Scrum Master
-* Canvas setup
 * Resizing
 * Jumping and ducking
 * Keyboard and touch input
 * House spawning
 * Mute
+* Game demo page
 * Heroku deployment
 
 **Oliver Thomas** - [thomasoliver2021](https://github.com/thomasoliver2021)
@@ -187,10 +158,8 @@ The people who worked on this project include:
 **Michael Zinn** - [mzinn18](https://github.com/mzinn18)
 * Token sprite
 * Button sprite
-* Canvas setup
 * Game demo page
-* Puns and random pun generator
+* End game puns
 
 ## License
-This game was created for Laundr LLC.
-
+This game was created for [Laundr LLC](https://www.laundr.io/).
