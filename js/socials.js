@@ -114,6 +114,7 @@ export default class socials {
         this.smallScreenDiv = document.createElement('div');
         this.smallScreenDiv.classList.add("smallScreenDiv");
         this.smallScreenDiv.style.width = "17%";
+        this.smallScreenDiv.style.minWidth = "17%";
         this.smallScreenDiv.style.position = "absolute";
         this.smallScreenDiv.style.textAlign = "center";
         this.smallScreenDiv.innerHTML = "Share your Score!";
