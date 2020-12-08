@@ -125,10 +125,12 @@ export default class Windows {
         "Collect tokens       for extra points";
     }
     else {
-      instructText = "Deliver the laundry without hitting any obstacles!" + '\n' +
-        "Tap sky to jump" + '\n' +
-        "Tap street to duck" + '\n' +
-        "Collect tokens         for extra points";
+      instructText = "Deliver the laundry without" + '\n' +
+      "hitting any obstacles!" + '\n' + '\n' +
+      "Press space/up arrow key to jump" + '\n' + '\n' +
+      "Press down arrow key to duck" + '\n' + '\n' +
+      "Collect tokens       for extra points" + '\n' + '\n'
+      "Tip: Turn your device horizontally!"
     }
     this.instructMessage = new PIXI.Text(instructText, this.style);
     this.instructMessage.anchor.set(0.5);
