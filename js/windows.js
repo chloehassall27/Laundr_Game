@@ -29,21 +29,23 @@ export default class Windows {
     this.setUpSprites();
 
     this.scoreMessage = new PIXI.Text(0, this.scoreStyle);
+    this.scoreMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
     this.scoreMessage.anchor.set(0.5);
     this.scoreMessage.x = WIDTH / 2;
   }
 
-  setUpCode(){
+  setUpCode() {
     fetch('inputData/couponCode.txt')
       .then(response => response.text())
-      .then(data => { 
+      .then(data => {
         this.couponCode = data;
-    })
+      })
     this.code = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
     this.code.anchor.set(0.5);
     this.code.x = WIDTH / 2;
     this.code.y = HEIGHT / 1.75;
     this.code.zIndex = 3;
+    this.code.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
   }
 
   setUpPuns() {
@@ -58,11 +60,12 @@ export default class Windows {
       .then(data => {
         this.losePuns = data.split('\n');
       })
-      this.pun = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
-      this.pun.anchor.set(0.5);
-      this.pun.x = WIDTH / 2;
-      this.pun.y = HEIGHT / 2.5;
-      this.pun.zIndex = 3;
+    this.pun = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
+    this.pun.anchor.set(0.5);
+    this.pun.x = WIDTH / 2;
+    this.pun.y = HEIGHT / 2.5;
+    this.pun.zIndex = 3;
+    this.pun.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
   }
 
   setUpSprites() {
@@ -114,23 +117,24 @@ export default class Windows {
     this.token.play();
 
     if (!PIXI.utils.isMobile.any) {
-      instructText = "Deliver the laundry without" + '\n' + 
-                     "hitting any obstacles!" + '\n' + '\n' + 
-                     "Press space/up arrow key to jump" + '\n' + '\n' + 
-                     "Press down arrow key to duck" + '\n' + '\n' + 
-                     "Collect tokens       for extra points";
+      instructText = "Deliver the laundry without" + '\n' +
+        "hitting any obstacles!" + '\n' + '\n' +
+        "Press space/up arrow key to jump" + '\n' + '\n' +
+        "Press down arrow key to duck" + '\n' + '\n' +
+        "Collect tokens       for extra points";
     }
     else {
-      instructText = "Deliver the laundry without hitting any obstacles!" + '\n' + 
-                     "Tap sky to jump" + '\n' + 
-                     "Tap street to duck" + '\n' +
-                     "Collect tokens         for extra points";
+      instructText = "Deliver the laundry without hitting any obstacles!" + '\n' +
+        "Tap sky to jump" + '\n' +
+        "Tap street to duck" + '\n' +
+        "Collect tokens         for extra points";
     }
     this.instructMessage = new PIXI.Text(instructText, this.style);
     this.instructMessage.anchor.set(0.5);
     this.instructMessage.x = WIDTH / 2;
     this.instructMessage.y = this.popUpBackground.y;
     this.instructMessage.zIndex = 3;
+    this.instructMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     this.setupXButton(95, 10, "instruct");
 
@@ -182,15 +186,15 @@ export default class Windows {
     this.xButton.style.left = xLoc;
     this.xButton.style.transform = "translate(-50%, -50%)";
 
-    if(toRemove == "instruct"){this.xButton.onclick = this.removeInstruct.bind(this);}
-    else if(toRemove == "credits"){this.xButton.onclick = this.setUpWin.bind(this);}
+    if (toRemove == "instruct") { this.xButton.onclick = this.removeInstruct.bind(this); }
+    else if (toRemove == "credits") { this.xButton.onclick = this.setUpWin.bind(this); }
   }
 
-  getScore(score){
+  getScore(score) {
     this.score = score;
   }
 
-  getCanvasSize(canvasSize){
+  getCanvasSize(canvasSize) {
     this.canvasSize = canvasSize;
   }
 
@@ -233,8 +237,8 @@ export default class Windows {
   setUpWin() {
     this.socials.endGame();
 
-    if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
-    else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
+    // if (this.canvasSize < 1090 && !this.socials.smallScreen) this.socials.switchSizes();
+    // else if (this.canvasSize >= 1090 && this.socials.smallScreen) this.socials.switchSizes();
 
     this.socials.endGame();
     this.invisDiv.style.left = "-999%";
@@ -287,33 +291,33 @@ export default class Windows {
     container.removeChild(this.scoreBackgroundWin);
     container.removeChild(this.scoreMessage);
     container.removeChild(this.pun);
-    if(!this.creditsShowing) this.laundrDiv.removeChild(this.creditsButton);
+    if (!this.creditsShowing) this.laundrDiv.removeChild(this.creditsButton);
     container.removeChild(this.topMessageCoupon);
     container.removeChild(this.code);
     container.removeChild(this.bottomMessageCoupon);
     this.socials.resetGame();
   }
 
-  showCredits(){
+  showCredits() {
     this.removeWin();
     this.creditsShowing = true;
     this.socials.resetGame();
 
     this.titles = "Supervisor of Suds:" + '\n' + '\n' +
-                  "Old man in a laundromat:" + '\n' + '\n' +
-                  "CEO of Clean Code:" + '\n' + '\n' +
-                  "Director of Detergent:" + '\n' + '\n' +
-                  "Stain Generator:" + '\n';
-    this.credits = '\n' + 
-                   "                                          Kyle Hassall" + '\n' +
-                   '\n' + 
-                   "                                          Oliver Thomas" + '\n' +
-                   '\n' + 
-                   "                                          Olivia Jacques-Baker" + '\n' +
-                   '\n' + 
-                   "                                          Simran Patel" + '\n' +
-                   '\n' + 
-                   "                                          Michael Zinn";
+      "Old man in a laundromat:" + '\n' + '\n' +
+      "CEO of Clean Code:" + '\n' + '\n' +
+      "Director of Detergent:" + '\n' + '\n' +
+      "Stain Generator:" + '\n';
+    this.credits = '\n' +
+      "                                          Kyle Hassall" + '\n' +
+      '\n' +
+      "                                          Oliver Thomas" + '\n' +
+      '\n' +
+      "                                          Olivia Jacques-Baker" + '\n' +
+      '\n' +
+      "                                          Simran Patel" + '\n' +
+      '\n' +
+      "                                          Michael Zinn";
 
     this.titleMessage = new PIXI.Text(this.titles, this.titlesStyle);
     this.titleMessage.anchor.set(0.5);
@@ -333,7 +337,7 @@ export default class Windows {
     this.setupXButton(95, 10, "credits");
   }
 
-  removeCredits(){
+  removeCredits() {
     this.creditsShowing = false;
 
     container.removeChild(this.creditsBackground);
@@ -343,7 +347,7 @@ export default class Windows {
     this.invisDiv.style.left = "-999%";
   }
 
-  socialsResizing(gameOver){
+  socialsResizing(gameOver) {
     if (this.canvasSize < 675 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
     else if (this.canvasSize >= 675 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
   }
