@@ -672,10 +672,6 @@ function resize() {
   scoreText.resolution = RELSCALE * 1.5;
   windows.instructMessage.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
-  console.log(creditsShowing);
-  if(gameOver){
-    if(!creditsShowing){windows.socialsResizing();} 
-  }
 
   //if (canvas.width < 1090 && !socials.smallScreen && gameOver) socials.switchSizes();
   //else if (canvas.width >= 1090 && socials.smallScreen && gameOver) socials.switchSizes();
@@ -684,9 +680,6 @@ function resize() {
   windows.pun.resolution = RELSCALE * 1.5;
   windows.code.resolution = RELSCALE * 1.5;
 
-  windows.getCanvasSize(canvas.width);
-  windows.topMessageInstruct.resolution = RELSCALE * 1.5;
-  windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
   try {windows.scoreMessage.resolution = RELSCALE * 1.5;} catch{};
   try {windows.pun.resolution = RELSCALE * 1.5;} catch{};
   try {
@@ -700,7 +693,7 @@ function resize() {
   } catch{};
 
   if (gameOver) {
-    if (!creditsShowing) { windows.socialsResizing(canvas.width, gameOver); }
+    if (!creditsShowing) { windows.socialsResizing(); }
   }
 }
 
