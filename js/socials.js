@@ -86,7 +86,7 @@ export default class socials {
     }
 
     smallBringOnScreen() {
-        this.smallScreenDiv.style.top = '75%';
+        this.smallScreenDiv.style.top = '77%';
         this.smallScreenDiv.style.left = "50%";
         this.smallScreenDiv.style.transform = "translate(-50%, -50%)";
     }
