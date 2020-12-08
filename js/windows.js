@@ -113,7 +113,7 @@ export default class Windows {
     this.token.scale.set(SCALE * 0.2);
     this.token.x = this.popUpBackground.x * 0.99;
     if(!PIXI.utils.isMobile.any){this.token.y = this.popUpBackground.y * 1.5;}
-    else{this.token.y = this.popUpBackground.y * 1.39;}
+    else{this.token.y = this.popUpBackground.y * 1.4;}
     this.token.zIndex = 3;
     this.token.animationSpeed = 0.135;
     this.token.play();
