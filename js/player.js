@@ -1,19 +1,4 @@
 export default class Player {
-    // groundLevel;
-
-    // app;
-
-
-
-
-    // currSprite;
-    // running;
-    // jumping;
-    // jumpStatic;
-    // ducking;
-    // falling;
-
-    // jumpS;
 
     constructor(app, jumpS) {
         this.app = app;
@@ -35,7 +20,7 @@ export default class Player {
     updateJump() {
         // If the player is on the ground, not ducking, and trying to jump, start the jump sequence with an initial jump speed
         if (this.currSprite.y == this.groundLevel && !window.inputs.duck && window.inputs.jump) {
-            if (!window.mute) this.jumpS.play();
+            this.jumpS.play();
             this.speedY = 3.5;
             this.switchSprite(this.jumpStatic);
             // this.switchSprite(this.jumping);
@@ -51,13 +36,18 @@ export default class Player {
             this.speedY += .06 * FPSSCALE;
         }
 
+        // Cap max upward speed to prevent flying due to lag
+		// This probably causes problems on lower fps...
+        if (this.speedY > 3.7)
+            this.speedY = 3.7;
+
         // Once the jump animation is completed, switch to static animation
         // if (this.currSprite === this.jumping && this.currSprite.currentFrame == this.jumping.size - 1){
         //     this.switchSprite(this.jumpStatic);
         // }
 
-        this.currSprite.y -= SCALE * this.speedY * FPSSCALE;
-        this.currSprite.hitArea.y = this.currSprite.y;
+        this.currSprite.y -= SCALE * this.speedY * FPSSCALE ;
+        this.currSprite.hitArea.y -= SCALE * this.speedY * FPSSCALE;
 
         if (this.currSprite.y > this.groundLevel) {
             this.speedY = 0;
@@ -75,7 +65,7 @@ export default class Player {
 
             // If ducking in midair, move player down faster
             else
-                this.speedY -= .15;
+                this.speedY -= .15 * FPSSCALE;
         }
 
         // End of duck

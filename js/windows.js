@@ -40,19 +40,20 @@ export default class Windows {
     this.pun.zIndex = 10;
   }
 
-  setUpCode(){
+  setUpCode() {
     fetch('inputData/couponCode.txt')
       .then(response => response.text())
-      .then(data => { 
+      .then(data => {
         this.couponCode = data;
-    })
+      })
     this.code = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
     this.code.anchor.set(0.5);
     this.code.x = WIDTH / 2;
     this.code.y = HEIGHT / 1.75;
     this.code.zIndex = 15;
+    this.code.resolution = 1.5 * RELSCALE;
     this.code.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-    
+
   }
 
   setUpPuns() {
@@ -67,11 +68,11 @@ export default class Windows {
       .then(data => {
         this.losePuns = data.split('\n');
       })
-      this.pun = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
-      this.pun.anchor.set(0.5);
-      this.pun.x = WIDTH / 2;
-      this.pun.y = HEIGHT / 2.5;
-      this.pun.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    this.pun = new PIXI.Text("SOMETHING WENT WRONG", this.scoreStyle);
+    this.pun.anchor.set(0.5);
+    this.pun.x = WIDTH / 2;
+    this.pun.y = HEIGHT / 2.5;
+    this.pun.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
   }
 
   setUpSprites() {
@@ -185,15 +186,15 @@ export default class Windows {
     this.xButton.style.left = xLoc;
     this.xButton.style.transform = "translate(-50%, -50%)";
 
-    if(toRemove == "instruct"){this.xButton.onclick = this.removeInstruct.bind(this);}
-    else if(toRemove == "credits"){this.xButton.onclick = this.setUpWin.bind(this);}
+    if (toRemove == "instruct") { this.xButton.onclick = this.removeInstruct.bind(this); }
+    else if (toRemove == "credits") { this.xButton.onclick = this.setUpWin.bind(this); }
   }
 
-  getScore(score){
+  getScore(score) {
     this.score = score;
   }
 
-  getCanvasSize(canvasSize){
+  getCanvasSize(canvasSize) {
     this.canvasSize = canvasSize;
   }
 
@@ -238,7 +239,7 @@ export default class Windows {
     if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
     else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
 
-    if(this.creditsShowing) this.removeCredits();
+    if (this.creditsShowing) this.removeCredits();
 
     this.socials.endGame();
     this.invisDiv.style.left = "-999%";
@@ -246,6 +247,7 @@ export default class Windows {
 
     let topText = 'Use coupon code';
     this.code.text = this.couponCode;
+    this.code.resolution = RELSCALE * 1.5;
     let bottomText = 'for 15% off your next order!';
 
     this.scoreMessage.text = Math.round(this.score);
@@ -268,6 +270,7 @@ export default class Windows {
     this.topMessageCoupon.x = WIDTH / 2;
     this.topMessageCoupon.y = this.popUpBackground.y;
     this.topMessageCoupon.zIndex = 15;
+    this.topMessageCoupon.resolution = RELSCALE * 1.5;
     this.topMessageCoupon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     this.bottomMessageCoupon = new PIXI.Text(bottomText, this.couponInfoStyle);
@@ -275,6 +278,7 @@ export default class Windows {
     this.bottomMessageCoupon.x = WIDTH / 2;
     this.bottomMessageCoupon.y = this.popUpBackground.y + (this.popUpBackground.y * 0.3);
     this.bottomMessageCoupon.zIndex = 15;
+    this.bottomMessageCoupon.resolution = RELSCALE * 1.5;
     this.bottomMessageCoupon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     container.addChild(this.popUpBackground);
@@ -292,38 +296,39 @@ export default class Windows {
     container.removeChild(this.scoreBackgroundWin);
     container.removeChild(this.scoreMessage);
     container.removeChild(this.pun);
-    if(!this.creditsShowing) this.laundrDiv.removeChild(this.creditsButton);
+    if (!this.creditsShowing) this.laundrDiv.removeChild(this.creditsButton);
     container.removeChild(this.topMessageCoupon);
     container.removeChild(this.code);
     container.removeChild(this.bottomMessageCoupon);
     this.socials.resetGame();
   }
 
-  showCredits(){
+  showCredits() {
     this.removeWin();
     this.creditsShowing = true;
     this.socials.resetGame();
 
     this.titles = "Supervisor of Suds:" + '\n' + '\n' +
-                  "Old man in a laundromat:" + '\n' + '\n' +
-                  "CEO of Clean Code:" + '\n' + '\n' +
-                  "Director of Detergent:" + '\n' + '\n' +
-                  "Stain Generator:" + '\n';
-    this.credits = '\n' + 
-                   "                                          Kyle Hassall" + '\n' +
-                   '\n' + 
-                   "                                          Oliver Thomas" + '\n' +
-                   '\n' + 
-                   "                                          Olivia Jacques-Baker" + '\n' +
-                   '\n' + 
-                   "                                          Simran Patel" + '\n' +
-                   '\n' + 
-                   "                                          Michael Zinn";
+      "Old man in a laundromat:" + '\n' + '\n' +
+      "CEO of Clean Code:" + '\n' + '\n' +
+      "Director of Detergent:" + '\n' + '\n' +
+      "Stain Generator:" + '\n';
+    this.credits = '\n' +
+      "                                          Kyle Hassall" + '\n' +
+      '\n' +
+      "                                          Oliver Thomas" + '\n' +
+      '\n' +
+      "                                          Olivia Jacques-Baker" + '\n' +
+      '\n' +
+      "                                          Simran Patel" + '\n' +
+      '\n' +
+      "                                          Michael Zinn";
 
     this.titleMessage = new PIXI.Text(this.titles, this.titlesStyle);
     this.titleMessage.anchor.set(0.5);
     this.titleMessage.y = HEIGHT / 1.9;
     this.titleMessage.x = WIDTH / 2.3;
+    this.titleMessage.resolution = RELSCALE * 1.5;
     this.titleMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
     this.titleMessage.zIndex = 13;
 
@@ -331,6 +336,7 @@ export default class Windows {
     this.creditsMessage.anchor.set(0.5);
     this.creditsMessage.y = HEIGHT / 1.9;
     this.creditsMessage.x = WIDTH / 2;
+    this.creditsMessage.resolution = RELSCALE * 1.5;
     this.creditsMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
     this.creditsMessage.zIndex = 13;
 
@@ -340,7 +346,7 @@ export default class Windows {
     this.setupXButton(95, 10, "credits");
   }
 
-  removeCredits(){
+  removeCredits() {
     this.creditsShowing = false;
 
     container.removeChild(this.creditsBackground);
@@ -350,9 +356,9 @@ export default class Windows {
     this.invisDiv.style.left = "-999%";
   }
 
-  socialsResizing(gameOver){
-    if (this.canvasSize < 675 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
-    else if (this.canvasSize >= 675 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
+  socialsResizing(gameOver) {
+    if (this.canvasSize < 1090 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
+    else if (this.canvasSize >= 1090 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
   }
 
 }
