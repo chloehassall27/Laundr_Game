@@ -27,7 +27,9 @@ canvas.style.zIndex = "-1";
 PIXI.sound.context.paused = true;
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-PIXI.settings.ROUND_PIXELS = true;
+// PIXI.settings.ROUND_PIXELS = true;
+PIXI.settings.MIPMAP_TEXTURES = PIXI.MIPMAP_MODES.ON;
+PIXI.settings.RENDER_OPTIONS.antialias = true;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
@@ -35,6 +37,7 @@ window.SCALE = HEIGHT / 225; // Scale used for compatibility with old code. Orig
 window.RELSCALE = HEIGHT / 225; // Scale relative to original scale.  Other scale is only calculated at start
 window.SCORE = 0;
 window.FPSSCALE;
+window.loaded = false;
 
 window.container = new PIXI.Container();
 app.stage.addChild(container);
@@ -49,7 +52,7 @@ app.ticker.minFPS = 30;
 
 // Basic game variables
 
-window.winTime = 300000;
+window.winTime = 300000; //300000
 
 const style = new PIXI.TextStyle({
   fontFamily: 'Arial', fontSize: RELSCALE * 26, fill: '#4e4e4e',
@@ -76,7 +79,6 @@ let gameOver = false;
 window.speedScale = 1.0;
 let focus = true;
 let visible = true;
-window.mute = false;
 let winTriggered = false;
 let winTimeout;
 window.timeOffset;
@@ -166,12 +168,15 @@ function loadOnce() {
       //for parallax (background moves slower than foreground)
       let bgTextureFront = PIXI.Texture.from("../sprites/background_road.png");
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
+      //let bgTextureBack = PIXI.Texture.from("../sprites/background_sky_blue.png"); // HELLO MR BLUE SKY
+      bgTextureFront.baseTexture.mipmap = false;
+      bgTextureBack.baseTexture.mipmap = false;
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
       backgroundFront.zIndex = 2;
-      backgroundFront.tileScale.set(SCALE * .25);
+      backgroundFront.tileScale.set(SCALE * 3.52);
       backgroundFront.y = HEIGHT - SCALE * 50.25;
-      backgroundBack.tileScale.set(SCALE * .25);
+      backgroundBack.tileScale.set(SCALE * .88);
       container.addChild(backgroundBack);
       container.addChild(backgroundFront);
 
@@ -215,6 +220,8 @@ function loadOnce() {
       //add windows;
       windows = new Windows(app);
       windows.setUpInstruct();
+
+      window.loaded = true;
     });
 
   reload();
@@ -236,7 +243,7 @@ function reload() {
 function gameLoop() {
   window.FPSSCALE = 144 / app.ticker.FPS;
   //must check &&player first or else itll be checking for loaded on a null object
-  if (!gameOver && player && player.loaded && started) {
+  if (!gameOver && loaded && player && player.loaded && started) {
     if (!windows.removedInstruct) {
       windows.removeInstruct();
     }
@@ -355,9 +362,7 @@ window.endGame = function () {
   windows.getScore(score);
 
   if (lose) {
-    if (!mute) {
-      deathS.play();
-    }
+    deathS.play();
     //this is on a timeout so that the twitter button has enough time to render
     setTimeout(() => {
       windows.setUpLose();
@@ -367,9 +372,7 @@ window.endGame = function () {
     }, 60);
   } else if (win) {
     setTimeout(() => {
-      if (!mute) {
-        winS.play();
-      }
+      winS.play();
       windows.setUpWin();
       //container.addChild(restartButton);
       //socials.endGame();
@@ -400,9 +403,23 @@ function onClickRestart() {
 
 function onClickMute() {
   touchDisable = true;
-  window.mute = !window.mute;
-  if (muteButton.currentFrame == 1) muteButton.gotoAndStop(0);
-  else muteButton.gotoAndStop(1);
+
+  // Unmute
+  if (muteButton.currentFrame == 1){
+    muteButton.gotoAndStop(0);
+    deathS.muted = false;
+    winS.muted = false;
+    tokenS.muted = false;
+    jumpS.muted = false;
+  }
+  // Mute
+  else {
+    muteButton.gotoAndStop(1);
+    deathS.muted = true;
+    winS.muted = true;
+    tokenS.muted = true;
+    jumpS.muted = true;
+  }
 }
 
 function onReleaseMute() {
@@ -530,7 +547,7 @@ function touchStart(e) {
   if (pos.y < (2 * container.height / 3)) {
     inputs.jump = true;
 
-    if (!started && firstLoad && removedInstruct)
+    if (!started && firstLoad && windows.removedInstruct)
       startGame();
   }
   // Bottom 1/3 of the canvas will call the duck function
@@ -645,10 +662,6 @@ function checkFocus() {
 
 window.addEventListener('resize', resize);
 function resize() {
-  // window.RELSCALE = (window.innerWidth / 4 / 225) / SCALE ;
-  // app.renderer.resolution = window.devicePixelRatio || RELSCALE * 1.25;
-  // console.log(app.renderer.resolution);
-
   app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width / 4);
 
   window.RELSCALE = (app.screen.height / 225) / SCALE;
@@ -669,6 +682,24 @@ function resize() {
   windows.pun.resolution = RELSCALE * 1.5;
   windows.code.resolution = RELSCALE * 1.5;
 
+  windows.getCanvasSize(canvas.width);
+  windows.topMessageInstruct.resolution = RELSCALE * 1.5;
+  windows.bottomMessageInstruct.resolution = RELSCALE * 1.5;
+  try {windows.scoreMessage.resolution = RELSCALE * 1.5;} catch{};
+  try {windows.pun.resolution = RELSCALE * 1.5;} catch{};
+  try {
+    windows.topMessageCoupon.resolution = RELSCALE * 1.5;
+    windows.code.resolution = RELSCALE * 1.5;
+    windows.bottomMessageCoupon.resolution = RELSCALE * 1.5;
+  } catch{};
+  try { 
+    windows.titleMessage.resolution = RELSCALE * 1.5;
+    windows.creditsMessage.resolution = RELSCALE * 1.5;
+  } catch{};
+
+  if (gameOver) {
+    if (!creditsShowing) { windows.socialsResizing(canvas.width, gameOver); }
+  }
 }
 
 // === End helper functions === //
@@ -681,6 +712,9 @@ function moveBackground() {
 
   backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale * FPSSCALE;
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale * FPSSCALE;
+  backgroundFront.tileScale.set(SCALE * 3.52);
+  backgroundFront.tilePosition.x %= backgroundFront.texture.width * SCALE * 3.52;
+  backgroundBack.tilePosition.x %= backgroundBack.texture.width * SCALE *.88;
   if (winTriggered && performance.now() >= (winTimeoutTime)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 }
 
