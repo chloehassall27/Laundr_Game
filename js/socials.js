@@ -117,7 +117,7 @@ export default class socials {
         this.smallScreenDiv.style.position = "absolute";
         this.smallScreenDiv.style.textAlign = "center";
         this.smallScreenDiv.innerHTML = "Share your Score!";
-        this.smallScreenDiv.style.padding = "0.5vw";
+        this.smallScreenDiv.style.padding = "0.4vw";
         this.smallScreenDiv.style.cursor = 'pointer';
         this.smallScreenDiv.style.fontSize = "2vw";
         this.smallScreenDiv.style.margin = "0px";
