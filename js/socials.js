@@ -17,6 +17,7 @@ export default class socials {
     endGame() {
         //html method
         this.bringOnScreen(false);
+        this.renderTwt();
     }
 
     switchSizes() {

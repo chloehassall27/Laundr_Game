@@ -1,19 +1,4 @@
 export default class Player {
-    // groundLevel;
-
-    // app;
-
-
-
-
-    // currSprite;
-    // running;
-    // jumping;
-    // jumpStatic;
-    // ducking;
-    // falling;
-
-    // jumpS;
 
     constructor(app, jumpS) {
         this.app = app;
@@ -35,7 +20,7 @@ export default class Player {
     updateJump() {
         // If the player is on the ground, not ducking, and trying to jump, start the jump sequence with an initial jump speed
         if (this.currSprite.y == this.groundLevel && !window.inputs.duck && window.inputs.jump) {
-            if (!window.mute) this.jumpS.play();
+            this.jumpS.play();
             this.speedY = 3.5;
             this.switchSprite(this.jumpStatic);
             // this.switchSprite(this.jumping);
@@ -51,13 +36,18 @@ export default class Player {
             this.speedY += .06 * FPSSCALE;
         }
 
+        // Cap max upward speed to prevent flying due to lag
+		// This probably causes problems on lower fps...
+        if (this.speedY > 3.7)
+            this.speedY = 3.7;
+
         // Once the jump animation is completed, switch to static animation
         // if (this.currSprite === this.jumping && this.currSprite.currentFrame == this.jumping.size - 1){
         //     this.switchSprite(this.jumpStatic);
         // }
 
-        this.currSprite.y -= SCALE * this.speedY * FPSSCALE;
-        this.currSprite.hitArea.y = this.currSprite.y;
+        this.currSprite.y -= SCALE * this.speedY * FPSSCALE ;
+        this.currSprite.hitArea.y -= SCALE * this.speedY * FPSSCALE;
 
         if (this.currSprite.y > this.groundLevel) {
             this.speedY = 0;
@@ -75,7 +65,7 @@ export default class Player {
 
             // If ducking in midair, move player down faster
             else
-                this.speedY -= .15;
+                this.speedY -= .15 * FPSSCALE;
         }
 
         // End of duck
@@ -164,6 +154,7 @@ export default class Player {
         //console.log(this.running.hitArea.width);
         this.running.animationSpeed = .15;
         this.running.play();
+        this.running.zIndex = 3;
 
 
         this.jumping = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["jumping_WithSock"]);
@@ -174,6 +165,7 @@ export default class Player {
         this.jumping.hitArea = new PIXI.Rectangle(this.jumping.x, this.jumping.y, spriteWidth, spriteHeight);
         this.jumping.animationSpeed = .15;
         this.jumping.play();
+        this.jumping.zIndex = 3;
 
         this.jumpStatic = new PIXI.Sprite(this.app.loader.resources.charaSheet.spritesheet.textures["jumping_WithSock_1.png"]);
         this.jumpStatic.scale.set(height);
@@ -181,6 +173,7 @@ export default class Player {
         this.jumpStatic.x = WIDTH * 0.22;
         this.jumpStatic.y = HEIGHT - (HEIGHT * .1);
         this.jumpStatic.hitArea = new PIXI.Rectangle(this.jumpStatic.x - widthOffset, this.jumpStatic.y + heightOffset, spriteWidth, spriteHeight);
+        this.jumpStatic.zIndex = 3;
 
         this.ducking = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["duck_WithSock"]);
         this.ducking.scale.set(height);
@@ -190,6 +183,7 @@ export default class Player {
         this.ducking.hitArea = new PIXI.Rectangle(this.ducking.x, this.ducking.y, spriteWidth, spriteHeight * 0.68);
         this.ducking.animationSpeed = .15;
         this.ducking.play();
+        this.ducking.zIndex = 3;
 
         this.falling = new PIXI.AnimatedSprite(this.app.loader.resources.charaSheet.spritesheet.animations["falling_WithSock"]);
         this.falling.scale.set(height);
@@ -199,6 +193,7 @@ export default class Player {
         this.falling.hitArea = new PIXI.Rectangle(this.falling.x, this.falling.y, spriteWidth, spriteHeight);
         this.falling.animationSpeed = .25;
         this.falling.loop = false;
+        this.falling.zIndex = 3;
 
         this.currSprite = this.ducking;
         this.currSprite.hitArea = this.ducking.hitArea;
