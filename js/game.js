@@ -652,15 +652,18 @@ function resize() {
   app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width / 4);
 
   window.RELSCALE = (app.screen.height / 225) / SCALE;
+  windows.getCanvasSize(canvas);
 
   container.scale.set(RELSCALE);
 
   scoreText.resolution = RELSCALE * 1.5;
   windows.instructMessage.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
+  console.log(creditsShowing);
+  if(!creditsShowing){windows.socialsResizing();} 
 
-  if (canvas.width < 1090 && !socials.smallScreen && gameOver) socials.switchSizes();
-  else if (canvas.width >= 1090 && socials.smallScreen && gameOver) socials.switchSizes();
+  //if (canvas.width < 1090 && !socials.smallScreen && gameOver) socials.switchSizes();
+  //else if (canvas.width >= 1090 && socials.smallScreen && gameOver) socials.switchSizes();
 
   windows.scoreMessage.resolution = RELSCALE * 1.5;
   windows.pun.resolution = RELSCALE * 1.5;

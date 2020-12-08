@@ -201,8 +201,8 @@ export default class Windows {
   setUpLose() {
     this.socials.endGame();
 
-    if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
-    else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
+    //if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
+    //else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
 
     this.scoreMessage.text = Math.round(this.score);
     this.scoreMessage.y = this.scoreBackgroundLose.y;
@@ -237,10 +237,9 @@ export default class Windows {
   setUpWin() {
     this.socials.endGame();
 
-    // if (this.canvasSize < 1090 && !this.socials.smallScreen) this.socials.switchSizes();
-    // else if (this.canvasSize >= 1090 && this.socials.smallScreen) this.socials.switchSizes();
+    if (this.canvasSize < 1090 && !this.socials.smallScreen) this.socials.switchSizes();
+    else if (this.canvasSize >= 1090 && this.socials.smallScreen) this.socials.switchSizes();
 
-    this.socials.endGame();
     this.invisDiv.style.left = "-999%";
     this.creditsShowing = false;
 
@@ -347,9 +346,9 @@ export default class Windows {
     this.invisDiv.style.left = "-999%";
   }
 
-  socialsResizing(gameOver) {
-    if (this.canvasSize < 675 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
-    else if (this.canvasSize >= 675 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
+  socialsResizing() {
+    if (this.canvasSize.width < 675 && !this.socials.smallScreen) this.socials.switchSizes();
+    else if (this.canvasSize.width >= 675 && this.socials.smallScreen) this.socials.switchSizes();
   }
 
 }
