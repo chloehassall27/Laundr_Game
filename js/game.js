@@ -169,6 +169,8 @@ function loadOnce() {
       let bgTextureFront = PIXI.Texture.from("../sprites/background_road.png");
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
       //let bgTextureBack = PIXI.Texture.from("../sprites/background_sky_blue.png"); // HELLO MR BLUE SKY
+      bgTextureFront.baseTexture.mipmap = false;
+      bgTextureBack.baseTexture.mipmap = false;
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
       backgroundFront.zIndex = 2;
