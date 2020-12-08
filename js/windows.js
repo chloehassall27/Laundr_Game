@@ -45,6 +45,7 @@ export default class Windows {
     this.code.x = WIDTH / 2;
     this.code.y = HEIGHT / 1.75;
     this.code.zIndex = 3;
+    this.code.resolution = 1.5 * RELSCALE;
     this.code.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
   }
 
@@ -236,15 +237,18 @@ export default class Windows {
 
   setUpWin() {
     this.socials.endGame();
-
+    
     if (this.canvasSize < 1090 && !this.socials.smallScreen) this.socials.switchSizes();
     else if (this.canvasSize >= 1090 && this.socials.smallScreen) this.socials.switchSizes();
+    
+    if (this.creditsShowing) this.removeCredits();
 
     this.invisDiv.style.left = "-999%";
     this.creditsShowing = false;
 
     let topText = 'Use coupon code';
     this.code.text = this.couponCode;
+    this.code.resolution = RELSCALE * 1.5;
     let bottomText = 'for 15% off your next order!';
 
     this.scoreMessage.text = Math.round(this.score);
@@ -267,13 +271,17 @@ export default class Windows {
     this.topMessageCoupon.anchor.set(0.5);
     this.topMessageCoupon.x = WIDTH / 2;
     this.topMessageCoupon.y = this.popUpBackground.y;
-    this.topMessageCoupon.zIndex = 3;
+    this.topMessageCoupon.zIndex = 15;
+    this.topMessageCoupon.resolution = RELSCALE * 1.5;
+    this.topMessageCoupon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     this.bottomMessageCoupon = new PIXI.Text(bottomText, this.couponInfoStyle);
     this.bottomMessageCoupon.anchor.set(0.5);
     this.bottomMessageCoupon.x = WIDTH / 2;
     this.bottomMessageCoupon.y = this.popUpBackground.y + (this.popUpBackground.y * 0.3);
-    this.bottomMessageCoupon.zIndex = 3;
+    this.bottomMessageCoupon.zIndex = 15;
+    this.bottomMessageCoupon.resolution = RELSCALE * 1.5;
+    this.bottomMessageCoupon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     container.addChild(this.popUpBackground);
     container.addChild(this.scoreBackgroundWin);
@@ -322,13 +330,17 @@ export default class Windows {
     this.titleMessage.anchor.set(0.5);
     this.titleMessage.y = HEIGHT / 1.9;
     this.titleMessage.x = WIDTH / 2.3;
-    this.titleMessage.zIndex = 3;
+    this.titleMessage.resolution = RELSCALE * 1.5;
+    this.titleMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    this.titleMessage.zIndex = 13;
 
     this.creditsMessage = new PIXI.Text(this.credits, this.creditsStyle);
     this.creditsMessage.anchor.set(0.5);
     this.creditsMessage.y = HEIGHT / 1.9;
     this.creditsMessage.x = WIDTH / 2;
-    this.creditsMessage.zIndex = 3;
+    this.creditsMessage.resolution = RELSCALE * 1.5;
+    this.creditsMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    this.creditsMessage.zIndex = 13;
 
     container.addChild(this.popUpBackground);
     container.addChild(this.titleMessage);
