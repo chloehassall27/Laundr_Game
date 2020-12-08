@@ -128,8 +128,7 @@ export default class Windows {
     else {
       instructText = "Deliver the laundry without" + '\n' +
         "hitting any obstacles!" + '\n' + '\n' +
-        "Tap sky to jump" + '\n' + '\n' +
-        "Tap street to duck" + '\n' + '\n' +
+        "Tap sky to jump, tap street to duck" + '\n' + '\n' +
         "Collect tokens         for extra points" + '\n' + '\n' +
         "Tip: Turn your device horizontally!";
     }
