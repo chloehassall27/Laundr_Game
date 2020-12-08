@@ -19,23 +19,14 @@ export default class Spawner {
     buildHouse(spriteName) {
         let texture = this.app.loader.resources.houseSheet.spritesheet.textures[spriteName];
 
-        house.anchor.set(0, 1);
-        house.x = WIDTH;
-        house.y = 3.96 * HEIGHT / 5;
-        house.scale.set(1.9 * SCALE);
-        house.zIndex = 0;
-        
-        container.addChild(house);
-        this.houses.push(house);
         if (texture != undefined) {
             let house = new PIXI.Sprite(this.app.loader.resources.houseSheet.spritesheet.textures[spriteName]);
-
             house.anchor.set(0, 1);
             house.x = WIDTH;
-            house.y = 4 * HEIGHT / 5;
+            house.y = 3.96 * HEIGHT / 5;
             house.scale.set(1.9 * SCALE);
             house.zIndex = 0;
-
+            
             container.addChild(house);
             this.houses.push(house);
         }
