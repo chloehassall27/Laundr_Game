@@ -112,7 +112,7 @@ export default class Windows {
     this.token.anchor.set(0.45);
     this.token.scale.set(SCALE * 0.2);
     this.token.x = this.popUpBackground.x * 0.99;
-    this.token.y = this.popUpBackground.y * 1.54;
+    this.token.y = this.popUpBackground.y * 1.5;
     this.token.zIndex = 3;
     this.token.animationSpeed = 0.135;
     this.token.play();
