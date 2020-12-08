@@ -33,7 +33,7 @@ export default class Spawner {
     moveSprites() {
         for (var i = 0; i < this.houses.length; i++) {
             const xBox = this.houses[i].getBounds().x + this.houses[i].getBounds().width;
-            this.houses[i].x -= SCALE * 1.28 * speedScale * FPSSCALE;
+            this.houses[i].x -= SCALE * 1.33 * speedScale * FPSSCALE;
 
             if (xBox <= 0) {
               container.removeChild(this.houses[i]);

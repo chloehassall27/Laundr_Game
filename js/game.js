@@ -28,7 +28,8 @@ PIXI.sound.context.paused = true;
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 // PIXI.settings.ROUND_PIXELS = true;
-PIXI.settings.MIPMAP_MODES = PIXI.MIPMAP_MODES.ON;
+PIXI.settings.MIPMAP_TEXTURES = PIXI.MIPMAP_MODES.ON;
+PIXI.settings.RENDER_OPTIONS.antialias = true;
 
 window.HEIGHT = app.screen.height;
 window.WIDTH = app.screen.width;
@@ -167,12 +168,13 @@ function loadOnce() {
       //for parallax (background moves slower than foreground)
       let bgTextureFront = PIXI.Texture.from("../sprites/background_road.png");
       let bgTextureBack = PIXI.Texture.from("../sprites/background_sky.png");
+      //let bgTextureBack = PIXI.Texture.from("../sprites/background_sky_blue.png"); // HELLO MR BLUE SKY
       backgroundFront = new PIXI.TilingSprite(bgTextureFront, WIDTH, HEIGHT * 0.25);
       backgroundBack = new PIXI.TilingSprite(bgTextureBack, WIDTH, HEIGHT);
       backgroundFront.zIndex = 2;
-      backgroundFront.tileScale.set(SCALE * .25);
+      backgroundFront.tileScale.set(SCALE * 3.52);
       backgroundFront.y = HEIGHT - SCALE * 50.25;
-      backgroundBack.tileScale.set(SCALE * .25);
+      backgroundBack.tileScale.set(SCALE * .88);
       container.addChild(backgroundBack);
       container.addChild(backgroundFront);
 
@@ -697,6 +699,9 @@ function moveBackground() {
 
   backgroundFront.tilePosition.x -= SCALE * 3.5 * speedScale * FPSSCALE;
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale * FPSSCALE;
+  backgroundFront.tileScale.set(SCALE * 3.52);
+  backgroundFront.tilePosition.x %= backgroundFront.texture.width * SCALE * 3.52;
+  backgroundBack.tilePosition.x %= backgroundBack.texture.width * SCALE *.88;
   if (winTriggered && performance.now() >= (winTimeoutTime)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 }
 
