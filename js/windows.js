@@ -6,7 +6,7 @@ export default class Windows {
     this.socials = new Socials(app);
 
     this.style = new PIXI.TextStyle({
-      fontFamily: 'Arial', fontSize: SCALE * 15, fill: '#4e4e4e'
+      fontFamily: 'Arial', fontSize: RELSCALE * 15, fill: '#4e4e4e', align: 'center'
     });
     this.scoreStyle = new PIXI.TextStyle({
       fontFamily: 'Arial', fontSize: RELSCALE * 23, fill: '#4b4b4b'
@@ -29,15 +29,9 @@ export default class Windows {
     this.setUpSprites();
 
     this.scoreMessage = new PIXI.Text(0, this.scoreStyle);
+    this.scoreMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
     this.scoreMessage.anchor.set(0.5);
     this.scoreMessage.x = WIDTH / 2;
-    this.scoreMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-
-    this.popUpBackground.zIndex = 10;
-    this.scoreBackgroundLose.zIndex = 10;
-    this.scoreBackgroundWin.zIndex = 10;
-    this.scoreMessage.zIndex = 10;
-    this.pun.zIndex = 10;
   }
 
   setUpCode() {
@@ -50,10 +44,9 @@ export default class Windows {
     this.code.anchor.set(0.5);
     this.code.x = WIDTH / 2;
     this.code.y = HEIGHT / 1.75;
-    this.code.zIndex = 15;
+    this.code.zIndex = 3;
     this.code.resolution = 1.5 * RELSCALE;
     this.code.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-
   }
 
   setUpPuns() {
@@ -72,6 +65,7 @@ export default class Windows {
     this.pun.anchor.set(0.5);
     this.pun.x = WIDTH / 2;
     this.pun.y = HEIGHT / 2.5;
+    this.pun.zIndex = 3;
     this.pun.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
   }
 
@@ -81,21 +75,21 @@ export default class Windows {
     this.popUpBackground.scale.set(SCALE * 0.6);
     this.popUpBackground.x = WIDTH / 2;
     this.popUpBackground.y = HEIGHT / 2;
-    this.popUpBackground.zIndex = 10;
+    this.popUpBackground.zIndex = 3;
 
     this.scoreBackgroundLose = new PIXI.Sprite.from("../sprites/scoreBackgroundLose.png");
     this.scoreBackgroundLose.anchor.set(0.5);
     this.scoreBackgroundLose.scale.set(SCALE * 0.4);
     this.scoreBackgroundLose.x = WIDTH / 2;
     this.scoreBackgroundLose.y = this.popUpBackground.y / 2.1;
-    this.scoreBackgroundLose.zIndex = 10;
+    this.scoreBackgroundLose.zIndex = 3;
 
     this.scoreBackgroundWin = new PIXI.Sprite.from("../sprites/scoreBackgroundWin.png");
     this.scoreBackgroundWin.anchor.set(0.5);
     this.scoreBackgroundWin.scale.set(SCALE * 0.75);
     this.scoreBackgroundWin.x = WIDTH / 2;
     this.scoreBackgroundWin.y = this.popUpBackground.y * 1.05;
-    this.scoreBackgroundLose.zIndex = 10;
+    this.scoreBackgroundWin.zIndex = 3;
 
     this.creditsButton = document.createElement('IMG');
     this.creditsButton.classList.add("creditsButton");
@@ -112,41 +106,48 @@ export default class Windows {
   }
 
   setUpInstruct() {
-    let topText;
-    let bottomText;
+    let instructText;
+
+    this.token = new PIXI.AnimatedSprite(this.app.loader.resources.tokenSheet.spritesheet.animations["tokenSprite"]);
+    this.token.anchor.set(0.45);
+    this.token.scale.set(SCALE * 0.2);
+    this.token.x = this.popUpBackground.x * 0.99;
+    this.token.y = this.popUpBackground.y * 1.54;
+    this.token.zIndex = 3;
+    this.token.animationSpeed = 0.135;
+    this.token.play();
+
     if (!PIXI.utils.isMobile.any) {
-      topText = 'Press space/up arrow key to jump';
-      bottomText = 'Press down arrow key to duck';
+      instructText = "Deliver the laundry without" + '\n' +
+        "hitting any obstacles!" + '\n' + '\n' +
+        "Press space/up arrow key to jump" + '\n' + '\n' +
+        "Press down arrow key to duck" + '\n' + '\n' +
+        "Collect tokens       for extra points";
     }
     else {
-      topText = 'Tap sky to jump';
-      bottomText = 'Tap street to duck'
+      instructText = "Deliver the laundry without hitting any obstacles!" + '\n' +
+        "Tap sky to jump" + '\n' +
+        "Tap street to duck" + '\n' +
+        "Collect tokens         for extra points";
     }
-    this.topMessageInstruct = new PIXI.Text(topText, this.style);
-    this.topMessageInstruct.anchor.set(0.5);
-    this.topMessageInstruct.x = WIDTH / 2;
-    this.topMessageInstruct.y = this.popUpBackground.y - (this.popUpBackground.y * 0.25);
-    this.topMessageInstruct.zIndex = 11;
-    this.topMessageInstruct.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-
-    this.bottomMessageInstruct = new PIXI.Text(bottomText, this.style);
-    this.bottomMessageInstruct.anchor.set(0.5);
-    this.bottomMessageInstruct.x = WIDTH / 2;
-    this.bottomMessageInstruct.y = this.popUpBackground.y + (this.popUpBackground.y * 0.25);
-    this.bottomMessageInstruct.zIndex = 11;
-    this.bottomMessageInstruct.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    this.instructMessage = new PIXI.Text(instructText, this.style);
+    this.instructMessage.anchor.set(0.5);
+    this.instructMessage.x = WIDTH / 2;
+    this.instructMessage.y = this.popUpBackground.y;
+    this.instructMessage.zIndex = 3;
+    this.instructMessage.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
     this.setupXButton(95, 10, "instruct");
 
     container.addChild(this.popUpBackground);
-    container.addChild(this.topMessageInstruct);
-    container.addChild(this.bottomMessageInstruct);
+    container.addChild(this.token);
+    container.addChild(this.instructMessage);
   }
 
   removeInstruct() {
     container.removeChild(this.popUpBackground);
-    container.removeChild(this.topMessageInstruct);
-    container.removeChild(this.bottomMessageInstruct);
+    container.removeChild(this.token);
+    container.removeChild(this.instructMessage);
 
     this.invisDiv.style.left = "-999%";
 
@@ -201,11 +202,12 @@ export default class Windows {
   setUpLose() {
     this.socials.endGame();
 
-    if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
-    else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
+    //if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
+    //else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
 
     this.scoreMessage.text = Math.round(this.score);
     this.scoreMessage.y = this.scoreBackgroundLose.y;
+    this.scoreMessage.zIndex = 3;
 
     this.rand = Math.floor(Math.random() * Math.floor(this.losePuns.length));
     this.punSize;
@@ -234,14 +236,13 @@ export default class Windows {
   }
 
   setUpWin() {
-    // this.socials.endGame();
-
-    if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
-    else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
-
+    this.socials.endGame();
+    
+    if (this.canvasSize < 1090 && !this.socials.smallScreen) this.socials.switchSizes();
+    else if (this.canvasSize >= 1090 && this.socials.smallScreen) this.socials.switchSizes();
+    
     if (this.creditsShowing) this.removeCredits();
 
-    this.socials.endGame();
     this.invisDiv.style.left = "-999%";
     this.creditsShowing = false;
 
@@ -252,6 +253,7 @@ export default class Windows {
 
     this.scoreMessage.text = Math.round(this.score);
     this.scoreMessage.y = this.scoreBackgroundWin.y / 2.5;
+    this.scoreMessage.zIndex = 3;
 
     this.rand = Math.floor(Math.random() * Math.floor(this.winPuns.length));
     this.punSize;
@@ -356,9 +358,9 @@ export default class Windows {
     this.invisDiv.style.left = "-999%";
   }
 
-  socialsResizing(gameOver) {
-    if (this.canvasSize < 1090 && !this.socials.smallScreen && gameOver) this.socials.switchSizes();
-    else if (this.canvasSize >= 1090 && this.socials.smallScreen && gameOver) this.socials.switchSizes();
+  socialsResizing() {
+    if (this.canvasSize.width < 675 && !this.socials.smallScreen) this.socials.switchSizes();
+    else if (this.canvasSize.width >= 675 && this.socials.smallScreen) this.socials.switchSizes();
   }
 
 }
