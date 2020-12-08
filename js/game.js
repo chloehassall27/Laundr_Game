@@ -660,7 +660,9 @@ function resize() {
   windows.instructMessage.resolution = RELSCALE * 1.5;
   highscoreText.resolution = RELSCALE * 1.5;
   console.log(creditsShowing);
-  if(!creditsShowing){windows.socialsResizing();} 
+  if(gameOver){
+    if(!creditsShowing){windows.socialsResizing();} 
+  }
 
   //if (canvas.width < 1090 && !socials.smallScreen && gameOver) socials.switchSizes();
   //else if (canvas.width >= 1090 && socials.smallScreen && gameOver) socials.switchSizes();
