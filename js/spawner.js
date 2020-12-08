@@ -237,7 +237,7 @@ export default class Spawner {
         } else if (rand % 5 == 0) {
             if (currTime > this.switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (rand == 8){//currTime >= this.ironTime && rand % 8 == 0) {
+        } else if (currTime >= this.ironTime && rand % 8 == 0){
             return "ironSprite";
         }
         else {
