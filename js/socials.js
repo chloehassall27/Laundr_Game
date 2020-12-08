@@ -86,7 +86,7 @@ export default class socials {
     }
 
     smallBringOnScreen() {
-        this.smallScreenDiv.style.top = '78%';
+        this.smallScreenDiv.style.top = '75%';
         this.smallScreenDiv.style.left = "50%";
         this.smallScreenDiv.style.transform = "translate(-50%, -50%)";
     }
@@ -117,7 +117,7 @@ export default class socials {
         this.smallScreenDiv.style.position = "absolute";
         this.smallScreenDiv.style.textAlign = "center";
         this.smallScreenDiv.innerHTML = "Share your Score!";
-        this.smallScreenDiv.style.padding = "0.35vw";
+        this.smallScreenDiv.style.padding = "0.4vw";
         this.smallScreenDiv.style.cursor = 'pointer';
         this.smallScreenDiv.style.fontSize = "2vw";
         this.smallScreenDiv.style.margin = "0px";
