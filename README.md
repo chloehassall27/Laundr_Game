@@ -1,4 +1,4 @@
-## HamperMan Game
+# HamperMan Game
 The HamperMan game is a Laundr-themed version of Google Chrome’s dino game. It is available on desktop and mobile browsers. The game is built on the pixi-js framework, allowing for wide compatibility and solid performance.
 
 ## Motivation
