@@ -112,7 +112,8 @@ export default class Windows {
     this.token.anchor.set(0.45);
     this.token.scale.set(SCALE * 0.2);
     this.token.x = this.popUpBackground.x * 0.99;
-    this.token.y = this.popUpBackground.y * 1.54;
+    if(!PIXI.utils.isMobile.any){this.token.y = this.popUpBackground.y * 1.5;}
+    else{this.token.y = this.popUpBackground.y * 1.2;}
     this.token.zIndex = 3;
     this.token.animationSpeed = 0.135;
     this.token.play();
@@ -125,10 +126,11 @@ export default class Windows {
         "Collect tokens       for extra points";
     }
     else {
-      instructText = "Deliver the laundry without hitting any obstacles!" + '\n' +
-        "Tap sky to jump" + '\n' +
-        "Tap street to duck" + '\n' +
-        "Collect tokens         for extra points";
+      instructText = "Deliver the laundry without" + '\n' +
+        "hitting any obstacles!" + '\n' + '\n' +
+        "Tap sky to jump, tap street to duck" + '\n' + '\n' +
+        "Collect tokens         for extra points" + '\n' + '\n' +
+        "Tip: Turn your device horizontally!";
     }
     this.instructMessage = new PIXI.Text(instructText, this.style);
     this.instructMessage.anchor.set(0.5);
