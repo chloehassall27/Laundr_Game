@@ -15,22 +15,22 @@ Game code was created using Javascript. Active deployments are created with [her
 - [pixi-sound](https://github.com/pixijs/pixi-sound)
 
 ## Features
-* Jumping
-* Ducking
-* Display of high score and current score 
+* Instructions on game start
+* Jumping and ducking
 * Random obstacle spawning
-* Score bonus tokens aka Laundr bombs 
+* Display high score and current score
+* Sound effects on player actions
+* Mute functionality
+* Auto pause when game tab loses focus
+* Score bonus tokens
+* Lose or win game
 * Restart functionality
-* Share high score to Twitter and Facebook
-* Mute functionality 
 * Coupon code displayed on a win
 * Puns displayed on game over screens
 * Display credits on a win
-* Lose game
-* Win game
-* Compatible with mobile 
-* Auto pause when game tab loses focus
-* Sound Effects on jumping, collecting a token, losing, and winning	
+* Share high score to Twitter and Facebook
+* Compatible with mobile
+
 
 ## Installation
 To install all necessary files required for further development, run: 
