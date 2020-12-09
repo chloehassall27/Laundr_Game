@@ -81,7 +81,7 @@ The [Tweet Button](https://developer.twitter.com/en/docs/twitter-for-websites/tw
 The [Share Button](https://developers.facebook.com/docs/plugins/share-button/) from Facebook was used to allow players to share their score to Facebook.
 
 ## Tests
-Unit tests were created using [Canvest](https://github.com/TyrealGray/Canvest) to allow for tests that interact with canvas elements. To run the tests, use the untiTests branch. 
+Unit tests were created using [Canvest](https://github.com/TyrealGray/Canvest) to allow for tests that interact with canvas elements. To run the tests, use the unitTests branch. 
 
 Ensure that the directory used has no spaces in it. For example, use C:/unitTests, not C:/unit Tests, as canvest will not automatically convert this directory to C:/”unit Tests” for you and will be unable to find your project.
 
