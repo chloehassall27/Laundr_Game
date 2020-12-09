@@ -237,7 +237,7 @@ export default class Spawner {
         } else if (rand % 5 == 0) {
             if (currTime > this.switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (currTime >= this.ironTime && rand % 8 == 0){
+        } else if (currTime >= this.ironTime && rand % 8 == 0) {
             return "ironSprite";
         }
         else {
@@ -268,5 +268,17 @@ export default class Spawner {
 
     gainFocus() {
         this.focus = true;
+    }
+
+    clearOffscreenEnd() {
+        if (this.gameOver) {
+            for (let i = 0; i < this.obstacles.length; i++) {
+                if (this.obstacles[i].x >= WIDTH * 1.09) {
+                    container.removeChild(spawner.obstacles[i]);
+                    this.obstacles.shift();
+                    i--;
+                }
+            }
+        }
     }
 }

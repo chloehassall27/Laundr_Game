@@ -4,14 +4,6 @@
  Dower Chin's Pixi.js Video Tutorials - https://www.youtube.com/user/dowerchin 
 */
 
-
-/*
-  current bugs:
-   - jiggle bug
-   - mute token collect sound
-   - Audio on touch devices will not play until first touch has been let go. Will be fixed by instructions requiring touch
-*/
-
 import Spawner from "./spawner.js"
 import HouseGen from "./houseGen.js"
 import Player from "./player.js"
@@ -273,10 +265,11 @@ function gameLoop() {
         win = true;
         winTriggered = true;
         spawner.gameOver = true;
-        winTimeoutTime = performance.now();
+        spawner.clearOffscreenEnd();
+        winTimeoutTime = performance.now() + 300;
         twtTimeout = setTimeout(socials.renderTwt, 2980);
         winTimeout = setTimeout(endGame, 3000);
-        slowTimout = setInterval(slowMovement, 700);
+        slowTimout = setInterval(slowMovement, 1000);
       }
     }
   } else if (gameOver && player && player.needsFall) {
@@ -405,7 +398,7 @@ function onClickMute() {
   touchDisable = true;
 
   // Unmute
-  if (muteButton.currentFrame == 1){
+  if (muteButton.currentFrame == 1) {
     muteButton.gotoAndStop(0);
     deathS.muted = false;
     winS.muted = false;
@@ -680,17 +673,17 @@ function resize() {
   windows.pun.resolution = RELSCALE * 1.5;
   windows.code.resolution = RELSCALE * 1.5;
 
-  try {windows.scoreMessage.resolution = RELSCALE * 1.5;} catch{};
-  try {windows.pun.resolution = RELSCALE * 1.5;} catch{};
+  try { windows.scoreMessage.resolution = RELSCALE * 1.5; } catch { };
+  try { windows.pun.resolution = RELSCALE * 1.5; } catch { };
   try {
     windows.topMessageCoupon.resolution = RELSCALE * 1.5;
     windows.code.resolution = RELSCALE * 1.5;
     windows.bottomMessageCoupon.resolution = RELSCALE * 1.5;
-  } catch{};
-  try { 
+  } catch { };
+  try {
     windows.titleMessage.resolution = RELSCALE * 1.5;
     windows.creditsMessage.resolution = RELSCALE * 1.5;
-  } catch{};
+  } catch { };
 
   if (gameOver) {
     if (!creditsShowing) { windows.socialsResizing(); }
@@ -709,7 +702,7 @@ function moveBackground() {
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale * FPSSCALE;
   backgroundFront.tileScale.set(SCALE * 3.52);
   backgroundFront.tilePosition.x %= backgroundFront.texture.width * SCALE * 3.52;
-  backgroundBack.tilePosition.x %= backgroundBack.texture.width * SCALE *.88;
+  backgroundBack.tilePosition.x %= backgroundBack.texture.width * SCALE * .88;
   if (winTriggered && performance.now() >= (winTimeoutTime)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 }
 
