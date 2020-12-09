@@ -266,10 +266,10 @@ function gameLoop() {
         winTriggered = true;
         spawner.gameOver = true;
         spawner.clearOffscreenEnd();
-        winTimeoutTime = performance.now() + 300;
+        winTimeoutTime = performance.now() + 400;
         twtTimeout = setTimeout(socials.renderTwt, 2980);
         winTimeout = setTimeout(endGame, 3000);
-        slowTimout = setInterval(slowMovement, 1000);
+        slowTimout = setInterval(slowMovement, 1100);
       }
     }
   } else if (gameOver && player && player.needsFall) {
