@@ -117,7 +117,7 @@ export default class Windows {
     this.token.zIndex = 3;
     this.token.animationSpeed = 0.135;
     this.token.play();
-
+a
     if (!PIXI.utils.isMobile.any) {
       instructText = "Deliver the laundry without" + '\n' +
         "hitting any obstacles!" + '\n' + '\n' +
