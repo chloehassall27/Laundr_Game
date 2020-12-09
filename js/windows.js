@@ -112,8 +112,8 @@ export default class Windows {
     this.token.anchor.set(0.45);
     this.token.scale.set(SCALE * 0.2);
     this.token.x = this.popUpBackground.x * 0.99;
-    if(!PIXI.utils.isMobile.any){this.token.y = this.popUpBackground.y * 1.5;}
-    else{this.token.y = this.popUpBackground.y * 1.2;}
+    if (!PIXI.utils.isMobile.any) { this.token.y = this.popUpBackground.y * 1.5; }
+    else { this.token.y = this.popUpBackground.y * 1.2; }
     this.token.zIndex = 3;
     this.token.animationSpeed = 0.135;
     this.token.play();
@@ -204,9 +204,6 @@ export default class Windows {
   setUpLose() {
     this.socials.endGame();
 
-    //if (this.canvasSize < 675 && !this.socials.smallScreen) this.socials.switchSizes();
-    //else if (this.canvasSize >= 675 && this.socials.smallScreen) this.socials.switchSizes();
-
     this.scoreMessage.text = Math.round(this.score);
     this.scoreMessage.y = this.scoreBackgroundLose.y;
     this.scoreMessage.zIndex = 3;
@@ -239,10 +236,10 @@ export default class Windows {
 
   setUpWin() {
     this.socials.endGame();
-    
+
     if (this.canvasSize < 1090 && !this.socials.smallScreen) this.socials.switchSizes();
     else if (this.canvasSize >= 1090 && this.socials.smallScreen) this.socials.switchSizes();
-    
+
     if (this.creditsShowing) this.removeCredits();
 
     this.invisDiv.style.left = "-999%";
@@ -360,6 +357,7 @@ export default class Windows {
     this.invisDiv.style.left = "-999%";
   }
 
+  //not tested, function never used + out of date
   socialsResizing() {
     if (this.canvasSize.width < 675 && !this.socials.smallScreen) this.socials.switchSizes();
     else if (this.canvasSize.width >= 675 && this.socials.smallScreen) this.socials.switchSizes();

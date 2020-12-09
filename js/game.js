@@ -1,15 +1,9 @@
 /*
+THIS IS THE TESTING BRANCH. To test objects, please follow the instructions in canvest_setup_inst :)
+
  References (outside of API/framework documentation) used while building this project include: 
  kittykatattack's Learning Pixi tutorial - https://github.com/kittykatattack/learningPixi
  Dower Chin's Pixi.js Video Tutorials - https://www.youtube.com/user/dowerchin 
-*/
-
-
-/*
-  current bugs:
-   - jiggle bug
-   - mute token collect sound
-   - Audio on touch devices will not play until first touch has been let go. Will be fixed by instructions requiring touch
 */
 
 import Spawner from "./spawner.js"
@@ -236,6 +230,8 @@ function reload() {
     });
 
   speedInterval = setInterval(increaseSpeedScale, 20000);
+  console.log("obstacles: " + spawner.obstacles);
+  console.log("tokens: " + spawner.tokens);
   // gameInterval = setInterval(gameLoop, 7);
 }
 
@@ -405,7 +401,7 @@ function onClickMute() {
   touchDisable = true;
 
   // Unmute
-  if (muteButton.currentFrame == 1){
+  if (muteButton.currentFrame == 1) {
     muteButton.gotoAndStop(0);
     deathS.muted = false;
     winS.muted = false;
@@ -680,17 +676,17 @@ function resize() {
   windows.pun.resolution = RELSCALE * 1.5;
   windows.code.resolution = RELSCALE * 1.5;
 
-  try {windows.scoreMessage.resolution = RELSCALE * 1.5;} catch{};
-  try {windows.pun.resolution = RELSCALE * 1.5;} catch{};
+  try { windows.scoreMessage.resolution = RELSCALE * 1.5; } catch { };
+  try { windows.pun.resolution = RELSCALE * 1.5; } catch { };
   try {
     windows.topMessageCoupon.resolution = RELSCALE * 1.5;
     windows.code.resolution = RELSCALE * 1.5;
     windows.bottomMessageCoupon.resolution = RELSCALE * 1.5;
-  } catch{};
-  try { 
+  } catch { };
+  try {
     windows.titleMessage.resolution = RELSCALE * 1.5;
     windows.creditsMessage.resolution = RELSCALE * 1.5;
-  } catch{};
+  } catch { };
 
   if (gameOver) {
     if (!creditsShowing) { windows.socialsResizing(); }
@@ -709,7 +705,7 @@ function moveBackground() {
   backgroundBack.tilePosition.x -= SCALE * 1.2 * speedScale * FPSSCALE;
   backgroundFront.tileScale.set(SCALE * 3.52);
   backgroundFront.tilePosition.x %= backgroundFront.texture.width * SCALE * 3.52;
-  backgroundBack.tilePosition.x %= backgroundBack.texture.width * SCALE *.88;
+  backgroundBack.tilePosition.x %= backgroundBack.texture.width * SCALE * .88;
   if (winTriggered && performance.now() >= (winTimeoutTime)) endHouse.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 }
 
@@ -721,21 +717,4 @@ function endGameFall() {
 
 // === End game functions === //
 
-// === exports for testing, not included in the actual deployed game === //
 
-module.exports = {
-  loadOnce: loadOnce,
-  reload: reload,
-  gameLoop: gameLoop,
-  displayScore: displayScore,
-  displayHighScore: displayHighScore,
-  checkCollision: checkCollision,
-  endGame: endGame,
-  slowMovement: slowMovement,
-  onClickRestart: onClickRestart,
-  onClickMute: onClickMute,
-  collectToken: collectToken,
-  cleanUp: cleanUp,
-  startGame: startGame,
-  moveBackground: moveBackground,
-}

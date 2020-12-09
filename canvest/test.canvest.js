@@ -1,3 +1,5 @@
+//test this file to ensure canvest is set up correctly :)
+
 describe('Test Canvest Setup', function () {
     it('should pass', function () {
         var a = 1;

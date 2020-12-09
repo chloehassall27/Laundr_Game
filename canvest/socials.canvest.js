@@ -88,6 +88,10 @@ describe('socials endGame tests', async () => {
         expect(socials.smallScreenDiv.style.left).to.equal("50%");
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
+
 });
 
 describe('socials switchSizes tests', async () => {
@@ -188,6 +192,10 @@ describe('socials switchSizes tests', async () => {
         expect(socials.smallScreenDiv.style.left).to.equal("50%");
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
+
 });
 
 describe('socials resetGame tests', async () => {
@@ -260,6 +268,10 @@ describe('socials resetGame tests', async () => {
 
         expect(socials.backupSocialsDiv.style.left).to.equal("-100%");
     });
+
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
 
 });
 
@@ -340,6 +352,10 @@ describe('socials restartGame tests', async () => {
         expect(socials.backupSocialsDiv.style.left).to.equal("-100%");
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
+
 });
 
 describe('socials setupHTMLBtns tests', async () => {
@@ -419,6 +435,10 @@ describe('socials setupHTMLBtns tests', async () => {
         }, 200)
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
+
 });
 
 describe('socials bringOnScreen tests', async () => {
@@ -497,7 +517,7 @@ describe('socials bringOnScreen tests', async () => {
         expect(socials.backupSocialsDiv.style.top).to.equal("50%");
     });
 
-    it('should bring divs on screen for large screens at 80% height', async () => {
+    it('should bring divs on screen for large screens at 78% height', async () => {
         socials.resetGame();
         socials.smallScreen = false;
         socials.adBlock = false;
@@ -515,21 +535,25 @@ describe('socials bringOnScreen tests', async () => {
         expect(socials.backupSocialsDiv.style.top).to.equal("78%");
     });
 
-    it('should bring divs on screen for small screens at 80% height', async () => {
+    it('should bring divs on screen for small screens at 77% height', async () => {
         socials.resetGame();
         socials.smallScreen = true;
         socials.adBlock = false;
         socials.bringOnScreen(false);
         expect(socials.smallScreenDiv.style.left).to.equal("50%");
-        expect(socials.smallScreenDiv.style.top).to.equal("78%");
+        expect(socials.smallScreenDiv.style.top).to.equal("77%");
 
         socials.resetGame();
         socials.smallScreen = true;
         socials.adBlock = true;
         socials.bringOnScreen(false);
         expect(socials.smallScreenDiv.style.left).to.equal("50%");
-        expect(socials.smallScreenDiv.style.top).to.equal("78%");
+        expect(socials.smallScreenDiv.style.top).to.equal("77%");
     });
+
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
 
 });
 
@@ -591,14 +615,18 @@ describe('socials smallBringOnScreen tests', async () => {
         }, 600);
     });
 
-    it('should bring divs on screen for small screens at 80% height', async () => {
+    it('should bring divs on screen for small screens at 77% height', async () => {
         socials.resetGame();
         socials.smallScreen = true;
         socials.adBlock = false;
         socials.smallBringOnScreen();
         expect(socials.smallScreenDiv.style.left).to.equal("50%");
-        expect(socials.smallScreenDiv.style.top).to.equal("78%");
+        expect(socials.smallScreenDiv.style.top).to.equal("77%");
     });
+
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
 
 });
 
@@ -683,6 +711,10 @@ describe('socials renderTwt tests', async () => {
         }, 200)
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
+
 });
 
 describe('socials smallScreenSetup tests', async () => {
@@ -754,6 +786,10 @@ describe('socials smallScreenSetup tests', async () => {
 
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
+
 });
 
 
@@ -823,6 +859,10 @@ describe('socials smallScreenPopup tests', async () => {
         expect(socials.sSMenu.style.left).to.equal("50%");
 
     });
+
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
 
 });
 
@@ -895,6 +935,10 @@ describe('socials smallScreenReset tests', async () => {
 
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
+
 });
 
 describe('socials resetTwtDiv tests', async () => {
@@ -961,6 +1005,10 @@ describe('socials resetTwtDiv tests', async () => {
 
         expect(socials.twtDiv.innerHTML).to.equal("");
     });
+
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
 
 });
 
@@ -1036,6 +1084,9 @@ describe('socials checkForBlock2 tests', async () => {
         expect(socials.adblock).to.equal(false);
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
 });
 
 describe('socials backup tests', async () => {
@@ -1106,4 +1157,7 @@ describe('socials backup tests', async () => {
         }, 20);
     });
 
+    socials.resetGame();
+    newScript.remove();
+    holder.remove();
 });
