@@ -243,8 +243,8 @@ function gameLoop() {
     }
     checkFocus();
 
-    console.log("obstacles: " + spawner.obstacles);
-    console.log("tokens: " + spawner.tokens);
+    // console.log("obstacles: " + spawner.obstacles);
+    // console.log("tokens: " + spawner.tokens);
 
     if (focus && visible) {
       if (firstLoop) {
