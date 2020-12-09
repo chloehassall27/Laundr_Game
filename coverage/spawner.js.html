@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/160</span>
+                <span class='fraction'>0/168</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/66</span>
+                <span class='fraction'>0/70</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>0/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/151</span>
+                <span class='fraction'>0/159</span>
             </div>
         
             
@@ -333,7 +333,19 @@
 <a name='L274'></a><a href='#L274'>274</a>
 <a name='L275'></a><a href='#L275'>275</a>
 <a name='L276'></a><a href='#L276'>276</a>
-<a name='L277'></a><a href='#L277'>277</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L277'></a><a href='#L277'>277</a>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -418,8 +430,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -598,6 +610,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -607,6 +623,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export default class Spawner {
@@ -694,8 +718,8 @@
 &nbsp;
             //check collision
 <span class="cstat-no" title="statement not covered" >            if (checkCollision(this.player.currSprite, this.obstacles[i])) {</span>
-                // lose = true;
-                // endGame();
+<span class="cstat-no" title="statement not covered" >                lose </span>= true;
+<span class="cstat-no" title="statement not covered" >                endGame();</span>
             }
 &nbsp;
             //remove box if it's offscreen
@@ -711,7 +735,7 @@
 <span class="cstat-no" title="statement not covered" >            this.t</span>okens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
 <span class="cstat-no" title="statement not covered" >            this.t</span>okens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >            if (checkCollision(this.player.currSprite, this.tokens[i]))</span>
+<span class="cstat-no" title="statement not covered" >            if (true)//checkCollision(this.player.currSprite, this.tokens[i]))</span>
 <span class="cstat-no" title="statement not covered" >                this.c</span>ollectToken(i);
 &nbsp;
 <span class="cstat-no" title="statement not covered" >            if (xBox &lt;= 0) {</span>
@@ -884,6 +908,18 @@
     gainFocus() <span class="fstat-no" title="function not covered" >{</span>
 <span class="cstat-no" title="statement not covered" >        this.f</span>ocus = true;
     }
+&nbsp;
+    clearOffscreenEnd() <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >        if (this.gameOver) {</span>
+<span class="cstat-no" title="statement not covered" >            for (let i = 0; i &lt; this.obstacles.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >                if (this.obstacles[i].x &gt;= WIDTH * 1.09) {</span>
+<span class="cstat-no" title="statement not covered" >                    container.</span>removeChild(spawner.obstacles[i]);
+<span class="cstat-no" title="statement not covered" >                    this.o</span>bstacles.shift();
+<span class="cstat-no" title="statement not covered" >                    i--;</span>
+                }
+            }
+        }
+    }
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -892,7 +928,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Dec 08 2020 22:26:16 GMT-0500 (Eastern Standard Time)
+                at Wed Dec 09 2020 15:31:27 GMT-0500 (Eastern Standard Time)
             </div>
         </div>
         <script src="prettify.js"></script>

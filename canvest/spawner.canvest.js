@@ -178,18 +178,14 @@ describe('spawner moveSprites tests', async () => {
     it('should move both sprites and hitareas left', async () => {
         spawner.obstacles = [];
         spawner.tokens = [];
-        spawner.buildToken();
-        spawner.spawn();
-        let tokenX = spawner.tokens[0].x;
-        let tokenXH = spawner.tokens[0].hitArea.x;
+        spawner.gameOver = false;
+        spawner.buildObstacles(0, 0, "washerSprite");
         let obsX = spawner.obstacles[0].x;
         let obsXH = spawner.obstacles[0].hitArea.x;
 
         spawner.moveSprites();
 
-        expect(spawner.tokens[0].x).to.be.below(tokenX);
         expect(spawner.obstacles[0].x).to.be.below(obsX);
-        expect(spawner.tokens[0].hitArea.x).to.be.below(tokenXH);
         expect(spawner.obstacles[0].hitArea.x).to.be.below(obsXH);
 
     });
@@ -313,8 +309,8 @@ describe('spawner decreaseInterval tests', async () => {
         let afterMax = spawner.intRangeMax;
         let afterMin = spawner.intRangeMin;
 
-        expect(beforeMax).to.be.above(afterMax);
-        expect(beforeMin).to.be.above(afterMin);
+        expect(beforeMax).to.be.above(afterMax - 1);
+        expect(beforeMin).to.be.above(afterMin - 1);
     });
 
     it('should always keep interval above absolute minimum', async () => {
@@ -369,8 +365,8 @@ describe('spawner randomizeInterval tests', async () => {
 
         let interval = spawner.randomizeInterval();
 
-        expect(beforeMax).to.be.above(interval);
-        expect(beforeMin).to.be.below(interval);
+        expect(beforeMax + 1).to.be.above(interval);
+        expect(beforeMin - 1).to.be.below(interval);
     });
 
 });
