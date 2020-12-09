@@ -15,6 +15,9 @@ Game code was created using Javascript. Active deployments are created with [her
 - [pixi-sound](https://github.com/pixijs/pixi-sound)
 
 ## Features
+![play game_8fps](https://user-images.githubusercontent.com/61722674/101677569-b84ca400-3a2a-11eb-8819-bab6c819581c.gif)
+<i>The start of the game, including game instructions and some gameplay.</i>
+
 * Instructions on game start
 * Jumping and ducking
 * Random obstacle spawning
@@ -31,6 +34,11 @@ Game code was created using Javascript. Active deployments are created with [her
 * Share high score to Twitter and Facebook
 * Compatible with mobile
 
+![end game NEW_8fps](https://user-images.githubusercontent.com/61722674/101677514-a9fe8800-3a2a-11eb-9326-64483a72034e.gif)
+<i>The end of the game when the player wins, including some gameplay, the win screen, and the credits.</i>
+
+![social media_8fps](https://user-images.githubusercontent.com/61722674/101677530-af5bd280-3a2a-11eb-9c56-f8a9d968f6b2.gif)
+<i>Social media sharing on a game over, including sharing to Twitter as well as to Facebook.</i>
 
 ## Installation
 To install all necessary files required for further development, run: 
