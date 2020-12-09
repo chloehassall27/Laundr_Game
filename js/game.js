@@ -230,8 +230,6 @@ function reload() {
     });
 
   speedInterval = setInterval(increaseSpeedScale, 20000);
-  console.log("obstacles: " + spawner.obstacles);
-  console.log("tokens: " + spawner.tokens);
   // gameInterval = setInterval(gameLoop, 7);
 }
 
@@ -469,6 +467,9 @@ function cleanUp() {
 }
 
 function startGame() {
+  console.log("obstacles: " + spawner.obstacles);
+  console.log("tokens: " + spawner.tokens);
+
   PIXI.sound.context.audioContext.resume();
 
   //now the player sprite is allowed to animate
