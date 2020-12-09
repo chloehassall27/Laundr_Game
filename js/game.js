@@ -243,6 +243,9 @@ function gameLoop() {
     }
     checkFocus();
 
+    console.log("obstacles: " + spawner.obstacles);
+    console.log("tokens: " + spawner.tokens);
+
     if (focus && visible) {
       if (firstLoop) {
         window.timeOffset = performance.now();
@@ -467,8 +470,8 @@ function cleanUp() {
 }
 
 function startGame() {
-  console.log("obstacles: " + spawner.obstacles);
-  console.log("tokens: " + spawner.tokens);
+  // console.log("obstacles: " + spawner.obstacles);
+  // console.log("tokens: " + spawner.tokens);
 
   PIXI.sound.context.audioContext.resume();
 
