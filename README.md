@@ -15,22 +15,30 @@ Game code was created using Javascript. Active deployments are created with [her
 - [pixi-sound](https://github.com/pixijs/pixi-sound)
 
 ## Features
-* Jumping
-* Ducking
-* Display of high score and current score 
+![play game_8fps](https://user-images.githubusercontent.com/61722674/101677569-b84ca400-3a2a-11eb-8819-bab6c819581c.gif)
+<i>The start of the game, including game instructions and some gameplay.</i>
+
+* Instructions on game start
+* Jumping and ducking
 * Random obstacle spawning
-* Score bonus tokens aka Laundr bombs 
+* Display high score and current score
+* Sound effects on player actions
+* Mute functionality
+* Auto pause when game tab loses focus
+* Score bonus tokens
+* Lose or win game
 * Restart functionality
-* Share high score to Twitter and Facebook
-* Mute functionality 
 * Coupon code displayed on a win
 * Puns displayed on game over screens
 * Display credits on a win
-* Lose game
-* Win game
-* Compatible with mobile 
-* Auto pause when game tab loses focus
-* Sound Effects on jumping, collecting a token, losing, and winning	
+* Share high score to Twitter and Facebook
+* Compatible with mobile
+
+![end game NEW_8fps](https://user-images.githubusercontent.com/61722674/101677514-a9fe8800-3a2a-11eb-9326-64483a72034e.gif)
+<i>The end of the game when the player wins, including some gameplay, the win screen, and the credits.</i>
+
+![social media_8fps](https://user-images.githubusercontent.com/61722674/101677530-af5bd280-3a2a-11eb-9c56-f8a9d968f6b2.gif)
+<i>Social media sharing on a game over, including sharing to Twitter as well as to Facebook.</i>
 
 ## Installation
 To install all necessary files required for further development, run: 
@@ -81,7 +89,7 @@ The [Tweet Button](https://developer.twitter.com/en/docs/twitter-for-websites/tw
 The [Share Button](https://developers.facebook.com/docs/plugins/share-button/) from Facebook was used to allow players to share their score to Facebook.
 
 ## Tests
-Unit tests were created using [Canvest](https://github.com/TyrealGray/Canvest) to allow for tests that interact with canvas elements. To run the tests, use the untiTests branch. 
+Unit tests were created using [Canvest](https://github.com/TyrealGray/Canvest) to allow for tests that interact with canvas elements. To run the tests, use the unitTests branch. 
 
 Ensure that the directory used has no spaces in it. For example, use C:/unitTests, not C:/unit Tests, as canvest will not automatically convert this directory to C:/”unit Tests” for you and will be unable to find your project.
 

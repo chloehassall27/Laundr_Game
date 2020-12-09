@@ -273,4 +273,16 @@ export default class Spawner {
     gainFocus() {
         this.focus = true;
     }
+
+    clearOffscreenEnd() {
+        if (this.gameOver) {
+            for (let i = 0; i < this.obstacles.length; i++) {
+                if (this.obstacles[i].x >= WIDTH * 1.09) {
+                    container.removeChild(spawner.obstacles[i]);
+                    this.obstacles.shift();
+                    i--;
+                }
+            }
+        }
+    }
 }
