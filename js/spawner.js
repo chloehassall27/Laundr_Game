@@ -100,7 +100,7 @@ export default class Spawner {
             this.tokens[i].x -= SCALE * 3.5 * speedScale * FPSSCALE;
             this.tokens[i].hitArea.x -= SCALE * 3.5 * speedScale * FPSSCALE;
 
-            if (checkCollision(this.player.currSprite, this.tokens[i]))
+            if (true)//checkCollision(this.player.currSprite, this.tokens[i]))
                 this.collectToken(i);
 
             if (xBox <= 0) {
