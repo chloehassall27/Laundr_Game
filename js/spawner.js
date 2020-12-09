@@ -83,8 +83,8 @@ export default class Spawner {
 
             //check collision
             if (checkCollision(this.player.currSprite, this.obstacles[i])) {
-                lose = true;
-                endGame();
+                // lose = true;
+                // endGame();
             }
 
             //remove box if it's offscreen
@@ -241,7 +241,7 @@ export default class Spawner {
         } else if (rand % 5 == 0) {
             if (currTime > this.switchDifficulty) return "laundrySprite";
             return "double";
-        } else if (currTime >= this.ironTime && rand % 8 == 0){
+        } else if (currTime >= this.ironTime && rand % 8 == 0) {
             return "ironSprite";
         }
         else {
